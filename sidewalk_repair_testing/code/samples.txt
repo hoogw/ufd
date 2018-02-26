@@ -1,0 +1,45 @@
+[
+    {
+      "attributes" : {
+	"objectid": 5,
+        "globalid": "71c29eae-883d-401d-9651-66f3c4f0e330",
+        "Notes" : "test again 2"
+      }
+    }
+]
+
+[
+    {
+      "attributes" : {
+	"OBJECTID": 5,
+        "Notes" : "test again 2"
+      }
+    }
+]
+
+[
+    {
+      "attributes" : {
+	"OBJECTID": 5,
+        "Download_Date" : 1227663551096
+      }
+    }
+]
+
+[
+    {
+      "attributes" : {
+	"OBJECTID": 5,
+        "Download_Date" : "01\/11\/2016 02:56:31"
+      }
+    }
+]
+
+[
+    {
+      "attributes" : {
+	"OBJECTID": 5,
+        "Download_Date" : null
+      }
+    }
+]
