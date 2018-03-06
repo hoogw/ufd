@@ -3531,11 +3531,11 @@
 		
 			<cfset sfx = timeformat(now(),"HHmmss")>
 
-			<cfset columns = "Site,Council District,Package,Facility Name,Address,Construction Start Date,Construction Completed Date,Priority No,Engineer's Estimate,Total Cost,Total Concrete,Type,Subtype,Work Order,Has Certificate,Certificate Total">
+			<cfset columns = "Site,Council District,Package,Facility Name,Address,Construction Start Date,Construction Completed Date,Priority No,Engineer's Estimate,Total Cost,Total Concrete,Type,Subtype,Work Order,Has Certificate,Certificate Total, Number of Curb Ramps">
 			
 			<cfquery name="setSearch" dbtype="query">
 			SELECT location_no as site,council_district as cd, package,name as facility_name,address,construction_start_date,
-			construction_completed_date,priority_no,engineers_estimate,total_cost,total_concrete,type_desc,subtype_desc,work_order,has_certificate,certificate_total FROM session.siteQuery
+			construction_completed_date,priority_no,engineers_estimate,total_cost,total_concrete,type_desc,subtype_desc,work_order,has_certificate,certificate_total,Number_CurbRamps FROM session.siteQuery
 			</cfquery>
 			
 			<cfset filename = expandPath("../downloads/SidewalkRepairSiteSearch_#sfx#.xls")>
