@@ -3503,6 +3503,8 @@
 	
 	<cffunction name="downloadSiteSearch" access="remote" returnType="any" returnFormat="plain" output="false">
 		
+        
+        
 		<cfset var data = {}>
 		
 		<cfif isdefined("session.userid") is false>

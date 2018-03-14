@@ -513,6 +513,10 @@ style="position:relative;top:10px;left:5px;height:25px;width:100%;border:2px #re
 			<th class="drk center middle" style="width:50px;" onClick="sortTable(2);return false;" onMouseOver="this.style.cursor='pointer';">Package</th>
 			<th class="drk center middle" style="width:350px;" onClick="sortTable(3);return false;" onMouseOver="this.style.cursor='pointer';">Facility Name</th>
 			<th class="drk center middle" onClick="sortTable(4);return false;" onMouseOver="this.style.cursor='pointer';">Address</th>
+            
+            <!--- joe hu --- 3/14/2018 --- add Days in queue --->
+            <th class="drk center middle" style="width:70px;" onClick="sortTable(14);return false;" onMouseOver="this.style.cursor='pointer';">Days In Queue</th>
+            
 			<th class="drk center middle" style="width:70px;" onClick="sortTable(5);return false;" onMouseOver="this.style.cursor='pointer';">Con. Started</th>
 			<th class="drk center middle" style="width:85px;" onClick="sortTable(6);return false;" onMouseOver="this.style.cursor='pointer';">Con. Completed</th>
 			<th class="drk center middle" style="width:58px;" onClick="sortTable(7);return false;" onMouseOver="this.style.cursor='pointer';">Priority No</th>
@@ -609,6 +613,7 @@ function sortTable(idx) {
 	case 11: sort.id = idx; sort.dir = dir; sort.order = "total_cost " + dir + ",location_no,location_suffix"; break;
 	case 12: sort.id = idx; sort.dir = dir; sort.order = "total_concrete " + dir + ",location_no,location_suffix"; break;
 	case 13: sort.id = idx; sort.dir = dir; sort.order = "engineers_estimate " + dir + ",location_no,location_suffix"; break;
+	case 14: sort.id = idx; sort.dir = dir; sort.order = "Days_In_Queues " + dir + ",location_no,location_suffix"; break;
 	default: sort.id = 1; sort.dir = "ASC"; sort.order = "";
 	}
 	submitForm();
@@ -666,6 +671,11 @@ function submitForm() {
 			case "PACKAGE_GROUP": sg = i; break;
 			case "NAME": sname = i; break;
 			case "ADDRESS": saddr = i; break;
+			
+			<!--- joe hu --- 3/14/2018 --- add Days in queue --->
+			case "DAYS_IN_QUEUES": sdays = i; break;
+			
+			
 			case "CONSTRUCTION_START_DATE": scons = i; break;
 			case "CONSTRUCTION_COMPLETED_DATE": sconc = i; break;
 			case "PRIORITY_NO": spry = i; break;
@@ -706,6 +716,11 @@ function submitForm() {
 				if (item[sg] == null) {item[sg] = "";}
 				if (item[sname] == null) {item[sname] = "";}
 				if (item[saddr] == null) {item[saddr] = "";}
+				
+				<!--- joe hu --- 3/14/2018 --- add Days in queue --->
+				if (item[sdays] == null) {item[sdays] = "";}
+				
+				
 				if (item[scons] == null) {item[scons] = "";}
 				if (item[sconc] == null) {item[sconc] = "";}
 				if (item[stype] == null) {item[stype] = "";}
@@ -741,6 +756,11 @@ function submitForm() {
 				items.push("<td style='width:49px;' class='small center frm'>" + pkg + "</td>");
 				items.push("<td style='padding:2px 0px 0px 5px;width:346px;' class='small frm'>" + item[sname] + "</td>");
 				items.push("<td style='padding:2px 0px 0px 5px;' class='small frm'>" + item[saddr] + "</td>");
+				
+				<!--- joe hu --- 3/14/2018 --- add Days in queue --->
+				items.push("<td style='width:69px;' class='small center frm'>" + item[sdays] + "</td>");
+				
+				
 				items.push("<td style='width:69px;' class='small center frm'>" + item[scons] + "</td>");
 				items.push("<td style='width:84px;' class='small center frm'>" + item[sconc] + "</td>");
 				items.push("<td style='width:57px;' class='small center frm'>" + item[spry] + "</td>");
