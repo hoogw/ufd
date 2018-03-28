@@ -307,6 +307,7 @@
 					package_no = #sw_pno#,
 					package_group = '#sw_pgroup#',
 					modified_date = #CreateODBCDateTime(Now())#,
+                    Packaged_Date = #CreateODBCDateTime(Now())#,
 					User_ID = #session.user_num#
 					WHERE id = #arrIDs[i]#
 					</cfquery>
@@ -650,7 +651,8 @@
 						package_no = NULL,
 						package_group = NULL,
 						modified_date = #CreateODBCDateTime(Now())#,
-						User_ID = #session.user_num#
+						User_ID = #session.user_num#,
+                        Packaged_Date = NULL
 						WHERE id = #arrIDs[i]#
 						</cfquery>
 						<cfset data.removed = "true">

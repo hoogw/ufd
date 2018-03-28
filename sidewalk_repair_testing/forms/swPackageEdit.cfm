@@ -40,6 +40,7 @@ body{background-color: transparent}
 
 <cfparam name="url.pid" default="1">
 
+
 <!--- Get Package --->
 <cfquery name="getPackage" datasource="#request.sqlconn#" dbtype="ODBC">
 SELECT * FROM tblPackages WHERE id = #url.pid#
@@ -561,10 +562,10 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 							<cfset attvis = "hidden"><cfif href_rmvl is not ""><cfset attvis = "visible"></cfif>
 							<th class="left" style="width:170px;"><a id="a_rmvl" #href_rmvl# target="_blank"><img id="img_rmvl" src="#src_rmvl#" width="17" height="17" style="position:relative;top:2px;">
 							<span style="position:relative;top:-3px;">Contractor's Bid</span></a><cfif (session.user_power is 2 OR session.user_level is 3) OR (session.user_power is 3 AND session.user_level is 2) OR (session.user_power is 1 AND session.user_level is 0 AND ucase(getPackage.contractor) is "BSS")>
-							<span id="rmv_rmvl" style="visibility:#attvis#;"><a href="" onclick="showRemoveAttach(0);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Contractor's Bid" style="position:relative;top:-2px;left:7px;"></a></span></cfif>
+							<span id="rmv_rmvl" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(0);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Contractor's Bid" style="position:relative;top:-2px;left:7px;"></a></span></cfif>
 							</th>
 							<cfif (session.user_power is 2 OR session.user_level is 3) OR (session.user_power is 3 AND session.user_level is 2) OR (session.user_power is 1 AND session.user_level is 0 AND ucase(getPackage.contractor) is "BSS")>
-							<th><a href="" onclick="showAttach();return false;"><img src="../images/attach.png" width="9" height="15" title="Attach File" style="position:relative;top:3px;right:5px;">
+							<th><a href="" onClick="showAttach();return false;"><img src="../images/attach.png" width="9" height="15" title="Attach File" style="position:relative;top:3px;right:5px;">
 							<span style="position:relative;top:0px;right:5px;" title="Attach Files">Attach File</span></a></td>
 							</cfif>
 						</tr>
@@ -616,8 +617,8 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 						<th class="center middle nopad" style="width:70px;">Construction<br>Started</th>
 						<td style="width:2px;"></td>
 						<th class="center middle nopad" style="width:70px;">Construction<br>Completed</th>
-						<!--- <td style="width:2px;"></td>
-						<th class="center middle nopad" style="width:75px;">Anticipated<br>Completion<br>Date</th> --->
+					    <td style="width:2px;"></td>
+						<th class="center middle nopad" style="width:75px;">Date<br>Added</th> 
 						<td style="width:2px;"></td>
 						<th class="center middle nopad" style="width:50px;">Remove</th>
 						<!--- <td style="width:2px;"></td> --->
@@ -626,7 +627,7 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 							
 							<tr><td style="height:2px;"></td></tr>
 							<tr>
-							<td class="small center frm" style="height:20px;"><a href="" onclick="goToSite(#url.pid#,#id#);return false;"><img src="../Images/rep.gif" width="13" height="16" alt="Edit Site Information" title="Edit Site Information"></a></td>
+							<td class="small center frm" style="height:20px;"><a href="" onClick="goToSite(#url.pid#,#id#);return false;"><img src="../Images/rep.gif" width="13" height="16" alt="Edit Site Information" title="Edit Site Information"></a></td>
 							<td style="width:2px;"></td>
 							<td class="small center frm">#location_no#<!--- #site_suffix# ---></td>
 							<td style="width:2px;"></td>
@@ -660,10 +661,13 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 							<td style="width:2px;"></td>
 							<cfset v = ""><cfif construction_completed_date is not ""><cfset v = dateformat(construction_completed_date,"MM/DD/YYYY")></cfif>
 							<td class="small center frm">#v#</td>
-							<!--- <td style="width:2px;"></td>
-							<cfset v = ""><cfif anticipated_completion_date is not ""><cfset v = dateformat(anticipated_completion_date,"MM/DD/YYYY")></cfif>
-							<td class="small center frm">#v#</td> --->
 							<td style="width:2px;"></td>
+                                
+							<cfset v = ""><cfif packaged_date is not ""><cfset v = dateformat(packaged_date,"MM/DD/YYYY")></cfif>
+							<td class="small center frm">#v#</td> 
+							<td style="width:2px;"></td>
+                            
+                            
 							<cfset bssdis = ""><!--- Added for BSS bonus power --->
 							<cfif session.user_power is 1 AND session.user_level is 0 AND (ucase(getPackage.contractor) is "BSS" OR ucase(getPackage.package_group) is "BSS")>
 							<cfset bssdis = "disabled"></cfif>
@@ -701,7 +705,7 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 
 	
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="msg_header" class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -720,7 +724,7 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 </div>
 
 <div id="msg2" class="box" style="top:40px;left:1px;width:300px;height:90px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg2').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg2').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="msg_header2" class="box_header"><strong>Warning:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text2" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -749,7 +753,7 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 
 
 <div id="msg3" class="box" style="top:40px;left:1px;width:220px;height:80px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg3').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg3').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="msg_header3" class="box_header"><strong>Recalculate:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text3" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -825,9 +829,9 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 				<div id="fi_rmvl" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 				</div>
 				<div id="fi_div_rmvl" style="display:block;">
-				<input id="file_rmvl" name="file_rmvl" type="file" class="file" style="top:15px;left:#lft+90#px;display:block;" onchange="setFileName('rmvl');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
+				<input id="file_rmvl" name="file_rmvl" type="file" class="file" style="top:15px;left:#lft+90#px;display:block;" onChange="setFileName('rmvl');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
 				<a id="fi_btn_rmvl" href="" class="button buttonText" tabindex="3"
-				style="position:absolute;top:16px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
+				style="position:absolute;top:16px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
 				</td></tr>
 
 				<tr><td><iframe id="attach_iframe" name="attach_iframe" style="display:none;position:relative;top:30px;left:0px;height:400px;width:500px;border:0px red solid;"></iframe></td></tr>
@@ -840,7 +844,7 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 
 	
 <div id="msg7" class="box" style="top:40px;left:1px;width:350px;height:80px;display:none;z-index:505;">
-<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg7').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg7').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 <div id="msg_header5" class="box_header"><strong>Warning:</strong></div>
 <div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 	<div id="msg_text7" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
