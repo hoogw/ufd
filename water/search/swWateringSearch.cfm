@@ -78,6 +78,13 @@
                           
                            
                            
+                                                   <cfquery name="new_planted" datasource="#request.sqlconn2#" dbtype="ODBC" >
+                                                                    Select count(*) as total from vw_search_tree where deleted = 0 and days_after_planted <= 30
+                                             
+                                                     </cfquery>
+                                                     
+                                                      <cfset new_planted_total = new_planted.total >
+                           
                                                 <!---  *************     End    *********  Get tree numbers  ********************   --->
 
 
@@ -320,9 +327,11 @@ SELECT * FROM tblType ORDER BY type
 
 <cfparam name="url.dmt" default="0" />
 <cfparam name="url.dlt" default="0" />
+<cfparam name="url.dap" default="0" />
+
 <cfset days_more_than = url.dmt />
 <cfset days_less_than = url.dlt />
-
+<cfset days_after_planted = url.dap />
 
 
 
@@ -408,8 +417,41 @@ SELECT * FROM tblType ORDER BY type
                                                    
                                                     <td align="center" class="pagetitle"  style="position:relative;top:10px;color:white;">
                                                     
+                                                     
+                                                      <!--- high light by red font size big for New <30 days --->
                                                       
-                                                      <cfif days_more_than GT 0 AND days_less_than EQ 0>
+                                                      <cfif days_after_planted GT 0 >
+                                                       
+                                                           
+                                                           
+                                                             <a href="swWateringSearch.cfm">
+                                                               <font size ="1" color="white"> All Tree (#all_tree_total#) </font>
+                                                             </a>
+                                                             
+                                                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                             <a href="swWateringSearch.cfm?dmt=7&dlt=10">
+                                                              <font size ="1" color="white"> 7 - 10 days (<font size ="2" color="red">#Between_7_to_10_total#</font>)  </font> 
+                                                             </a>
+                                                             
+                                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                             <a href="swWateringSearch.cfm?dmt=10">
+                                                             <font size ="1" color="white">  &gt; 10 days (<font size="2" color="red">#more_than_10_total#</font>) </font> 
+                                                              </a>
+                                                           
+                                                           
+                                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                                             <a href="swWateringSearch.cfm?dap=30">
+                                                             <font size ="5" color="white">  New &lt; <font size ="6" color="red">30</font>  days (<font size="4" color="red">#new_planted_total#</font>) </font> 
+                                                              </a>
+                                                           
+                                                    
+                                                    
+                                                    
+                                                    
+                                                      
+                                                      <!--- high light by red font size big for > 10 days --->
+                                                      
+                                                      <cfelseif days_more_than GT 0 AND days_less_than EQ 0>
                                                        
                                                            
                                                            
@@ -423,20 +465,24 @@ SELECT * FROM tblType ORDER BY type
                                                              </a>
                                                              
                                                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                                              > <font size="6" color="red">#days_more_than# </font> Days (<font size="4" color="red">#more_than_10_total#</font>)
+                                                              &gt; <font size="6" color="red">#days_more_than# </font> Days (<font size="4" color="red">#more_than_10_total#</font>)
                                                            
                                                            
-                                                      </cfif>
-                                                      
-                                                      
-                                                      
-                                                      
-                                                      
-                                                      
-                                                      
-                                                      
+                                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                                             <a href="swWateringSearch.cfm?dap=30">
+                                                             <font size ="1" color="white">  New &lt; 30 days (<font size="2" color="red">#new_planted_total#</font>) </font> 
+                                                              </a>
+                                                           
                                                     
-                                                        <cfif days_less_than GT 0 AND days_more_than GT 0>
+                                                      
+                                                      
+                                                      
+                                                      
+                                                      
+                                                      
+                                                       <!--- high light by red font size big for 7 - 10 days --->
+                                                    
+                                                        <cfelseif days_less_than GT 0 AND days_more_than GT 0>
                                                           
                                                           
                                                           <a href="swWateringSearch.cfm">
@@ -451,22 +497,27 @@ SELECT * FROM tblType ORDER BY type
                                                              
                                                                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                              <a href="swWateringSearch.cfm?dmt=10">
-                                                             <font size ="1" color="white">  > 10 days (<font size="2" color="red">#more_than_10_total#</font>) </font> 
+                                                             <font size ="1" color="white">  &gt; 10 days (<font size="2" color="red">#more_than_10_total#</font>) </font> 
                                                               </a>
                                                       
                                                       
+                                                             &nbsp;&nbsp;&nbsp;&nbsp;
+                                                             <a href="swWateringSearch.cfm?dap=30">
+                                                             <font size ="1" color="white">  New &lt; 30 days (<font size="2" color="red">#new_planted_total#</font>) </font> 
+                                                              </a>
                                                           
-                                                        </cfif>
+                                                      
                                                         
                                                         
                                                         
                                                         
                                                         
                                                         
+                                                        <!--- high light by red font size big for All tree --->
                                                         
-                                                        
-                                                        <cfif days_more_than EQ 0 AND days_less_than EQ 0>
-                                                            <font  color="red">All </font> Tree (#all_tree_total#) 
+                                                        <cfelseif days_more_than EQ 0 AND days_less_than EQ 0>
+                                                           
+                                                                    <font  color="red">All </font> Tree (#all_tree_total#) 
                                                             
                                                              		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                      <a href="swWateringSearch.cfm?dmt=7&dlt=10">
@@ -474,9 +525,15 @@ SELECT * FROM tblType ORDER BY type
                                                                      </a>
                                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                                      <a href="swWateringSearch.cfm?dmt=10">
-                                                                     <font size ="1" color="white">  > 10 days (<font size="2" color="red">#more_than_10_total#</font>) </font> 
+                                                                     <font size ="1" color="white">  &gt; 10 days (<font size="2" color="red">#more_than_10_total#</font>) </font> 
                                                                       </a>
-                                                        </cfif>
+                                                                      
+                                                                      
+                                                                      &nbsp;&nbsp;&nbsp;&nbsp;
+                                                                     <a href="swWateringSearch.cfm?dap=30">
+                                                                     <font size ="1" color="white">  New &lt; 30 days (<font size="2" color="red">#new_planted_total#</font>) </font> 
+                                                                      </a>
+                                                       </cfif>
                                                     
                                                     <!---
                                                     
@@ -1249,6 +1306,8 @@ SELECT * FROM tblType ORDER BY type
 		
 		var _days_more_than = #days_more_than#;
 		var _days_less_than = #days_less_than#;
+		var _days_after_planted	= #days_after_planted#;
+		
 		
 		</cfoutput>
 		

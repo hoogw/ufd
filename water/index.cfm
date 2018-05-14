@@ -178,6 +178,15 @@ findNoCase('Touch', cgi.http_user_agent,1)>
                           
                            
                            
+                           
+                           <cfquery name="new_planted" datasource="#request.sqlconn2#" dbtype="ODBC" >
+                                                                    Select count(*) as total from vw_search_tree where deleted = 0 and days_after_planted <= 30
+                                             
+                           </cfquery>
+                                                     
+                           <cfset new_planted_total = new_planted.total >
+                           
+                           
                                                 <!---  *************     End    *********  Get tree numbers  ********************   --->
                            
                            
@@ -592,10 +601,22 @@ findNoCase('Touch', cgi.http_user_agent,1)>
                  <tr>        
                          <th class="dropdown left middle" style="height:20px;width:150px;" 
                         onclick="changeFrame_literal('search/swWateringSearch.cfm?dmt=10');$('#chr(35)#dd_water').hide();" onMouseOver="this.style.cursor='pointer';">
-                        > 10 days (<font size="4" color="red">#more_than_10_total#</font>)   
+                        &gt; 10 days (<font size="4" color="red">#more_than_10_total#</font>)   
                         </th>
                         
 			    </tr>
+                
+                
+                <tr><td style="height:1px;"></td></tr>
+                   
+                 <tr>        
+                         <th class="dropdown left middle" style="height:20px;width:150px;" 
+                        onclick="changeFrame_literal('search/swWateringSearch.cfm?dap=30');$('#chr(35)#dd_water').hide();" onMouseOver="this.style.cursor='pointer';">
+                        New&lt;30days (<font size="4" color="red">#new_planted_total#</font>)   
+                        </th>
+                        
+			    </tr>
+                
                 
                 
               <!---

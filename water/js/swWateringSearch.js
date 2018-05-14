@@ -1319,7 +1319,7 @@ app.controller('MainCtrl', ['$scope', '$http','$interval', '$q', '$templateCache
 
 				 // $http.get(url + 'cfc/tree_service.cfc?method=search_tree&returnformat=json&queryformat=struct')
 				  
-				   $http.get(url + 'cfc/tree_service.cfc?method=search_tree_by&dmt='+ _days_more_than + '&dlt=' + _days_less_than +'&returnformat=json&queryformat=struct')
+				   $http.get(url + 'cfc/tree_service.cfc?method=search_tree_by&dmt='+ _days_more_than + '&dlt=' + _days_less_than + '&dap=' +  _days_after_planted  +'&returnformat=json&queryformat=struct')
 					.success(function(data) {
 					 
 					 

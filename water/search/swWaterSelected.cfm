@@ -265,6 +265,16 @@
                                                       <cfset more_than_10_total = more_than_10.total >
                            
                           
+                                                   
+                                                   <cfquery name="new_planted" datasource="#request.sqlconn2#" dbtype="ODBC" >
+                                                                    Select count(*) as total from vw_search_tree where deleted = 0 and days_after_planted <= 30
+                                             
+                                                     </cfquery>
+                                                     
+                                                      <cfset new_planted_total = new_planted.total >
+                          
+                          
+                          
                            
                            
                                                 <!---  *************     End    *********  Get tree numbers  ********************   --->
@@ -312,8 +322,14 @@
                                                      </a>
                                                      &nbsp;&nbsp;&nbsp;&nbsp;
                                                      <a href="swWateringSearch.cfm?dmt=10">
-                                                     <font size ="1" color="white">  > 10 days (<font size="2" color="red">#more_than_10_total#</font>) </font> 
+                                                     <font size ="1" color="white">  &gt; 10 days (<font size="2" color="red">#more_than_10_total#</font>) </font> 
                                                       </a>
+                                                    
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                                     <a href="swWateringSearch.cfm?dap=30">
+                                                     <font size ="1" color="white">  New &lt; 30 days (<font size="2" color="red">#new_planted_total#</font>) </font> 
+                                                      </a>
+                                                    
                                                     
                                                     <!---  ----------  End ----------  quick navigation link  --------------  --->
                                                             

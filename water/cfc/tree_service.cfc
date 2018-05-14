@@ -390,7 +390,21 @@
  
           <cfargument name="dmt" required="true"> 
           <cfargument name="dlt" required="true">
+          <cfargument name="dap" required="true">
           
+          
+          <cfif dap GT 0 >
+                   
+                     <cfquery name="search_tree_by_dap" datasource="#request.sqlconn2#" dbtype="ODBC">
+                     Select * from vw_search_tree 
+                     where deleted = 0
+                     and days_after_planted <= #dap# 
+                     
+                     </cfquery>
+                    <cfreturn search_tree_by_dap>	
+          
+          
+          </cfif>
           
           
           
@@ -447,6 +461,11 @@
           
           
           </cfif>
+          
+          
+          
+          
+          
           
           
         

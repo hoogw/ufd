@@ -86,6 +86,14 @@ td.small { font: 14px Arial, Verdana, Helvetica, sans-serif; }
                                                       <cfset more_than_10_total = more_than_10.total >
                            
                           
+                          
+                          
+                                                    <cfquery name="new_planted" datasource="#request.sqlconn2#" dbtype="ODBC" >
+                                                                    Select count(*) as total from vw_search_tree where deleted = 0 and days_after_planted <= 30
+                                             
+                                                     </cfquery>
+                                                     
+                                                      <cfset new_planted_total = new_planted.total >
                            
                            
                                                 <!---  *************     End    *********  Get tree numbers  ********************   --->
@@ -145,7 +153,12 @@ td.small { font: 14px Arial, Verdana, Helvetica, sans-serif; }
                                                      
                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                      <a href="search/swWateringSearch.cfm?dmt=10">
-                                                     <font size ="2" color="white">  > 10 days (<font size="4" color="red">#more_than_10_total#</font>) </font> 
+                                                     <font size ="2" color="white">  &gt; 10 days (<font size="4" color="red">#more_than_10_total#</font>) </font> 
+                                                      </a>
+                                                      
+                                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                     <a href="search/swWateringSearch.cfm?dap=30">
+                                                     <font size ="2" color="white">  New &lt; 30 days (<font size="4" color="red">#new_planted_total#</font>) </font> 
                                                       </a>
                                                     
                                                     <!---  ----------  End ----------  quick navigation link  --------------  ---> 
@@ -333,12 +346,17 @@ SELECT count(*) as cnt FROM tblSites WHERE Construction_Completed_Date IS NOT NU
 <cfset wth = 140>
 
 
-
+<!--- 
 
 <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:410px;" >
 	<tr>
 	<td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
+    
+     
+	 
 		<table align=center bgcolor=white cellspacing="2" cellpadding="2" border="0">
+        
+       
 		<tr>
 			<th class="drk left middle" colspan="4" style="height:21px;padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
@@ -352,7 +370,7 @@ SELECT count(*) as cnt FROM tblSites WHERE Construction_Completed_Date IS NOT NU
         
         
         
-        <!---
+        <!-  --
         
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -532,7 +550,7 @@ SELECT count(*) as cnt FROM tblSites WHERE Construction_Completed_Date IS NOT NU
         --->
         
 		
-	<!---	<cfif isdefined("session.userid") is true>   --->
+	<!---	<cfif isdefined("session.userid") is true>   --   ->
 		<tr>	
 			<th class="drk" colspan="4" style="padding:0px 0px 0px 0px;height:2px;">
 			</th>
@@ -600,6 +618,7 @@ SELECT count(*) as cnt FROM tblSites WHERE Construction_Completed_Date IS NOT NU
 		</table>
 		
 		
+        
 		
 		
 		
@@ -607,7 +626,7 @@ SELECT count(*) as cnt FROM tblSites WHERE Construction_Completed_Date IS NOT NU
 	</tr>
 </table>
 
-
+--->
 
 
 <table cellspacing="0" cellpadding="0" border="0" style="width:100%;"><tr><td style="height:10px;"></td></tr></table>
