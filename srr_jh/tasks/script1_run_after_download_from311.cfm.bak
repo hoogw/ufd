@@ -1,0 +1,429 @@
+<!--- rate_nbr ready --->
+<cfinclude template="../common/myCFfunctions.cfm">
+
+<!--- set a 50 character unique for each srr --->
+<cfquery name="getKey" datasource="#request.dsn#" dbtype="datasource">
+Select srr_id, srrKey
+from srr_info
+where 
+(srrKey is null or srrKey = '')
+</cfquery>
+
+<cfif #getKey.recordcount# is not 0>
+<cfloop query="getKey">
+<cfset request.srrKey = #randString('alphanum', 50)#>
+<cfquery name="checkKey" datasource="#request.dsn#" dbtype="datasource">
+select srrKey from  srr_info
+where
+srrKey = '#request.srrKey#'
+</cfquery>
+<cfif #checkKey.recordcount# is 0>
+<cfquery name="setKey" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+set 
+srrKey = '#request.srrKey#'
+where 
+srr_id = #getKey.srr_id#
+</cfquery>
+<cfelse>
+<cflocation addtoken="No" url="#cgi.script_name#">
+</cfif>
+</cfloop>
+</cfif>
+<!--- set a 50 character unique for each srr --->
+SrrKey Generated<br><br>
+
+<!--- set rate_nbr --->
+<cfquery name="last_rate_nbr" datasource="#request.dsn#" dbtype="datasource">
+select max(rate_nbr) as last_rate_nbr
+from rebate_rates
+</cfquery>
+<cfquery name="upateRateNbr" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+set rate_nbr = #last_rate_nbr.last_rate_nbr# 
+where (rate_nbr is null or rate_nbr = '')
+</cfquery>
+<!--- set rate_nbr --->
+Rate Numbers are set<br><br>
+
+<!-- if str_nm or  hse_nbr are blank, set address verified = 'N' and prop_data_checked = 'y'  -->
+<cfquery name="updateInvalidRecords" datasource="#request.dsn#" dbtype="datasource">
+Update srr_info
+set 
+address_verified = 'N'
+, prop_data_checked = 'Y'
+where (hse_nbr is null or hse_nbr = 0 or str_nm is null or str_nm = '')
+</cfquery>
+
+<!--- validate address, set residential or commercial, set reserved amount, mark property data as set --->
+
+<!-- read all tickets where prop_data_checked is not "y" -->
+<cfquery name="getRecords" datasource="#request.dsn#" dbtype="datasource">
+select srr_id, hse_nbr, str_nm
+from srr_info
+where (prop_data_checked is null OR prop_data_checked = '')
+</cfquery>
+
+<!--- 
+
+<cfquery name="getRecords" datasource="#request.dsn#" dbtype="datasource">
+select srr_id, hse_nbr, str_nm
+from srr_info
+where prop_data_checked is null
+</cfquery> --->
+
+<!--- <cfdump var="#getRecords#" output="browser"> --->
+
+<cfloop query="getRecords">
+<cfquery name="readHouse" datasource="#request.dsn#" dbtype="datasource">
+select 
+srr_id
+, hse_id
+, hse_nbr
+, hse_frac_nbr
+, hse_dir_cd
+, str_nm
+, str_sfx_cd
+, str_sfx_dir_cd
+, zip_cd
+
+from srr_info
+where srr_id = #getRecords.srr_id#
+</cfquery>
+
+<cfquery name="checkAddress" datasource="navla_spatial" dbtype="datasource">
+select HSE_ID, PIN, PIND, HSE_NBR, HSE_FRAC_NBR, HSE_DIR_CD, STR_NM, STR_SFX_CD, STR_SFX_DIR_CD, UNIT_RANGE, ZIP_CD, 
+X_COORD_NBR, Y_COORD_NBR, ASGN_STTS_IND, ENG_DIST, CNCL_DIST, LON, LAT
+from LA_HSE_NBR
+Where (1=1)
+<cfif #readHouse.hse_nbr# is not "" and #readHouse.str_nm# is not "">
+and HSE_NBR = #readHouse.hse_nbr# and STR_NM = '#readHouse.str_nm#' 
+</cfif>
+
+<cfif readHouse.hse_frac_nbr NEQ "">
+and HSE_FRAC_NBR = '#readHouse.hse_frac_nbr#'
+</cfif>
+
+<cfif readHouse.hse_dir_cd NEQ "">
+and HSE_DIR_CD = '#readHouse.hse_dir_cd#'
+</cfif>
+
+<cfif readHouse.str_sfx_cd NEQ "">
+and STR_SFX_CD = '#readHouse.str_sfx_cd#'
+</cfif>
+
+<cfif readHouse.str_sfx_dir_cd NEQ "">
+and STR_SFX_DIR_CD = '#readHouse.str_sfx_dir_cd#'
+</cfif>
+
+<cfif readHouse.zip_cd NEQ "">
+and ZIP_CD = '#readHouse.zip_cd#'
+</cfif>
+
+and EXIST_STTS_CD Is Null
+</cfquery>
+
+
+<cfif #checkAddress.recordcount# is 0><!-- Invalid Address -->
+<cfquery name="updateSRR" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+
+set 
+address_verified = 'N'
+, prop_data_checked = 'Y'
+where srr_id = #getRecords.srr_id#
+</cfquery>
+</cfif>
+
+
+
+
+
+
+<cfif #checkAddress.recordcount# is not 0><!-- Invalid Address --><!--- 1 --->
+
+<cfset request.job_address = #checkAddress.hse_nbr#>
+<cfif #checkAddress.hse_frac_nbr# NEQ "">
+<cfset request.job_address = #request.job_address#&" "&#checkAddress.hse_frac_nbr#>
+</cfif>
+
+<cfif #checkAddress.hse_dir_cd# NEQ "">
+<cfset request.job_address = #request.job_address#&" "&#checkAddress.hse_dir_cd#>
+</cfif>
+
+<cfif #checkAddress.str_nm# NEQ "">
+<cfset request.job_address = #request.job_address#&" "&#checkAddress.str_nm#>
+</cfif>
+
+<cfif #checkAddress.str_sfx_cd# NEQ "">
+<cfset request.job_address = #request.job_address#&" "&#checkAddress.str_sfx_cd#>
+</cfif>
+
+<cfif #checkAddress.str_sfx_dir_cd# NEQ "">
+<cfset request.job_address = #request.job_address#&" "&#checkAddress.str_sfx_dir_cd#>
+</cfif>
+
+<cfif #checkAddress.zip_cd# NEQ "">
+<cfset request.job_address = #request.job_address#&" - "&#checkAddress.zip_cd#>
+</cfif>
+
+
+<cfquery name="updateSRR" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+
+set 
+address_verified = 'Y'
+, prop_data_checked = 'Y'
+,unit_range = '#toSqlText(checkAddress.unit_range)#'
+,hse_id = #toSqlNumeric(checkAddress.hse_id)#
+<!---       ,tbm_grid = '#toSqlText(checkAddress.tbm_grid)#' --->
+,boe_dist = '#toSqlText(checkAddress.ENG_DIST)#'
+<!---,council_dist = '#toSqlText(checkAddress.CNCL_DIST)#'--->
+, zip_cd = '#toSqlText(checkAddress.zip_cd)#'
+,pin = '#toSqlText(checkAddress.pin)#'
+,pind = '#toSqlText(checkAddress.pind)#'
+,x_coord = #toSqlNumeric(checkAddress.X_COORD_NBR)#
+,y_coord = #toSqlNumeric(checkAddress.Y_COORD_NBR)#
+,longitude = #toSqlNumeric(checkAddress.lon)#
+,latitude = #toSqlNumeric(checkAddress.lat)#
+, job_address = '#request.job_address#'
+
+where srr_id = #getRecords.srr_id#
+</cfquery>
+
+<cfif #checkAddress.pin# is not ""><!--- 2 --->
+<cfquery name="getAPN" datasource="navla_spatial" dbtype="datasource">
+select PIN, BPP
+from LA_APN
+where PIN = '#checkAddress.pin#'
+and exist_stts_cd is null
+</cfquery>
+<cfif #getAPN.recordCount# is 1><!--- 3 --->
+<cfquery name="checkLiens" datasource="form9_sql" dbtype="datasource">
+SELECT dbo.apn.bpp, dbo.apn.reason, dbo.reason_codes.reason_text
+FROM  dbo.apn LEFT OUTER JOIN
+               dbo.reason_codes ON dbo.apn.reason = dbo.reason_codes.reason
+where apn.bpp = '#getAPN.bpp#'
+</cfquery>
+
+<cfif #checkLiens.recordcount# is 0>
+<cfset request.anyLiens = "N">
+<cfset request.LiensText = "">
+<cfelse>
+<cfset request.anyLiens = "Y">
+<cfset request.LiensText = #checkLiens.reason_text#>
+</cfif>
+
+<cfquery name="updateSRR" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+set 
+bpp = '#getAPN.bpp#'
+, anyLiens = '#request.anyLiens#'
+, LiensText = '#request.liensText#'
+
+where srr_id = #getRecords.srr_id#
+</cfquery>
+<cfelse><!--- 3    multiple apn found--->
+<cfset apnList = #ValueList(getAPN.bpp)#>
+<cfset apnList = #listQualify(apnList, "'")#>
+<cfquery name="checkLiens" datasource="form9_sql" dbtype="datasource">
+SELECT dbo.apn.bpp, dbo.apn.reason, dbo.reason_codes.reason_text
+FROM  dbo.apn LEFT OUTER JOIN
+               dbo.reason_codes ON dbo.apn.reason = dbo.reason_codes.reason
+where apn.bpp in  (#listQualify(apnList, "'")#)
+</cfquery>
+
+<cfif #checkLiens.recordcount# is 0>
+<cfset request.anyLiens = "N">
+<cfset request.LiensText = "">
+<cfelse>
+<cfset request.anyLiens = "Y">
+<cfset request.LiensText = #ValueList(checkLiens.reason_text)#>
+</cfif>
+
+
+<cfquery name="updateSRR" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+set 
+bpp = 'Multiple'
+, anyLiens = '#request.anyLiens#'
+, LiensText = '#request.liensText#'
+
+where srr_id = #getRecords.srr_id#
+</cfquery>
+</cfif><!--- 3 --->
+
+<cfif #checkAddress.pind# is not ""><!-- 4 -->
+<cfquery name="getZoning" datasource="navla_spatial" dbtype="datasource">
+SELECT 
+      PIN
+	  , [PIND]
+      ,[ZONE_CMPLT] as zoningCode
+	  
+  FROM dcp_zoning_pin
+  
+  where 
+  pin = '#checkAddress.pin#'
+  </cfquery>
+  
+  <cfdump var="#getZoning#" output="browser">
+  
+ <cfset request.zoningCode = #getZoning.zoningCode#>
+ 
+ <cfset request.zoningCode=ReplaceNoCase("#request.zoningCode#","(T)","","ALL")>
+<cfset request.zoningCode=ReplaceNoCase("#request.zoningCode#","(F)","","ALL")>
+<cfset request.zoningCode=ReplaceNoCase("#request.zoningCode#","(Q)","","ALL")>
+<cfset request.zoningCode=ReplaceNoCase("#request.zoningCode#","[Q]","","ALL")>
+ <cfset request.zoningCode=ReplaceNoCase("#request.zoningCode#","[T]","","ALL")>
+ 
+ 
+ 
+ <cfset zcLen = len(#request.zoningCode#)>
+ 
+ <cfif left(#request.zoningCode#, 1) is "Q">
+ <cfset request.zoningCode = right(#zoningCode#, (#zcLen# - 1))>
+ </cfif>
+
+
+ <cfif left(#request.zoningCode#, 1) is "R" or left(#request.zoningCode#, 2) is "OS" or left(#request.zoningCode#, 2) is "A">
+ <cfset request.prop_type = "R">
+ <cfelse>
+  <cfset request.prop_type = "C">
+ </cfif>
+  
+  
+  <cfquery name="updateZoning" datasource="#request.dsn#" dbtype="datasource">
+  update srr_info
+  set 
+  prop_type = '#request.prop_type#'
+  , ZoningCode = '#request.zoningCode#'
+  where srr_id = #getRecords.srr_id#
+  </cfquery>
+  
+</cfif><!-- 4 -->
+
+
+
+</cfif><!--- 2 --->
+
+</cfif><!--- 1 --->
+</cfloop>
+
+
+<cfquery name="getNoStatus" datasource="#request.dsn#" dbtype="datasource">
+SELECT 
+srr_id
+, rate_nbr
+, prop_type
+, sr_number
+, srrKey
+from 
+srr_info
+where srr_status_cd is null or srr_status_cd = ''
+</cfquery>
+
+<cfif #getNoStatus.recordcount# gt 0><!--- zzzzzzzzzzzzzzzz --->
+
+<cfloop query="getNoStatus">
+
+<!--- <cfquery name="getRebateRate" datasource="#request.dsn#" dbtype="datasource">
+SELECT 
+	   res_cap_amt
+      , comm_cap_amt
+  FROM rebate_rates
+  where rate_nbr = #getNoStatus.rate_nbr#
+</cfquery> --->
+
+<!--- <cfinclude template="../common/calc_balanceNow.cfm">
+<cfif #getNoStatus.prop_type# is "R" and #request.balanceNow# lt #getRebateRate.res_cap_amt#>
+<cfset request.newStatus = "waitListed">
+<cfset request.offer_reserved_amt = 0>
+<Cfelseif #getNoStatus.prop_type# is "R" and #request.balanceNow# gte #getRebateRate.res_cap_amt#>
+<cfset request.newStatus = "received">
+<cfset request.offer_reserved_amt = #getRebateRate.res_cap_amt#>
+<Cfelseif #getNoStatus.prop_type# is "C" and #request.balanceNow# lt #getRebateRate.comm_cap_amt#>
+<cfset request.newStatus = "waitListed">
+<cfset request.offer_reserved_amt = 0>
+<Cfelseif #getNoStatus.prop_type# is "C" and #request.balanceNow# gte #getRebateRate.comm_cap_amt#>
+<cfset request.newStatus = "received">
+<cfset request.offer_reserved_amt = #getRebateRate.comm_cap_amt#>
+<cfelseif  #getNoStatus.prop_type# is "" and #request.balanceNow# lt #getRebateRate.comm_cap_amt#><!--- when prop_type is not known, reserve commercial cap--->
+<cfset request.newStatus = "waitListed">
+<cfset request.offer_reserved_amt = 0>
+<cfelseif  #getNoStatus.prop_type# is "" and #request.balanceNow# gte #getRebateRate.comm_cap_amt#><!--- when prop_type is not known, reserve commercial cap --->
+<cfset request.newStatus = "received">
+<cfset request.offer_reserved_amt = #getRebateRate.comm_cap_amt#>
+</cfif> --->
+<cfset request.newStatus = "waitListed"><!--- place all new applications on the waitlist until they get evaluated by the nightly script --->
+<cfset request.offer_reserved_amt = 0>
+<cfquery name="UpdateStatus" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+set 
+srr_status_cd = '#request.newStatus#'
+, offer_reserved_amt = #request.offer_reserved_amt#
+, offer_open_amt = 0
+, offer_accepted_amt = 0
+, offer_paid_amt = 0
+where 
+srr_id = #getNoStatus.srr_id#
+</cfquery>
+
+
+<cfquery name="UpdateHistory" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+set
+record_history = isnull(record_history, '') + '|Service Request was submitted on ' + CONVERT(VARCHAR(20), ddate_submitted, 100)+'.'
+where srr_id = #getNoStatus.srr_id#
+</cfquery>
+
+<cfquery name="UpdateHistory1" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+set
+record_history = isnull(record_history, '') + '|Service Request was added to the waiting list on ' + CONVERT(VARCHAR(20), ddate_submitted, 100)+' (script).'
+where srr_id = #getNoStatus.srr_id#
+</cfquery>
+
+
+<cfif #request.newStatus# is "waitListed">
+<cfinclude template="../common/calc_balanceNow.cfm">
+<cfset request.srNum = #getNoStatus.sr_number#>
+
+<cfmail to="essam.amarragy@lacity.org" from="srr@lacity.org" subject="Rebate Program: Waitlisted #request.srNum#">
+Service Ticket no. #request.srNum# was added to the waiting list for the Rebate Program.
+
+Balance Now is: #request.balanceNow#
+</cfmail>
+
+
+
+<cfset request.srCode = "11">
+<!-- This message is the latest message as of 11/4/2016 -->
+<cfset request.srComment = "There are currently insufficient funds available to further process your application for the Sidewalk Rebate Program.  Your application has been placed on a waitlist until more funds become available. Your place in line is determined by the date your application was received - do not resubmit.  A change to your waitlist status will be posted to the original Service Request ticket in MyLA311 and will be sent via e-mail.">
+<cftry>
+<!--- No need to send comments to customer --->
+<cfif #request.production# is "p"><!--- 000 --->
+<cfmodule template="../modules/updateSR_module.cfm" srNum="#request.srNum#" srCode="#request.srCode#" srComment="#left(request.srComment, 750)#">
+</cfif><!--- 000 --->
+<cfcatch type="Any">
+<!--- do nothing --->
+</cfcatch>
+</cftry>
+</cfif>
+
+
+</cfloop>
+
+</cfif><!--- zzzzzzzzzzzzzzzz --->
+
+
+<!--- <cfquery name="UpdateHistory" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+set
+record_history = 'Service Request was submitted on ' + CONVERT(VARCHAR(20), ddate_submitted, 100)+'.'
+where record_history is null
+</cfquery> --->
+
+
+<cfmail to="essam.amarragy@lacity.org" from="SRR@lacity.org" subject="Script after 311 to SRR ran successfully at #now()#">
+Script after 311 to SRR ran successfully at #now()#
+</cfmail>

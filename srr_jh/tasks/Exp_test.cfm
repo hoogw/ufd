@@ -1,0 +1,189 @@
+<!--- 04.10.2018 Start  --->
+
+
+
+<cfquery name="checkOfferExpired" datasource="#request.dsn#" dbtype="datasource">
+SELECT
+ srr_info.srr_id
+ , srr_info.srrKey
+ , srr_info.sr_number
+ , srr_info.a_ref_no
+ , srr_info.srr_status_cd
+ , srr_info.offerAccepted_dt
+, srr_info.offerAccepted_exp_dt
+, srr_info.ApermitSubmitted_dt 
+, srr_info.ApermitIssued_dt
+, srr_info.offer_open_amt
+, srr_info.offer_reserved_amt
+, srr_info.offer_accepted_amt
+, srr_info.offer_paid_amt
+
+
+
+
+FROM  srr_info
+where 
+srr_status_cd = 'offerExpired'
+</cfquery>
+
+
+<cfoutput>
+CHECKED 
+Offer Expired <br>
+Record Count: #checkofferExpired.recordcount#
+</cfoutput>
+
+<br>
+
+
+<cfdump var="#checkOfferExpired#">
+
+
+
+
+
+<!--- Select all applications with status offerAccepted and 60 days have passed, i.e., offer did  expire.  If offer is accepted and applicant did not submit all required permits within 30 days, this offer will acquire a status of requiredPermitsNotSubmitted.  Later, applications with status requiredPermitsNotSubmitted should be canceled, not closed, manually by SRP staff. --->
+<cfquery name="checkOfferAccepted" datasource="#request.dsn#" dbtype="datasource">
+SELECT
+ srr_info.srr_id
+ , srr_info.srrKey
+ , srr_info.sr_number
+ , srr_info.a_ref_no
+ , srr_info.srr_status_cd
+ , srr_info.offerAccepted_dt
+, srr_info.offerAccepted_exp_dt
+, srr_info.ApermitSubmitted_dt 
+, srr_info.ApermitIssued_dt
+, srr_info.offer_open_amt
+, srr_info.offer_reserved_amt
+, srr_info.offer_accepted_amt
+, srr_info.offer_paid_amt
+
+
+FROM  srr_info
+
+where 
+srr_status_cd = 'offerAccepted'
+
+
+and
+isdate(ApermitSubmitted_dt) = 0 and isdate(ApermitIssued_dt) = 0
+
+and
+srr_info.offerAccepted_exp_dt < #CreateODBCDate(now())# 
+
+</cfquery>
+
+
+<cfoutput>
+Offer Accepted Exp DT Greater <br>
+Record Count: #checkofferAccepted.recordcount#
+</cfoutput>
+
+<br>
+
+<cfdump var="#checkOfferAccepted#">
+
+<Br>
+
+
+<cfabort>
+
+
+
+<!---   Update srr_status_CD to Offer Expired     --->
+
+<cfset request.dnow = #dateformat(now(),"mm/dd/yyyy")#&" at: "&#timeformat(now(),"h:mm tt")#>
+
+
+<cfloop query="checkOfferAccepted">
+<cfquery name="updateSrr" datasource="#request.dsn#" dbtype="datasource">
+update srr_info
+set 
+srr_status_cd = 'OfferExpiredTemp'
+<!---, offer_open_amt = 0
+, offer_reserved_amt = 0
+, offer_accepted_amt = 0
+, offer_paid_amt = 0
+--->
+
+
+, record_history = isnull(record_history,'') + '|Offer expired since the applicant took no action for 60 days after accepting the offer -  (Action taken by Automated Nightly Script on #request.dnow#).'
+
+where srr_id = #checkOfferAccepted.srr_id#
+</cfquery>
+
+
+<cfset request.srNum = #checkOfferAccepted.sr_number#>
+<cfset request.srCode = "46"> <!--- If the value is numeric then it will update the Reason Code. Otherwise is will update the Resolution Code --->
+<cfset request.srComment = "Rebate offer for the sidewalk repair has expired.  You may still appeal this determination by using the following link to file an appeal:<br><br>
+#request.serverRoot#/srr/public/submit_an_appeal1.cfm?srrKey=#offerMade.srrKey#">
+<cftry>
+<!--- No need to send comments to customer  ??????--->
+<cfif #request.production# is "p"><!--- 000 --->
+<cfmodule template="../modules/updateSR_module.cfm" srNum="#request.srNum#" srCode="#request.srCode#" srComment="#left(request.srComment, 750)#">
+</cfif>
+<cfcatch type="Any">
+<!--- do nothing --->
+</cfcatch>
+</cftry>
+</cfloop><!--- End of looping thru offerMade where offer is expired --->
+
+
+
+
+
+
+<cfquery name="checkOfferExpiredtemp" datasource="#request.dsn#" dbtype="datasource">
+SELECT
+ srr_info.srr_id
+ , srr_info.srrKey
+ , srr_info.sr_number
+ , srr_info.a_ref_no
+ , srr_info.srr_status_cd
+ , srr_info.offerAccepted_dt
+, srr_info.offerAccepted_exp_dt
+, srr_info.ApermitSubmitted_dt 
+, srr_info.ApermitIssued_dt
+, srr_info.offer_open_amt
+, srr_info.offer_reserved_amt
+, srr_info.offer_accepted_amt
+, srr_info.offer_paid_amt
+
+
+
+
+FROM  srr_info
+where 
+srr_status_cd = 'offerExpiredTemp'
+</cfquery>
+
+
+<cfoutput>
+After
+Offer Expired <br>
+Record Count: #checkofferExpiredTemp.recordcount#
+</cfoutput>
+
+<br>
+
+
+<cfdump var="#checkOfferExpiredTemp#">
+
+
+
+<cfabort>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

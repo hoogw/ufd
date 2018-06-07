@@ -1,5 +1,59 @@
 <!doctype html>
 
+
+
+
+
+
+
+<!--- joe 6/1/2018 meet kelly's tree report --->
+<cfscript> 
+
+    totalQuery = new Query( datasource = "sidewalk" );
+	
+    totalQuery.setSql( "with good ( action_type, Tree_Removal_Date, Tree_Planting_Date, t_type, loc_no ) as (
+        select action_type, Tree_Removal_Date, Tree_Planting_Date, [type], Location_No
+        from vwHDRTreeList
+        where deleted = 0 or deleted is null
+    )
+    select 11, 'Total Number of Trees Removed', count(*) from good where ACTION_TYPE = 'Removal' and TREE_REMOVAL_DATE is not null and t_type in ( 'BSS', 'RAP', 'General Service', 'BSS - Dead Tree', 'BSS - Volunteer' )
+	union
+    select 21, 'Total Number of Tress to be Removed', count(*) from good inner join vwHDRAssessmentTracking a on loc_no = a.Location_No where ACTION_TYPE = 'Removal' AND TREE_REMOVAL_DATE is null and t_type in ( 'BSS', 'RAP', 'General Service', 'BSS - Dead Tree', 'BSS - Volunteer' ) and ( a.Package_No is not null )
+    union
+    select 31, 'Total Number of Trees Planted', count(*) from good where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is not null and t_type in ( 'BSS', 'RAP', 'General Service' )
+    union
+    select 41, 'Total Number of Trees to be Planted', count(*) from good inner join vwHDRAssessmentTracking a on loc_no = a.Location_No where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is null and t_type in ( 'BSS', 'RAP', 'General Service' ) and ( a.Package_No is not null )" );
+
+   
+
+    summary = totalQuery.execute().getResult();
+	
+	//writedump(summary.recordcount); // get resultcount
+   // writedump(summary); // dump result
+	
+	for (item in summary){
+        // When iterating over a query in CFScript, you can use the
+        // main query object to get meta-data; then, use the row
+        // object to get row-specific properties.
+     //   writeOutput(
+     //       "[ #summary.currentRow# of #summary.recordCount# ] " &
+     //       item.COMPUTED_COLUMN_3 &
+     //       "<br />"
+     //   );
+		
+	 if (item.COMPUTED_COLUMN_1 == 11) { trc = item.COMPUTED_COLUMN_3; }
+	 if (item.COMPUTED_COLUMN_1 == 21) { ttbrc = item.COMPUTED_COLUMN_3; }
+	 if (item.COMPUTED_COLUMN_1 == 31) { tpc = item.COMPUTED_COLUMN_3; }
+	 if (item.COMPUTED_COLUMN_1 == 41) { ttbpc = item.COMPUTED_COLUMN_3; }
+		
+		
+    }
+	
+</cfscript>
+
+
+
+
 <cfparam name="s" default="">
 <cfoutput>
 <HTML>
@@ -172,6 +226,14 @@ dbo.tblContractorPricing ON dbo.tblSites.Location_No = dbo.tblContractorPricing.
 WHERE (dbo.tblSites.Construction_Completed_Date IS NOT NULL)) AS derivedtbl_1
 </cfquery>
 
+
+
+
+
+
+
+
+<!---
 <cfquery name="getTrees" datasource="#request.sqlconn#" dbtype="ODBC">
 SELECT dbo.tblSites.Location_No, dbo.tblPackages.Notice_To_Proceed_Date, dbo.tblTreeList.TREE_REMOVAL_DATE, 
 dbo.tblTreeList.TREE_PLANTING_DATE, dbo.tblTreeList.ACTION_TYPE, dbo.tblTreeList.TYPE
@@ -179,15 +241,46 @@ FROM dbo.tblSites LEFT OUTER JOIN dbo.tblTreeList ON dbo.tblSites.Location_No = 
 dbo.tblPackages ON dbo.tblSites.Package_No = dbo.tblPackages.Package_No AND dbo.tblSites.Package_Group = dbo.tblPackages.Package_Group
 WHERE (dbo.tblPackages.Notice_To_Proceed_Date IS NOT NULL) AND (dbo.tblTreeList.DELETED = 0) AND (dbo.tblTreeList.TYPE = 1)
 </cfquery>
+--->
 
-<cfquery name="getTRC" dbtype="query">SELECT count(*) as cnt FROM getTrees WHERE TREE_REMOVAL_DATE is not null AND TYPE not in (5,6)</cfquery>
+<!--- joe 5/21/2018 include 5:BSS - Dead Tree  c:BSS - Volunteer --->
+<cfquery name="getTrees" datasource="#request.sqlconn#" dbtype="ODBC">
+SELECT dbo.tblSites.Location_No, dbo.tblPackages.Notice_To_Proceed_Date, dbo.tblTreeList.TREE_REMOVAL_DATE, 
+dbo.tblTreeList.TREE_PLANTING_DATE, dbo.tblTreeList.ACTION_TYPE, dbo.tblTreeList.TYPE
+FROM dbo.tblSites LEFT OUTER JOIN dbo.tblTreeList ON dbo.tblSites.Location_No = dbo.tblTreeList.Location_No LEFT OUTER JOIN
+dbo.tblPackages ON dbo.tblSites.Package_No = dbo.tblPackages.Package_No AND dbo.tblSites.Package_Group = dbo.tblPackages.Package_Group
+WHERE (dbo.tblPackages.Notice_To_Proceed_Date IS NOT NULL) AND (dbo.tblTreeList.DELETED = 0)
+</cfquery>
+
+
+
+
+
+
+<!--- <cfquery name="getTRC" dbtype="query">SELECT count(*) as cnt FROM getTrees WHERE TREE_REMOVAL_DATE is not null AND TYPE not in (5,6)</cfquery>  --->
+<!--- joe 5/21/2018 include 5:BSS - Dead Tree  6:BSS - Volunteer --->
+<cfquery name="getTRC" dbtype="query">SELECT count(*) as cnt FROM getTrees WHERE TREE_REMOVAL_DATE is not null AND TYPE <> 3 </cfquery>
+
+
+
+
 <cfquery name="getTPC" dbtype="query">SELECT count(*) as cnt FROM getTrees WHERE TREE_PLANTING_DATE is not null</cfquery>
-<cfquery name="getTTBRC" dbtype="query">SELECT count(*) as cnt FROM getTrees WHERE TREE_REMOVAL_DATE is null AND ACTION_TYPE = 0 AND TYPE not in (5,6)</cfquery>
+
+<!--- <cfquery name="getTTBRC" dbtype="query">SELECT count(*) as cnt FROM getTrees WHERE TREE_REMOVAL_DATE is null AND ACTION_TYPE = 0 AND TYPE not in (5,6)</cfquery> --->
+<!--- joe 5/21/2018 include 5:BSS - Dead Tree  c:BSS - Volunteer --->
+<cfquery name="getTTBRC" dbtype="query">SELECT count(*) as cnt FROM getTrees WHERE TREE_REMOVAL_DATE is null AND ACTION_TYPE = 0 AND TYPE <> 3</cfquery>
+
 <cfquery name="getTTBPC" dbtype="query">SELECT count(*) as cnt FROM getTrees WHERE TREE_PLANTING_DATE is null AND ACTION_TYPE = 1</cfquery>
+
+
+<!--- joe 6/1/2018 meet kelly's tree report --->
+<!---
 <cfset trc = getTRC.cnt>
 <cfset tpc = getTPC.cnt>
 <cfset ttbrc = getTTBRC.cnt>
 <cfset ttbpc = getTTBPC.cnt>
+--->
+
 
 <cfquery name="getConcrete" datasource="#request.sqlconn#" dbtype="ODBC">
 SELECT e4 + e6 + e8 + + ep + eb + q4 + q6 + q8 + qp + qb + c4 + c6 + c8 + cp + cb AS total FROM (SELECT 

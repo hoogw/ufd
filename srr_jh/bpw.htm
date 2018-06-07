@@ -1,0 +1,204 @@
+<!--- Start Header --->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta http-equiv="Cache-Control" content="no-store" />
+<title>(SRR) Sidewalk Repair Rebate Program - City of Los Angeles</title>
+<link href="css/boe_main_2016_v1.css" rel="stylesheet" type="text/css">
+<style>
+/* Layout styling*/
+* {
+	margin:0px;
+	padding:0px;
+}
+
+body {
+	margin-top:0px;
+	padding:0px;
+	text-align:center;
+}
+
+.Pheader {
+	width: 100%;
+	height: 85px;
+	margin: 0 auto;
+	padding: 0px;
+	background: linear-gradient(to bottom, #013953 , #0272a7);
+}
+		
+.Pheader  a {
+	text-decoration:none;
+	color: #FFF;
+}
+
+
+.Pheader  a:visited {
+	text-decoration: none;
+	color: #FFF;
+}
+
+
+.Pheader  a:hover
+{
+	text-decoration: underline;
+	color: red;
+}
+
+.headertitle {
+	font-size: 150%;
+	color: #33ffff;
+	text-shadow: 1px 1px 1px #333333;
+}
+
+.headerbackground {
+	width: 100%;
+	height: 85px;
+	top: 0;
+}
+
+.headerlinks {
+	font-size: 12px;
+	color: #FFF;
+}
+
+.footer {
+	margin-left:  auto;
+	margin-right: auto;
+	margin-top: 25px;
+	margin-bottom: 10px;
+	font-size: 12px;
+	color: silver;
+}
+</style>
+
+		<!--- header background container --->
+        <div class="Pheader">
+			<!--- header container withing the background container 700 px wide--->
+            <div style="width: 700px; height: 85px; margin-left: auto; margin-right: auto;">
+			
+                <div style="padding: 5px 0 0 0; width: 150px; height: 85px; float: left;"><!--- 2 --->
+                    <a href="http://eng.lacity.org" target="_blank"><img src="/srr/images/boe_logo_75h1.png" alt="" width="132" height="75" /></a>
+                </div><!-- 2 -->
+				
+				<!--- middle div 450px wide --->
+                <div style="padding: 5px 0 0 0; width: 450px; height: 85px; float: left;">
+					<!--- subdivs within middle div--->
+                    <div style="width: 100%; height: 20px; text-align: right;"><span class="headerlinks"><a href="http://eng.lacity.org" target="_blank">Bureau of Engineering</a> | <a href="http://www.lacity.org" target="_blank">City of LA</a> | <a href="http://navigatela.lacity.org/navigatela" target="_blank">Navigate LA</a> | <a href="http://eng.lacity.org/apps/address_list/contact_list.pdf" target="_blank">Contact us</a></span></div>
+                    <div style="width: 100%; height: 65px; padding-top: 15px;padding-left:25px;" class="headertitle">Sidewalk Repair Rebate Program</div>
+					<!--- subdivs within middle div--->
+				
+                </div>
+				<!--- middle div 450px wide --->
+				
+				 <div style="padding: 5px 0 0 0; width: 100px; height: 85px; float: left;">
+                    <a href="http://lacity.org" target="_blank"><img src="/srr/images/city_seal_75h1.png" alt="" width="75" height="75" /></a>
+                </div>
+				
+			<!--- header container withing the background container 700 px wide--->
+            </div>
+			
+        </div>
+		<!--- header outer container --->
+		
+<div align="center" style="margin_top:0;margin-bottom:5px;"></div>
+<!--- End of Header --->
+
+<script language="JavaScript" type="text/javascript">
+function checkForm()
+{
+
+if (document.form1.user_name.value == "")
+{
+alert ("User Name is Required!");
+document.form1.user_name.focus();
+return false;
+}
+
+
+if (document.form1.user_password.value == "")
+{
+alert ("Password is Required!");
+document.form1.user_password.focus();
+return false;
+}
+
+document.getElementById('submit').value='Please Wait ...';
+document.getElementById('submit').disabled=true;
+
+return true;
+
+}
+</script>
+
+<body ONLOAD="if (self !=top) top.location = self.location;checkCookies();">
+
+<div class='title'>Board of Public Works (BPW)</div>
+
+
+
+<div align="center">
+<font  color="Red">
+This page is for use by City of Los Angeles Authorized Personnel Only.
+<br>
+Unauthorized access will subject to criminal prosecution.
+</font>
+</div>
+
+<BR>
+
+
+
+
+
+<!-- ---------------------------------------------------------------------- -->
+<form action="bpw/authorize.cfm" method="post" name="form1" onSubmit="return checkForm();">
+<!-- ---------------------------------------------------------------------- -->
+
+<div class="formbox" style="width:400px;">
+<h1>Please Login</h1>
+
+
+<div class="field">
+<label for="user_name">User Name</label>
+<input type="text" name="user_name" id="user_name" size="15" required="yes">
+</div>
+
+<div class="field">
+<label for="user_name">Password</label>
+<input type="password" name="user_password" id="user_password" size="15" required="yes">
+</div>
+
+</div>
+
+<div align="center">
+<input type="submit" name="bpw_submit" id="bpw_submit" value="Login" class="submit">
+</div>
+
+</form>
+
+
+
+
+
+<BR><BR>
+<div align="center">
+<TABLE WIDTH="600" BORDER="0" CELLSPACING="3" CELLPADDING="3" ALIGN="center">
+<tr>
+<td style="text-align:center;">
+To obtain an account, please email <A HREF="mailto:Essam.Amarragy@lacity.org">Essam Amarragy</A>
+<BR>
+Please identify the application name and your agency in your email.
+</TD>
+</tr>
+</table>
+</div>
+
+
+<BR><BR>
+<div align="center" class="footer">&copy;&nbsp; 2000 - 2015 Bureau of Engineering, Department of Public Works, City of Los Angeles.</div>
+
+
+
+</body>
+</html>

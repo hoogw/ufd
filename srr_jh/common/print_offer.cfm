@@ -1,0 +1,93 @@
+<cfparam name="request.srr_id" default="10028">
+
+<cfquery name="find_srr" datasource="#request.dsn#" dbtype="datasource">
+SELECT 
+srr_id
+, ddate_submitted
+, app_id
+, app_name_nn
+, app_contact_name_nn
+, app_address1_nn
+, app_address2_nn
+, app_city_nn
+, app_state_nn
+, app_zip_nn
+, app_phone_nn
+, app_email_nn
+, job_address, job_city
+, job_state, job_zip
+, unit_range
+, mailing_address1
+, mailing_address2
+, mailing_zip
+, mailing_city
+, mailing_state
+, job_address
+, job_city
+, job_state
+, job_zip
+, offer_amt
+
+FROM  dbo.srr_info
+
+where srr_id = #request.srr_id#
+</cfquery>
+
+
+
+
+<cfdocument  format="PDF" pagetype="letter" margintop="0.5" marginbottom="0.5" marginright="0.2" marginleft="0.2" orientation="portrait" unit="in" encryption="none" fontembed="Yes" backgroundvisible="Yes" bookmark="False" localurl="Yes">
+
+
+<cfmodule template="/styles/boe_ltr_head_pdf.cfm" seal = "../../styles/seals.gif">
+
+<cfoutput query="find_srr">
+<div align="center">
+<table width="75%" border="0" cellpadding="10" align="center">
+<tr>
+<td width="100%" valign="top">
+<!---<cfmodule template="/styles/boe_ltr_head_html.cfm" seal = "/styles/seals.gif">--->
+
+<div align="center">
+<b>Offer to Repair/Replace Sidewalk <br>under the Sidewalk Repair Rebate Program</b>
+</div>
+
+<br>
+Applicant:<br>
+<strong>#find_srr.app_name_nn#</strong><br>
+#find_srr.app_address1_nn# #find_srr.app_address2_nn#<br>
+#find_srr.app_city_nn#, #find_srr.app_state_nn# #find_srr.app_zip_nn#<br>
+<br>
+<br>
+Property Information:<br>
+<strong>#find_srr.job_address#</strong><br>
+#find_srr.job_city#, #find_srr.job_state# #find_srr.job_zip#<br>
+<br>
+
+
+
+<p>This letter is to inform you that the City of Los Angeles has completed reviewing your application under the Sidewalk Repair Rebate Program and the subject property is Eligible for this program.</p>
+
+<p>The City is offering you an amount of &nbsp;&nbsp; #dollarformat(find_srr.offer_amt)#</p>
+
+
+<p>If you have any question about this, please ........</p>
+
+<br><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr>
+<td width="50%"></td>
+<td>
+Sincerely,<br>
+#client.full_name#
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+</div>
+</cfoutput>
+
+</cfdocument>

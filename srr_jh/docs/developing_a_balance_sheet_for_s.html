@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta content="en-us" http-equiv="Content-Language" />
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+<title>(SRR) Sidewalk Rebate Request - City of Los Angeles</title>
+</head>
+
+<body>
+
+<p><strong>Developing a Balance Sheet for Sidewalk Rebate Program and assigning 
+new applications to wait-list:</strong><br />
+<br />
+Assuming the Starting Balance&nbsp; =&nbsp;&nbsp; $6,000,000<br />
+<br />
+Count the Number of Application Received (not reviewed by BPW at this point):</p>
+<p>For each application received a $2000 or $4000 will be assigned as <strong>
+RESERVED_AMT</strong> to this application.<br />
+<br />
+Example:</p>
+<p>&nbsp;24 Residential Property Applications<br />
+15 Commercial Property Applications</p>
+<p>&nbsp;Reserved funds = 24 x $2000 + 15 x $4000 = $108, 000<br />
+<br />
+Once an offer is made, an <strong>OFFERED_AMT</strong> will be assigned to each 
+of those applications and the <strong>RESERVED_AMT</strong> will be set to 0.&nbsp; 
+This means that any application at any point of time has either a Reserved 
+Amount or Offered Amount and for "Not Eligible", "Declined", etc.&nbsp; both 
+amouts will be 0.<br />
+<br />
+At any point of time the <strong>AVAILABLE FUND = Starting Balance - Total of 
+All Reserved Amounts - Total of All Offered Amounts</strong><br />
+<br />
+The application OFFERED_AMT to 0 if applicant declined offer or offer expired so 
+that the running total will be accurate.</p>
+<p>The available funds will be calcuated each time a new application is received 
+and at a certain amount, all new applications will be assigned a status of 
+"Wait-Listed".</p>
+<p>Another algorithm will be developed to move applications from "Wait-Listed" 
+to the "Pending Review" queue whenever an application is deemed "Not Eligible", 
+"Declined", etc..<br />
+There could be a time gap between moving applications from "Wait-Listed" to 
+"Pending Review" queue based on time allowed for appeal.</p>
+<p><br />
+<br />
+</p>
+<p>&nbsp;</p>
+<p><br />
+<br />
+<br />
+</p>
+
+</body>
+
+</html>

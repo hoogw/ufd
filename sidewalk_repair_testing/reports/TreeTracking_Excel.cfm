@@ -49,7 +49,7 @@
         , a.Council_District
 
         , a.Address
-        , c.Construction_Start_Date, c.Construction_Completed_Date
+        , a.Construction_Start_Date, a.Construction_Completed_Date
         , info.ready_to_plant
 
         , r.TREE_NO, r.SPECIES, r.TREE_SIZE, r.PERMIT_ISSUANCE_DATE, r.TREE_REMOVAL_DATE, r.ADDRESS
@@ -121,18 +121,18 @@
 
     //
     totalQuery = new Query( datasource = "sidewalk" );
-    totalQuery.setSql( "with good ( action_type, Tree_Removal_Date, Tree_Planting_Date ) as (
-        select action_type, Tree_Removal_Date, Tree_Planting_Date
+    totalQuery.setSql( "with good ( action_type, Tree_Removal_Date, Tree_Planting_Date, t_type, loc_no ) as (
+        select action_type, Tree_Removal_Date, Tree_Planting_Date, [type], Location_No
         from vwHDRTreeList
         where deleted = 0 or deleted is null
     )
-    select 1, 'Total Number of Trees Removed', sum ( case when ACTION_TYPE = 'Removal' AND TREE_REMOVAL_DATE is not null then 1 else 0 end ) from good
+    select 11, 'Total Number of Trees Removed', count(*) from good where ACTION_TYPE = 'Removal' and TREE_REMOVAL_DATE is not null and t_type in ( 'BSS', 'RAP', 'General Service', 'BSS - Dead Tree', 'BSS - Volunteer' )
+	union
+    select 21, 'Total Number of Tress to be Removed', count(*) from good inner join vwHDRAssessmentTracking a on loc_no = a.Location_No where ACTION_TYPE = 'Removal' AND TREE_REMOVAL_DATE is null and t_type in ( 'BSS', 'RAP', 'General Service', 'BSS - Dead Tree', 'BSS - Volunteer' ) and ( a.Package_No is not null )
     union
-    select 2, 'Total Number of Tress to be Removed', sum (	case when ACTION_TYPE = 'Removal' AND TREE_REMOVAL_DATE is null then 1 else 0 end ) from good
+    select 31, 'Total Number of Trees Planted', count(*) from good where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is not null and t_type in ( 'BSS', 'RAP', 'General Service' )
     union
-    select 3, 'Total Number of Trees Planted', sum ( case when ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is not null then 1 else 0 end ) from good
-    union
-    select 4, 'Total Number of Trees to be Planted', sum ( case when ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is null then 1 else 0 end ) from good" );
+    select 41, 'Total Number of Trees to be Planted', count(*) from good inner join vwHDRAssessmentTracking a on loc_no = a.Location_No where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is null and t_type in ( 'BSS', 'RAP', 'General Service' ) and ( a.Package_No is not null )" );
 
     summary = totalQuery.execute().getResult();
 

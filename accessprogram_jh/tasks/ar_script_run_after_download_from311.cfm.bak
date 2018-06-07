@@ -1,0 +1,56 @@
+<cfinclude template="../common/myCFfunctions.cfm">
+
+
+<!--- set a 50 character unique for each srr --->
+<cfquery name="getKey" datasource="#request.dsn#" dbtype="datasource">
+Select ar_id, arKey, ddate_submitted
+from ar_info
+where 
+(arKey is null or arKey = '')
+</cfquery>
+
+<cfif #getKey.recordcount# is not 0>
+<cfloop query="getKey">
+<cfset request.arKey = #randString('alphanum', 50)#>
+<cfquery name="checkKey" datasource="#request.dsn#" dbtype="datasource">
+select arKey from  ar_info
+where
+arKey = '#request.arKey#'
+</cfquery>
+<cfif #checkKey.recordcount# is 0>
+<cfquery name="setKey" datasource="#request.dsn#" dbtype="datasource">
+update ar_info
+set 
+arKey = '#request.arKey#'
+where 
+ar_id = #getKey.ar_id#
+</cfquery>
+<cfelse>
+<cflocation addtoken="No" url="#cgi.script_name#">
+</cfif>
+</cfloop>
+</cfif>
+<!--- set a 50 character unique for each srr --->
+arKey Generated
+
+
+<cfquery name="setStatus" datasource="#request.dsn#" dbtype="datasource">
+update ar_info
+set 
+ar_status_cd = 'received'
+where 
+(ar_status_cd = '' or ar_status_cd is null)
+</cfquery>
+
+<cfquery name="setStatus" datasource="#request.dsn#" dbtype="datasource">
+update ar_info
+set 
+record_history = 'Application received on: '+LEFT(CONVERT(VARCHAR, ddate_submitted, 22), 120)
+<!--- where 
+(record_history = '' or record_history is null) --->
+</cfquery>
+
+
+<cfmail to="essam.amarragy@lacity.org" from="AR@lacity.org" subject="Script after Downloading AR ran successfully at #now()#">
+Script after Downloading AR ran successfully at #now()#
+</cfmail>
