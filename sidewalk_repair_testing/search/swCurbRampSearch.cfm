@@ -234,6 +234,27 @@ SELECT * FROM tblCurbRequestType ORDER BY type
 						</select>
 						</td>
 						
+                        
+                        
+                        <!---  -----------------  joe hu 6/14/18 added  ----- (1)-----   --->
+                        
+                        <td style="width:2px;"></td>
+						<th class="left middle" style="width:120px;">Curb Ramp Deleted:</th>
+						<td style="width:2px;"></td>
+						<td class="frm"  style="width:55px;">
+						<select name="scr_removed" id="scr_removed" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
+						<option value=""></option>
+						<cfloop query="getYesNo">
+							<cfif id is 1>
+							<option value="#id#">#value#</option>
+							</cfif>
+						</cfloop>
+						</select>
+						</td>
+                        
+                         <!---  ------ End --------  joe hu 6/14/18 added  ----- (1)-----   --->
+                        
+                        
 						<td style="width:2px;"></td>
 						<th class="left middle" style="width:175px;">Standard Plan Applicable:</th>
 						<td style="width:2px;"></td>
@@ -330,11 +351,11 @@ SELECT * FROM tblCurbRequestType ORDER BY type
 						<td class="frm" style="width:268px;"><!--- <input type="Text" name="ss_assdt" id="ss_assdt" value="" style="width:75px;" class="rounded">
 						<span class="page">&nbsp;<strong>OR</strong>&nbsp;</span> --->
 						<span class="page" style="position:relative;top:-2px;">&nbsp;&nbsp;From:&nbsp;</span>
-						<input type="Text" name="scr_dsdfrm" id="scr_dsdfrm" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onchange="clearChk('dsd');">
+						<input type="Text" name="scr_dsdfrm" id="scr_dsdfrm" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onChange="clearChk('dsd');">
 						<span class="page" style="position:relative;top:-2px;">&nbsp;&nbsp;To:&nbsp;</span>
-						<input type="Text" name="scr_dsdto" id="scr_dsdto" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onchange="clearChk('dsd');">
+						<input type="Text" name="scr_dsdto" id="scr_dsdto" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onChange="clearChk('dsd');">
 						<cfset chk = ""><cfif isdefined("session.scr_dsdnull")><cfset chk = "checked"></cfif>
-						<input type="checkbox" name="scr_dsdnull" id="scr_dsdnull" style="position:relative;top:2px;left:4px;" value="" onchange="clearFlds('dsd');" #chk#>
+						<input type="checkbox" name="scr_dsdnull" id="scr_dsdnull" style="position:relative;top:2px;left:4px;" value="" onChange="clearFlds('dsd');" #chk#>
 						<span class="page" style="position:relative;top:-1px;">Is Null</span>
 						</td>
 						<td style="width:2px;"></td>
@@ -342,11 +363,11 @@ SELECT * FROM tblCurbRequestType ORDER BY type
 						<td style="width:2px;"></td>
 						<td class="frm" style="width:268px;">
 						<span class="page" style="position:relative;top:-2px;">&nbsp;&nbsp;From:&nbsp;</span>
-						<input type="Text" name="scr_dfdfrm" id="scr_dfdfrm" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onchange="clearChk('dfd');">
+						<input type="Text" name="scr_dfdfrm" id="scr_dfdfrm" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onChange="clearChk('dfd');">
 						<span class="page" style="position:relative;top:-2px;">&nbsp;&nbsp;To:&nbsp;</span>
-						<input type="Text" name="scr_dfdto" id="scr_dfdto" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onchange="clearChk('dfd');">
+						<input type="Text" name="scr_dfdto" id="scr_dfdto" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onChange="clearChk('dfd');">
 						<cfset chk = ""><cfif isdefined("session.scr_dfdnull")><cfset chk = "checked"></cfif>
-						<input type="checkbox" name="scr_dfdnull" id="scr_dfdnull" style="position:relative;top:2px;left:4px;" value="" onchange="clearFlds('dfd');" #chk#>
+						<input type="checkbox" name="scr_dfdnull" id="scr_dfdnull" style="position:relative;top:2px;left:4px;" value="" onChange="clearFlds('dfd');" #chk#>
 						<span class="page" style="position:relative;top:-1px;">Is Null</span>
 						</td>
 						</tr>
@@ -363,11 +384,11 @@ SELECT * FROM tblCurbRequestType ORDER BY type
 						<td class="frm" style="width:268px;"><!--- <input type="Text" name="ss_assdt" id="ss_assdt" value="" style="width:75px;" class="rounded">
 						<span class="page">&nbsp;<strong>OR</strong>&nbsp;</span> --->
 						<span class="page" style="position:relative;top:-2px;">&nbsp;&nbsp;From:&nbsp;</span>
-						<input type="Text" name="scr_assfrm" id="scr_assfrm" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onchange="clearChk('ass');">
+						<input type="Text" name="scr_assfrm" id="scr_assfrm" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onChange="clearChk('ass');">
 						<span class="page" style="position:relative;top:-2px;">&nbsp;&nbsp;To:&nbsp;</span>
-						<input type="Text" name="scr_assto" id="scr_assto" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onchange="clearChk('ass');">
+						<input type="Text" name="scr_assto" id="scr_assto" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onChange="clearChk('ass');">
 						<cfset chk = ""><cfif isdefined("session.scr_assnull")><cfset chk = "checked"></cfif>
-						<input type="checkbox" name="scr_assnull" id="scr_assnull" style="position:relative;top:2px;left:4px;" value="" class="roundedsmall" onchange="clearFlds('ass');" #chk#>
+						<input type="checkbox" name="scr_assnull" id="scr_assnull" style="position:relative;top:2px;left:4px;" value="" class="roundedsmall" onChange="clearFlds('ass');" #chk#>
 						<span class="page" style="position:relative;top:-1px;">Is Null</span>
 						</td>
 						<td style="width:2px;"></td>
@@ -375,11 +396,11 @@ SELECT * FROM tblCurbRequestType ORDER BY type
 						<td style="width:2px;"></td>
 						<td class="frm" style="width:268px;">
 						<span class="page">&nbsp;&nbsp;From:&nbsp;</span>
-						<input type="Text" name="scr_ccdfrm" id="scr_ccdfrm" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onchange="clearChk('ccd');">
+						<input type="Text" name="scr_ccdfrm" id="scr_ccdfrm" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onChange="clearChk('ccd');">
 						<span class="page">&nbsp;&nbsp;To:&nbsp;</span>
-						<input type="Text" name="scr_ccdto" id="scr_ccdto" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onchange="clearChk('ccd');">
+						<input type="Text" name="scr_ccdto" id="scr_ccdto" value="" style="width:67px;height:20px;padding:0px 0px 0px 4px;position:relative;top:-2px;" class="roundedsmall" onChange="clearChk('ccd');">
 						<cfset chk = ""><cfif isdefined("session.scr_ccdnull")><cfset chk = "checked"></cfif>
-						<input type="checkbox" name="scr_ccdnull" id="scr_ccdnull" style="position:relative;top:2px;left:4px;" value="" class="roundedsmall" onchange="clearFlds('ccd');" #chk#>
+						<input type="checkbox" name="scr_ccdnull" id="scr_ccdnull" style="position:relative;top:2px;left:4px;" value="" class="roundedsmall" onChange="clearFlds('ccd');" #chk#>
 						<span class="page" style="position:relative;top:-1px;">Is Null</span>
 						
 						</td>
@@ -416,14 +437,14 @@ SELECT * FROM tblCurbRequestType ORDER BY type
 
 </div>
 
-<div name="ss_arrow" id="ss_arrow" onclick="toggleSearchBox();"
+<div name="ss_arrow" id="ss_arrow" onClick="toggleSearchBox();"
 style="position:absolute;top:280px;left:0px;height:15px;width:50px;border:0px red solid;display:none;">
 <img id="ss_arrow_img" style="position:absolute;top:0px;left:15px;visibility:visible;" src="../images/arrow_up.png" width="19" height="12" title="Hide Search Filter Box"  onmouseover="this.style.cursor='pointer';">
 </div>
 
 <div name="ss_downloads" id="ss_downloads"
 style="position:absolute;top:273px;right:0px;height:20px;width:52px;border:0px red solid;display:block;">
-<img id="dlExcel" style="position:relative;top:0px;left:0px;visibility:hidden;" src="../images/excel.png" width="16" height="16" title="Download Search Results to Excel" onclick="downloadExcel();" onmouseover="this.style.cursor='pointer';"><a href="../reports/CurbSearch.cfm" target="_blank"><img id="dlPDF" style="position:relative;top:1px;left:7px;visibility:hidden;" src="../images/pdf_icon.gif" width="17" height="17" title="View Search Results PDF"></a>
+<img id="dlExcel" style="position:relative;top:0px;left:0px;visibility:hidden;" src="../images/excel.png" width="16" height="16" title="Download Search Results to Excel" onClick="downloadExcel();" onMouseOver="this.style.cursor='pointer';"><a href="../reports/CurbSearch.cfm" target="_blank"><img id="dlPDF" style="position:relative;top:1px;left:7px;visibility:hidden;" src="../images/pdf_icon.gif" width="17" height="17" title="View Search Results PDF"></a>
 </div>
 
 <div name="ss_header" id="ss_header" 
@@ -433,17 +454,17 @@ style="position:relative;top:10px;left:5px;height:25px;width:100%;border:2px #re
 		<table align="center" bgcolor="white" cellspacing="2" cellpadding="2" border="0" style="width:100%;">
 		<tr>
 			<th class="drk center middle" style="height:21px;width:30px;">Edit</th>
-			<th class="drk center middle" style="width:70px;" onclick="sortTable(1);return false;" onmouseover="this.style.cursor='pointer';">Curb Ramp</th>
-			<th class="drk center middle" style="width:35px;" onclick="sortTable(2);return false;" onmouseover="this.style.cursor='pointer';">CD</th>
-			<th class="drk center middle" style="width:65px;" onclick="sortTable(3);return false;" onmouseover="this.style.cursor='pointer';">Site</th>
-			<th class="drk center middle" style="width:106px;" onclick="sortTable(9);return false;" onmouseover="this.style.cursor='pointer';">Intersection Corner</th>
-			<th class="drk center middle" onclick="sortTable(4);return false;" onmouseover="this.style.cursor='pointer';">Primary Street</th>
-			<th class="drk center middle" style="width:250px;" onclick="sortTable(5);return false;" onmouseover="this.style.cursor='pointer';">Secondary Street</th>
-			<th class="drk center middle" style="width:85px;" onclick="sortTable(11);return false;" onmouseover="this.style.cursor='pointer';">Design Finished</th>
-			<th class="drk center middle" style="width:85px;" onclick="sortTable(6);return false;" onmouseover="this.style.cursor='pointer';">Con. Completed</th>
-			<th class="drk center middle" style="width:78px;" onclick="sortTable(10);return false;" onmouseover="this.style.cursor='pointer';">Designed By</th>
-			<th class="drk center middle" style="width:78px;" onclick="sortTable(7);return false;" onmouseover="this.style.cursor='pointer';">Priority No</th>
-			<th id="fldWO" class="drk center middle" style="width:135px;" onclick="sortTable(8);return false;" onmouseover="this.style.cursor='pointer';">Type</th>
+			<th class="drk center middle" style="width:70px;" onClick="sortTable(1);return false;" onMouseOver="this.style.cursor='pointer';">Curb Ramp</th>
+			<th class="drk center middle" style="width:35px;" onClick="sortTable(2);return false;" onMouseOver="this.style.cursor='pointer';">CD</th>
+			<th class="drk center middle" style="width:65px;" onClick="sortTable(3);return false;" onMouseOver="this.style.cursor='pointer';">Site</th>
+			<th class="drk center middle" style="width:106px;" onClick="sortTable(9);return false;" onMouseOver="this.style.cursor='pointer';">Intersection Corner</th>
+			<th class="drk center middle" onClick="sortTable(4);return false;" onMouseOver="this.style.cursor='pointer';">Primary Street</th>
+			<th class="drk center middle" style="width:250px;" onClick="sortTable(5);return false;" onMouseOver="this.style.cursor='pointer';">Secondary Street</th>
+			<th class="drk center middle" style="width:85px;" onClick="sortTable(11);return false;" onMouseOver="this.style.cursor='pointer';">Design Finished</th>
+			<th class="drk center middle" style="width:85px;" onClick="sortTable(6);return false;" onMouseOver="this.style.cursor='pointer';">Con. Completed</th>
+			<th class="drk center middle" style="width:78px;" onClick="sortTable(10);return false;" onMouseOver="this.style.cursor='pointer';">Designed By</th>
+			<th class="drk center middle" style="width:78px;" onClick="sortTable(7);return false;" onMouseOver="this.style.cursor='pointer';">Priority No</th>
+			<th id="fldWO" class="drk center middle" style="width:135px;" onClick="sortTable(8);return false;" onMouseOver="this.style.cursor='pointer';">Type</th>
 		</tr>
 		</table>
 	</td></tr>
@@ -458,7 +479,7 @@ style="position:relative;top:8px;left:5px;height:100%;width:100%;border:2px #req
 
 	
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">

@@ -51,9 +51,6 @@ SELECT * FROM tblCurbRamps WHERE ramp_no = #url.crid#
 SELECT location_no as id FROM tblSites WHERE removed is null ORDER BY location_no
 </cfquery>
 
-
-
-
 <!--- Check Geocode --->
 <cfquery name="getGeocode" datasource="#request.sqlconn#" dbtype="ODBC">
 SELECT * FROM vwGeocoderCurbRamps WHERE ramp_no = #url.crid#
@@ -132,11 +129,6 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
   </tr>
 </table>
 
-<!--- joe hu 6/14/2018   (2) --->
-<cfset w = 700>
-<!--- End joe hu 6/14/2018   (2) --->
-
-
 <cfset dis = ""><cfif getCurbRamp.removed is 1><cfset dis="disabled"></cfif>
 <cfif session.user_level is 0><cfset dis="disabled"></cfif>
 <cfif session.user_power lt 0><cfset dis="disabled"></cfif>
@@ -192,7 +184,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 						<cfif dis is "">
 						<cfif getCurbRamp.location_no is not "">
 						<td align="right" style="width:41px;">
-						<a href="" onClick="goToSite(#getSID.id#);return false;" style="position:relative;top:0px;">
+						<a href="" onclick="goToSite(#getSID.id#);return false;" style="position:relative;top:0px;">
 						<img src="../Images/site.png" width="20" height="20" alt="Go To Associated Repair Site" title="Go To Associated Repair Site"></a>
 						</td>
 						</cfif>
@@ -202,10 +194,10 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 						<td align="right" style="width:32px;">
 						<cfif getGeocode.recordcount gt 0>
 
-						<a href="" onClick="openViewer();return false;" style="position:relative;top:2px;">
+						<a href="" onclick="openViewer();return false;" style="position:relative;top:2px;">
 						<img src="../Images/MapChk.png" width="24" height="24" alt="Re-Geocode Site" title="Re-Geocode Site"></a>
 						<cfelse>
-						<a href="" onClick="openViewer();return false;" style="position:relative;top:0px;left:-4px;">
+						<a href="" onclick="openViewer();return false;" style="position:relative;top:0px;left:-4px;">
 						<img src="../Images/Map.png" width="20" height="20" alt="Geocode Site" title="Geocode Site"></a>
 						</cfif>
 						</td>
@@ -498,7 +490,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 						<th class="left middle" style="height:30px;width:100px;">Utility Conflict:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:60px;">
-						<select name="cr_utility" id="cr_utility" class="rounded" style="width:55px;" onChange="setDisabled('cr_utility',0);" #dis#>
+						<select name="cr_utility" id="cr_utility" class="rounded" style="width:55px;" onchange="setDisabled('cr_utility',0);" #dis#>
 						<option value=""></option>
 						<cfloop query="getYesNo">
 							<cfset sel = ""><cfif getCurbRamp.utility_conflict is id><cfset sel = "selected"></cfif>
@@ -559,7 +551,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 						<th class="left middle" style="height:30px;width:100px;">Minor Repairs Only:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:60px;">
-						<select name="cr_minor" id="cr_minor" class="rounded" style="width:55px;" onChange="setDisabled('cr_minor',1);" #dis#>
+						<select name="cr_minor" id="cr_minor" class="rounded" style="width:55px;" onchange="setDisabled('cr_minor',1);" #dis#>
 						<option value=""></option>
 						<cfloop query="getYesNo">
 							<cfset sel = ""><cfif getCurbRamp.minor_repair_only is id><cfset sel = "selected"></cfif>
@@ -602,7 +594,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 								<th style="width:10px;"></th>
 								<cfset v = ""><cfif getCurbRamp.ada_exception is 1><cfset v = "checked"></cfif>
 								<th class="middle">
-								<div style="position:relative;top:1px;"><input id="cr_excptn" name="cr_excptn" type="checkbox" onClick="toggleADANotes();" #v# #dis#></div></th>
+								<div style="position:relative;top:1px;"><input id="cr_excptn" name="cr_excptn" type="checkbox" onclick="toggleADANotes();" #v# #dis#></div></th>
 								</tr>
 							</table>
 						
@@ -618,7 +610,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 			<tr><th class="left middle" colspan="4" style="height:16px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">Notes:</th>
-					<td class="right" style="padding:0px;"><a href="" onClick="expandTextArea('cr_notes',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13" title="Expand to View All Text"></a></td></tr>
+					<td class="right" style="padding:0px;"><a href="" onclick="expandTextArea('cr_notes',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13" title="Expand to View All Text"></a></td></tr>
 				</table>
 			</th></tr>
 			<tr>
@@ -631,7 +623,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 			<tr><th class="left middle" colspan="4" style="height:16px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">ADA Compliance Exception Notes:</th>
-					<td class="right" style="padding:0px;"><a href="" onClick="expandTextArea('cr_excptn_notes',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13" title="Expand to View All Text"></a></td></tr>
+					<td class="right" style="padding:0px;"><a href="" onclick="expandTextArea('cr_excptn_notes',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13" title="Expand to View All Text"></a></td></tr>
 				</table>
 			</th></tr>
 			<tr>
@@ -650,177 +642,39 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 	</form>
 </table>
 
-
-<!--- joe hu 6/14/2018   (1) --->
-
-
 <table align=center border="0" cellpadding="0" cellspacing="0">
-	
-    
-    
-    <cfset w2 = (w-80)/2>
-	<cfset cs = 3>
-	<cfif  url.search is true OR url.crid gt 0>
-	   <cfset w2 = (w-180)/2>
-	   <cfset cs = 5>
-    </cfif>
-    
-	
-		<cfset v = getCurbRamp.Removed>
-	
-    
-	   <cfif session.user_level gt 2>
-	
-                <tr>
-                    
-                    
-                    <td height="22" class="right" colspan="#cs#"  style="width:#w#px;">
-                   
-                        
-                        
-                         
-                        
-                            <cfif v is "">
-                               
-                                <a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" onClick="showRemove();return false;">
-                                     Delete 
-                                </a>
-                            <cfelse>
-                                    <a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" onClick="showRemove();return false;">
-                                   Restore
-                                    </a>
-                            </cfif>
-                                
-                        
-                    </td>
-                </tr>
-                
-                
-        <cfelse>
-            <tr><td height=15></td></tr>
-        
-		</cfif>
-		
-	<!--- cfif v is ""   ---->
-        
-    
+	<tr><td height=15></td></tr>
 	<tr>
-         <td style="width:#w2#px;"></td>
-         
-    
-		<cfif session.user_power is 1 AND session.user_level is 0 AND isBSS>
-				<cfset dis="">
-        </cfif> <!--- Added for BSS Power User --->
-        
-        
-        
+		<cfif session.user_power is 1 AND session.user_level is 0 AND isBSS><cfset dis=""></cfif> <!--- Added for BSS Power User --->
 		<cfif dis is "">
-            <td align="center">
-                <a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-                onclick="submitForm();return false;">Update</a>
-            </td>
-            
-            <td style="width:15px;"></td>
-        
+		<td align="center">
+			<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+			onclick="submitForm();return false;">Update</a>
+		</td>
+		<td style="width:15px;"></td>
 		</cfif>
-        
-		<cfif session.user_power is 1 AND session.user_level is 0 AND isBSS>
-		     <cfset dis="disabled">
-        </cfif> <!--- Added for BSS Power User --->
-        
-        
+		<cfif session.user_power is 1 AND session.user_level is 0 AND isBSS><cfset dis="disabled"></cfif> <!--- Added for BSS Power User --->
 		<cfif url.search is true>
-			<cfset v = "Back">
-			<cfif session.user_level is 0>
-				<cfset v = "Back">
-            </cfif>
-            
-                <!--- td style="width:15px;"></td --->
-                <td align="center">
-                    <a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-                    onclick="cancelUpdate();return false;">#v#</a>
-				</td>
+		<cfset v = "Back"><cfif session.user_level is 0><cfset v = "Back"></cfif>
+		<td style="width:15px;"></td>
+		<td align="center">
+			<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+			onclick="cancelUpdate();return false;">#v#</a>
+		</td>
 		<cfelse>
-        
-        
-                <td align="center">
-                    <a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-                    onclick="cancelUpdate();return false;">Exit</a>
-                </td>
-        
-        
+		<td align="center">
+			<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+			onclick="cancelUpdate();return false;">Exit</a>
+		</td>
 		</cfif>
-        
-        
-        
-        
-        <td class="right top" style="width:#w2#px;"> </td>
-            
-            
 	</tr>
-    
-    <!--- /cfif --->
 	<tr><td height=15></td></tr>
 </table>
 	
-    
-     <!--- ---- End -----  joe hu 6/14/2018   (1)------------     --->
-    
-    
-    
-    
-    
-    
-    
-    <!--- joe hu 6/14/2018   (3) --->
-    
-    
-    
-   <div id="msg10" class="box" style="top:40px;left:1px;width:350px;height:90px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg10').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
-	<div id="msg_header10" class="box_header"><strong>Warning:</strong></div>
-	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
-		<cfset v = getCurbRamp.removed>
-		<cfif v is ""><cfset v = 0></cfif>
-		<cfset msg = "Are you sure you want to delete this Curb Ramp?<!--- br>This Curb Ramp will also be removed from any associated Package. --->">
-		<cfif v is 1>
-		<cfset msg = "Are you sure you want to restore this Curb Ramp?<!--- br>This Curb Ramp will return to the unassigned pool. --->">
-		</cfif>
-		<div id="msg_text10" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
-		#msg#
-		</div>
-		
-		<div style="position:absolute;bottom:15px;width:100%;">
-		<table align=center border="0" cellpadding="0" cellspacing="0" width="45%">
-			<tr>
-			<td align="center">
-				<a href="" class="button buttonText" style="height:15px;width:60px;padding:2px 0px 0px 0px;" 
-				onclick="deleteCurbRamp(#v#);$('#chr(35)#msg10').hide();return false;">Continue...</a>
-			</td>
-			<td style="width:0px;"></td>
-			<td align="center">
-				<a href="" class="button buttonText" style="height:15px;width:60px;padding:2px 0px 0px 0px;" 
-				onclick="$('#chr(35)#msg10').hide();return false;">Cancel</a>
-			</td>
-			</tr>
-			
-		</table>
-		</div>
-		
-	</div>
-</div>
-    
-    
-    <!---   End ---------- joe hu 6/14/2018   (3) --->
-    
-    
-    
-    
-    
 	
 	
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="msg_header" class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -853,19 +707,18 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 
 <script>
 
-		<cfoutput>
-			var url = "#request.url#";
-			var search = #url.search#;
-			var geoCnt = #getGeocode.recordcount#;
-			var crid = #url.crid#;
-			var ro = #ro#;
-			
-			<cfif isdefined("url.editcr")>
-				var editcr = #url.editcr#;
-				var sid = #url.sid#;
-				var pid = #url.pid#;
-			</cfif>
-		</cfoutput>
+<cfoutput>
+var url = "#request.url#";
+var search = #url.search#;
+var geoCnt = #getGeocode.recordcount#;
+var crid = #url.crid#;
+var ro = #ro#;
+<cfif isdefined("url.editcr")>
+var editcr = #url.editcr#;
+var sid = #url.sid#;
+var pid = #url.pid#;
+</cfif>
+</cfoutput>
 
 function submitForm() {
 
@@ -1046,57 +899,12 @@ function newWindow(mypage, myname, w, h, scroll)
 }
 
 
-
-//  -------------- joe 6/14/2018 delete curbRamp  (4) -----------------
-
-function showRemove() {
-	
-	
-	
-	$('#msg10').css({top:'50%',left:'50%',margin:'-'+($('#msg10').height() / 2)+'px 0 0 -'+($('#msg10').width() / 2)+'px'});
-	$('#msg10').show();
-}
-
-
-
-
-function deleteCurbRamp(idx) {
-	var frm = [];
-	frm.push({"name" : "crid", "value" : crid });
-	//console.log(frm);
-	var typ = "deleteCurbRamp"; 
-	
-	if (idx == 1) { typ = "restoreCurbRamp"; }
-	
-	console.log('delete curb rampe', idx)
-	
-	$.ajax({
-	  type: "POST",
-	  url: url + "cfc/sw.cfc?method=" + typ + "&callback=",
-	  data: frm,
-	  success: function(data) { 
-	  	data = jQuery.parseJSON(trim(data));
-	  	//console.log(data);
-		if(data.RESULT != "Success") {
-			showMsg4(data.RESULT,1);
-			return false;	
-		}
-		location.replace(url + "forms/swCurbRampEdit.cfm?crid=" + crid);
-	  }
-	});
-}
-
-//----------   end joe 6/14/2018 delete function   (4) ------------------
-
-
-
-		$( "#cr_assessed_dt" ).datepicker();
-		$( "#cr_design_sdt" ).datepicker();
-		$( "#cr_design_fdt" ).datepicker();
-		$( "#cr_qc_dt" ).datepicker();
-		$( "#cr_con_cdt" ).datepicker({maxDate:0});
-		$( "#cr_logdate" ).datepicker();
-		
+$( "#cr_assessed_dt" ).datepicker();
+$( "#cr_design_sdt" ).datepicker();
+$( "#cr_design_fdt" ).datepicker();
+$( "#cr_qc_dt" ).datepicker();
+$( "#cr_con_cdt" ).datepicker({maxDate:0});
+$( "#cr_logdate" ).datepicker();
 </script>
 
 </html>

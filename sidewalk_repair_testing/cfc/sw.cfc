@@ -2447,6 +2447,163 @@
 	</cffunction>
 	
 	
+    
+    
+    
+    
+    <!--- ------------ joe hu 6/14/2018 delete curbRamp   added (1)--------------  ----------- --->
+    
+    
+    
+	
+	<cffunction name="deleteCurbRamp" access="remote" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="crid" required="true">
+		
+		<cfset var data = {}>
+		
+		<cfif isdefined("session.userid") is false>
+			<cfset data.result = "- CurbRamp Deletion Failed: You are no longer logged in.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>
+		
+		<cfif session.user_level lt 2>
+			<cfset data.result = "- CurbRamp Deletion Failed: You are not authorized to make edits.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>		
+		
+		<cfset data.crid = crid>
+	
+	
+		
+			<cfquery name="getRecord" datasource="#request.sqlconn#">
+			SELECT * FROM tblCurbRamps WHERE Ramp_No = #crid#
+			</cfquery>
+			
+			<cfif getRecord.recordcount gt 0>
+				
+			
+				<cfquery name="updateRecord" datasource="#request.sqlconn#">
+				UPDATE tblCurbRamps SET
+				removed = 1,
+				
+				user_id = #session.user_num#,
+				modified_date = #CreateODBCDateTime(Now())#
+				WHERE Ramp_No = #crid#
+				</cfquery>
+				
+				<cfquery name="updateRecord" datasource="#request.sqlconn#">
+				UPDATE tblGeocodingCurbRamps SET
+				deleted = 1,
+				userid = #session.user_num#,
+				lastmodifieddate = #CreateODBCDateTime(Now())#
+				WHERE Ramp_No = #crid#
+				</cfquery>
+				
+			
+			</cfif>
+		
+			<cfset data.result = "Success">
+		
+		
+		<cfset data = serializeJSON(data)>
+		
+	    <!--- wrap --->
+	    <cfif structKeyExists(arguments, "callback")>
+	        <cfset data = arguments.callback & "" & data & "">
+	    </cfif>
+	    
+	    <cfreturn data>
+	
+	</cffunction>
+    
+    
+    
+    
+    <cffunction name="restoreCurbRamp" access="remote" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="crid" required="true">
+		
+		<cfset var data = {}>
+		
+		<cfif isdefined("session.userid") is false>
+			<cfset data.result = "- CurbRamp Restoration Failed: You are no longer logged in.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>
+		
+		<cfif session.user_level lt 2>
+			<cfset data.result = "- CurbRamp Restoration Failed: You are not authorized to make edits.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>		
+		
+		<cfset data.crid = crid>
+	
+		<cftry>
+		
+			<cfquery name="updateRecord" datasource="#request.sqlconn#">
+			UPDATE tblCurbRamps SET
+			removed = NULL,
+			user_id = #session.user_num#,
+			modified_date = #CreateODBCDateTime(Now())#
+			WHERE Ramp_No = #crid#
+			</cfquery>
+				
+			<cfset data.result = "Success">
+		<cfcatch>
+			<cfset data.result = "- Update Failed: Database Error.">
+		</cfcatch>
+		
+		</cftry>
+		
+		<cfset data = serializeJSON(data)>
+		
+	    <!--- wrap --->
+	    <cfif structKeyExists(arguments, "callback")>
+	        <cfset data = arguments.callback & "" & data & "">
+	    </cfif>
+	    
+	    <cfreturn data>
+	
+	</cffunction>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <!--- ---------    End  -------------- joe hu 6/14/2018 delete curbRamp  added (1) --------------   --->
+    
+    
+    
+    
+    
+    
+    
 	
 	<cffunction name="downloadData" access="remote" returnType="any" returnFormat="plain" output="false">
 		
@@ -4839,6 +4996,11 @@
 		<cfargument name="scr_assessed" required="true">
 		<cfargument name="scr_repairs" required="true">
 		<cfargument name="scr_design" required="true">
+        
+         <!--- joe hu ------ 6/14/2018     ------- added (2) ----------  ---> 
+        <cfargument name="scr_removed" required="true">
+        
+        
 		<cfargument name="scr_applicable" required="true">
 		<cfargument name="scr_utility" required="true">
 		<cfargument name="scr_minor" required="true">
@@ -5159,6 +5321,12 @@
 		</cfif> 
 		<cfif scr_repairs is not "">AND repairs_required = #scr_repairs#</cfif> 
 		<cfif scr_design is not "">AND design_required = #scr_design#</cfif> 
+        
+        
+        <!--- joe hu ------ 6/14/2018     ------- added (3) ----------  ---> 
+        <cfif scr_removed is not "">AND removed = #scr_removed#<cfelse>AND removed is NULL</cfif> 
+        
+        
 		<cfif scr_applicable is not "">AND standard_plan_applicable = #scr_applicable#</cfif> 
 		<cfif scr_utility is not "">AND utility_conflict = #scr_utility#</cfif> 
 		<cfif scr_minor is not "">AND minor_repair_only = #scr_minor#</cfif> 
