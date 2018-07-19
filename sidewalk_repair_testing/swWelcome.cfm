@@ -6,7 +6,7 @@
 
 
 
-<!--- joe 6/1/2018 meet kelly's tree report --->
+<!--- joe 7/17/2018 meet kelly's tree report --->
 <cfscript> 
 
     totalQuery = new Query( datasource = "sidewalk" );
@@ -22,7 +22,7 @@
     union
     select 31, 'Total Number of Trees Planted', count(*) from good where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is not null and t_type in ( 'BSS', 'RAP', 'General Service' )
     union
-    select 41, 'Total Number of Trees to be Planted', count(*) from good inner join vwHDRAssessmentTracking a on loc_no = a.Location_No where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is null and t_type in ( 'BSS', 'RAP', 'General Service' ) and ( a.Package_No is not null )" );
+    select 41, 'Total Number of Trees to be Planted', count(*) from good inner join vwHDRAssessmentTracking a on loc_no = a.Location_No where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is null and t_type in ( 'BSS', 'RAP', 'General Service' ) and ( a.Package_No is not null ) and ( a.Construction_Completed_Date is not null ) " );
 
    
 

@@ -42,13 +42,12 @@
     )
 
     select site, line
-        , c.Type, c.Subtype
+        , coalesce( r.site_type, t.site_type )
+        , a.Type
         , a.Package
         , a.Location_No
-        , c.Facility_Name, c.Facility_Address, a.Zip_Code
+        , a.Name, a.Address, a.Zip_Code
         , a.Council_District
-
-        , a.Address
         , a.Construction_Start_Date, a.Construction_Completed_Date
         , info.ready_to_plant
 
@@ -64,7 +63,6 @@
         , info.Root_Barrier_Lock 
     from report_line rl
     left join vwHDRAssessmentTracking a on rl.site = a.Location_No
-    left join ( select distinct Location_No, Type, Subtype, Facility_Name, Facility_Address, Construction_Completed_Date, Construction_Start_Date FROM vwHDRCertificates ) c on rl.site = c.Location_No
     left join vwHDRTreeSiteInfo info on rl.site = info.Location_No
     left join vwHDRTreeList r on rl.site = r.Location_No and rl.rgroup_no = r.group_no and rl.rtree_no = r.TREE_NO and r.ACTION_TYPE = 'Removal'
     left join vwHDRTreeList t on rl.site = t.location_no and rl.tgroup_no = t.group_no and rl.ttree_no = t.tree_no and t.ACTION_TYPE = 'Planting'
@@ -79,7 +77,7 @@
     SpreadsheetAddRow( myXls, "Removal", 1,13);
     SpreadsheetSetCellValue( myXls, "Removal", 1, 13);
     SpreadsheetSetCellValue( myXls, "Planting", 1,21);
-    SpreadsheetAddRow( myXls, "s,l, Type, Sub Type, Package, Site No, Facility Name, Facility Address, ZIP, Council District, Address, Construction Start Date, Construction Completed Date, Ready to Plant, Tree No, Species, Size, Permit Issunce Date, Tree Removal Date, Address, Contractor, Notes, Tree No, Species, Box Size, Permit Issuance Date, Tree Planting Date, Start Watering Date, End Watering Date, Most Recent Watering Date, Addres, Contractor, Notes, Tree Root Pruning/Shaving, Existing Stump Removal, Tree Canopy Pruning, Root Control Barrier Installed", 2,1);
+    SpreadsheetAddRow( myXls, "s,l, Type, Sub Type, Package, Site No, Facility Name, Address, ZIP, Council District, Construction Start Date, Construction Completed Date, Ready to Plant, Tree No, Species, Size, Permit Issunce Date, Tree Removal Date, Address, Contractor, Notes, Tree No, Species, Box Size, Permit Issuance Date, Tree Planting Date, Start Watering Date, End Watering Date, Most Recent Watering Date, Addres, Contractor, Notes, Tree Root Pruning/Shaving, Existing Stump Removal, Tree Canopy Pruning, Root Control Barrier Installed", 2,1);
     SpreadsheetAddRows( myXls, trees );
 
     // pretty print. merge cells
@@ -132,7 +130,7 @@
     union
     select 31, 'Total Number of Trees Planted', count(*) from good where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is not null and t_type in ( 'BSS', 'RAP', 'General Service' )
     union
-    select 41, 'Total Number of Trees to be Planted', count(*) from good inner join vwHDRAssessmentTracking a on loc_no = a.Location_No where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is null and t_type in ( 'BSS', 'RAP', 'General Service' ) and ( a.Package_No is not null )" );
+    select 41, 'Total Number of Trees to be Planted', count(*) from good inner join vwHDRAssessmentTracking a on loc_no = a.Location_No where ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is null and t_type in ( 'BSS', 'RAP', 'General Service' ) and ( a.Package_No is not null ) and ( a.Construction_Completed_Date is not null ) " );
 
     summary = totalQuery.execute().getResult();
 

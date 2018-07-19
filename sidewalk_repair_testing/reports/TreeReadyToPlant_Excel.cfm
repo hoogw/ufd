@@ -18,12 +18,11 @@
 </cfoutput>
 
 <!--- anticipate to be different from TreeTracking_Excel. so cannot share the same file --->
+<!--- new layout 2018.2.22 --->
 
 <!--- tree site info.ready_to_plant is true --->
-<!--- filter by start and end dates --->
-
-<cfparam name="planting_start" type="date" />
-<cfparam name="planting_end" type="date" />
+<cfparam name="planting_start" type="date" default="2000-1-1" />
+<cfparam name="planting_end" type="date" default="2100-1-1" />
 
 <cfscript>
 
@@ -32,148 +31,118 @@
     myFile = outdir & "ttt.xls";
 
     myQuery = new Query( datasource = "sidewalk" );
-    myQuery.setSql("with good ( loc, group_no, tree_no, action_type ) as (
-        select location_no, group_no, tree_no, action_type
-        from vwHDRTreeList
-        where deleted = 0 or deleted is null
-    )
-    , removal( loc, group_no, tree_no, action_type ) as (
-        select * from good where action_type = 'Removal'
-    )
-    , plant( loc, group_no, tree_no, action_type ) as (
-        select * from good where action_type = 'Planting'
-    )
-    , report_line ( site, line, rloc, rgroup_no, rtree_no, raction_type, tloc, tgroup_no, ttree_no, taction_type ) as (
-    select coalesce(g0.loc, g1.loc) site, coalesce(g0.tree_no, g1.tree_no) line, * 
-    from removal g0
-    full outer join plant g1 on g0.loc = g1.loc and g0.group_no = g1.group_no and g0.tree_no = g1.tree_no
-    )
-
-    select site, line
-        , c.Type, c.Subtype
-        , a.Package
-        , a.Location_No
-        , c.Facility_Name, c.Facility_Address, a.Zip_Code
-        , a.Council_District
-
-        , a.Address
-        , c.Construction_Start_Date, c.Construction_Completed_Date
-        , info.ready_to_plant
-
-        , r.TREE_NO, r.SPECIES, r.TREE_SIZE, r.PERMIT_ISSUANCE_DATE, r.TREE_REMOVAL_DATE, r.ADDRESS
-            , info.TREE_REMOVAL_CONTRACTOR, info.TREE_REMOVAL_NOTES
-        , t.TREE_NO, t.SPECIES, t.TREE_BOX_SIZE, t.PERMIT_ISSUANCE_DATE, t.TREE_PLANTING_DATE, t.START_WATERING_DATE, t.END_WATERING_DATE, null
-            , t.ADDRESS
-            , info.TREE_PLANTING_CONTRACTOR
-            , info.TREE_REMOVAL_NOTES
-        , coalesce(ee.[TREE_ROOT_PRUNING_/_SHAVING_(PER_TREE)_QUANTITY],0) + coalesce(qc.[TREE_ROOT_PRUNING_/_SHAVING_(PER_TREE)_QUANTITY],0) + coalesce(co.[TREE_ROOT_PRUNING_/_SHAVING_(PER_TREE)_QUANTITY],0 ) root_prune
-        , coalesce(ee.[EXISTING_STUMP_REMOVAL_QUANTITY],0) + coalesce(qc.[EXISTING_STUMP_REMOVAL_QUANTITY],0) + coalesce(co.[EXISTING_STUMP_REMOVAL_QUANTITY],0 )
-        , coalesce(ee.[TREE_CANOPY_PRUNING_(PER_TREE)_QUANTITY],0) + coalesce(qc.[TREE_CANOPY_PRUNING_(PER_TREE)_QUANTITY],0) + coalesce(co.[TREE_CANOPY_PRUNING_(PER_TREE)_QUANTITY],0 ) canopy_prune
-        , info.Root_Barrier_Lock 
-    from report_line rl
-    left join vwHDRAssessmentTracking a on rl.site = a.Location_No
-    left join ( select distinct Location_No, Type, Subtype, Facility_Name, Facility_Address, Construction_Completed_Date, Construction_Start_Date FROM vwHDRCertificates ) c on rl.site = c.Location_No
-    left join vwHDRTreeSiteInfo info on rl.site = info.Location_No
-    left join vwHDRTreeList r on rl.site = r.Location_No and rl.rgroup_no = r.group_no and rl.rtree_no = r.TREE_NO and r.ACTION_TYPE = 'Removal'
-    left join vwHDRTreeList t on rl.site = t.location_no and rl.tgroup_no = t.group_no and rl.ttree_no = t.tree_no and t.ACTION_TYPE = 'Planting'
-    left join vwHDREngineeringEstimate ee on rl.site = ee.Location_No
-    left join vwHDRQCQuantity qc on rl.site = qc.Location_No
-    left join vwHDRChangeOrders co on rl.site = co.Location_No
-    where info.ready_to_plant = 1
-    and t.[tree_planting_date] BETWEEN :planting_start AND :planting_end
-    order by 1,2" );
+    myQuery.setSql("select a.package, a.location_no, a.name, a.address, i.tree_planting_contractor, i.ready_to_plant, t.address 'taddress', t.species, t.parkway_treewell_size, t.overhead_wires, t.sub_position, t.offsite, t.Tree_Planting_Date
+    from  vwHDRTreeSiteInfo i
+    inner join vwHDRTreeList t on i.location_no = t.location_no
+    inner join vwHDRAssessmentTracking a on i.location_no = a.location_no
+    where t.action_type = 'planting' and i.ready_to_plant = 1
+    and a.package <> ''
+    and t.[type] in ( 'BSS', 'RAP', 'General Service' ) 
+    and a.Construction_Completed_Date is not null
+    and i.[pre_inspection_date] BETWEEN :planting_start AND :planting_end
+    order by a.package, i.location_no, taddress, t.tree_no");
 
     myQuery.addParam(name="planting_start", value=planting_start, cfsqltype="CF_SQL_DATE");
     myQuery.addParam(name="planting_end", value=planting_end, cfsqltype="CF_SQL_DATE");
     trees = myQuery.execute().getResult();
 
+    headerFmt = StructNew();
+    // headerFmt.color = 'blue';
+    headerFmt.bold = true;
+
+    rightAlign = StructNew();
+    rightAlign.alignment = 'left';
+
+    totalFmt = StructNew();
+    totalFmt.bold = true;
+    totalFmt.alignment = 'center';
+
+    treeHFmt = StructNew();
+    treeHFmt.bold = true;
+    treeHFmt.alignment = 'center';
+    treeHFmt.bottomborder = 'thin';
+    treeHFmt.leftborder = 'thin';
+    treeHFmt.rightborder = 'thin';
+    treeHFmt.topborder = 'thin';
+
+    treeFmt = StructNew();
+    treeFmt.bold = false;
+    treeFmt.dataFormat = 'General';
+    treeFmt.alignment = 'center';
+    treeFmt.bottomborder = 'thin';
+    treeFmt.leftborder = 'thin';
+    treeFmt.rightborder = 'thin';
+    treeFmt.topborder = 'thin';
+
+    treeDFmt = StructNew();
+    treeDFmt.bold = false;
+    treeDFmt.alignment = 'center';
+    treeDFmt.dataFormat = 'm/d/yy';
+    treeDFmt.bottomborder = 'thin';
+    treeDFmt.leftborder = 'thin';
+    treeDFmt.rightborder = 'thin';
+    treeDFmt.topborder = 'thin';
+
     myXls = SpreadsheetNew( "Tree Data" );
-    SpreadsheetAddRow( myXls, "Removal", 1,13);
-    SpreadsheetSetCellValue( myXls, "Removal", 1, 13);
-    SpreadsheetSetCellValue( myXls, "Planting", 1,21);
-    SpreadsheetAddRow( myXls, "s,l, Type, Sub Type, Package, Site No, Facility Name, Facility Address, ZIP, Council District, Address, Construction Start Date, Construction Completed Date, Ready to Plant, Tree No, Species, Size, Permit Issunce Date, Tree Removal Date, Address, Contractor, Notes, Tree No, Species, Box Size, Permit Issuance Date, Tree Planting Date, Start Watering Date, End Watering Date, Most Recent Watering Date, Addres, Contractor, Notes, Tree Root Pruning/Shaving, Existing Stump Removal, Tree Canopy Pruning, Root Control Barrier Installed", 2,1);
-    SpreadsheetAddRows( myXls, trees );
+    SpreadsheetAddRow( myXls, "TREES READY TO PLANT REPORT", 1, 1);
+    SpreadsheetMergeCells( myXls, 1,1, 1,7 );
+    SpreadsheetFormatCellRange( myXls, headerFmt, 1,1,1,7);
 
-    // pretty print. merge cells
-    format = new Query( dbtype = "query" );
-    format.setAttributes( trees = trees );
-    format.setSql ("select site, count(*) as m from trees group by site");
-    ff = format.execute().getResult();
+    old_loc = 0;
+    siteTotal = 0;
+    grandTotal = 0;
+    line = 2;
 
-    start_r = 3;
-    end_r = 2;
+    for( t in trees ) {
 
-    for( g in ff ) {
-        end_r = end_r + g["m"];    
-        SpreadsheetMergeCells( myXls, start_r, end_r, 3,3);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 4,4);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 5,5);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 6,6);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 7,7);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 8,8);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 9,9);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 10,10);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 11,11);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 12,12);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 13,13);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 14,14);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 21,21);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 22,22);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 32,32);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 33,33);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 34,34);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 35,35);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 36,36);
-        SpreadsheetMergeCells( myXls, start_r, end_r, 37,37);
-        start_r = start_r + g["m"];
+        if ( t.location_no != old_loc ) {
+
+            if ( old_loc > 0 ) {
+                SpreadsheetAddRow( myXls, "TOTAL NUMBER OF REPLANTS," & siteTotal, line, 1);
+                SpreadsheetFormatCellRange( myXls, totalFmt, line,1, line,2);
+                siteTotal = 0;
+                line++;
+            }
+            sline = line;
+            line += 2;
+            SpreadsheetAddRow( myXls, "PACKAGE NUMBER," & t.package, line++, 1 );
+            SpreadsheetAddRow( myXls, "SITE NUMBER," & t.location_no, line, 1 ); SpreadsheetFormatCell( myXls, rightAlign, line, 2);
+            line++;
+            SpreadsheetAddRow( myXls, "SITE ADDRESS", line, 1 ); SpreadsheetSetCellValue( myXls, t.address, line, 2); SpreadsheetMergeCells( myXls, line,line,2,4); line++;
+            SpreadsheetAddRow( myXls, "TREE PLANTING CONTRACTOR," & t.tree_planting_contractor, line++, 1 );
+            SpreadsheetFormatCellRange( myXls, headerFmt, sline, 1, line, 1);
+
+            line++;
+            SpreadsheetAddRow( myXls, "TREE PLANTING ADDRESS,SPECIES TO BE PLANTED,PARKWAY OR TREE WELL SIZE,OVERHEAD WIRES,SUB POSITION,OFFSITE,TREE PLANTING DATE", line, 1);
+            SpreadsheetFormatCellRange( myXls, treeHFmt, line, 1, line, 7);
+            line++;
+            old_loc = t.location_no;
+        }
+
+        overhead = t.overhead_wires == 1 ? "Yes" : "No";
+        SpreadsheetAddRow( myXls, t.species & "," & t.parkway_treewell_size & "," & overhead & "," & t.sub_position & "," & t.offsite & "," & t.Tree_Planting_Date, line, 2);
+        SpreadsheetSetCellValue( myXls, t.taddress, line, 1);
+        SpreadsheetFormatCellRange( myXls, treeFmt, line, 1, line, 6);
+        SpreadsheetFormatCell( myXls, treeDFmt, line, 7);
+
+        line++;
+        
+        siteTotal++;
+        grandTotal++;
     }
-    SpreadsheetDeleteColumn( myXls, 1);
-    SpreadsheetDeleteColumn( myXls, 2);
-    
 
-    //
-    totalQuery = new Query( datasource = "sidewalk" );
-    totalQuery.setSql( "with good ( action_type, Tree_Removal_Date, Tree_Planting_Date ) as (
-        select action_type, Tree_Removal_Date, Tree_Planting_Date
-        from vwHDRTreeList
-        inner join vwHDRTreeSiteInfo info on vwHDRTreeList.Location_No = info.Location_No
-        where ( deleted = 0 or deleted is null ) and info.ready_to_plant = 1
-        and Tree_Planting_Date BETWEEN :planting_start AND :planting_end
-    )
-    select 1, 'Total Number of Trees Removed', sum ( case when ACTION_TYPE = 'Removal' AND TREE_REMOVAL_DATE is not null then 1 else 0 end ) from good
-    union
-    select 2, 'Total Number of Tress to be Removed', sum (	case when ACTION_TYPE = 'Removal' AND TREE_REMOVAL_DATE is null then 1 else 0 end ) from good
-    union
-    select 3, 'Total Number of Trees Planted', sum ( case when ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is not null then 1 else 0 end ) from good
-    union
-    select 4, 'Total Number of Trees to be Planted', sum ( case when ACTION_TYPE = 'Planting' AND TREE_PLANTING_DATE is null then 1 else 0 end ) from good" );
+    SpreadsheetAddRow( myXls, "TOTAL NUMBER OF REPLANTS," & siteTotal, line, 1);
+    SpreadsheetFormatCellRange( myXls, totalFmt, line,1, line,2);
+    line += 2;
 
-    totalQuery.addParam(name="planting_start", value=planting_start, cfsqltype="CF_SQL_DATE");
-    totalQuery.addParam(name="planting_end", value=planting_end, cfsqltype="CF_SQL_DATE");
-    summary = totalQuery.execute().getResult();
+    SpreadsheetAddRow( myXls, "GRAND TOTAL REPLANTS," & grandTotal, line, 1);
+    SpreadsheetFormatCellRange( myXls, totalFmt, line,1,line,2);
 
-    SpreadsheetCreateSheet( myXls, "Summary" );
-    SpreadsheetSetActiveSheet( myXls, "Summary" );
-    SpreadsheetAddRow( myXls, "Sidewalk Repair Program" ,1,2);
-    SpreadsheetAddRow( myXls, "Tree Report", 2,2);
-    SpreadsheetAddRow( myXls, Now() ,3,2);
-    SpreadsheetAddRows( myXls, summary, 5,1);
-    SpreadsheetDeleteColumn( myXls, 1);
-    SpreadsheetShiftColumns( myXls, 2,3, -1);
+    shet = myXls.getWorkBook().getSheetAt( javacast("int",0));
+    for( i=0; i< 7; i++)
+        shet.autoSizeColumn( javacast("int", i));
 
 
-    totalPruneQuery = new Query( datasource = "sidewalk" );
-    totalPruneQuery.setSql ("select 
-        sum( coalesce(ee.[TREE_ROOT_PRUNING_/_SHAVING_(PER_TREE)_QUANTITY],0) + coalesce(qc.[TREE_ROOT_PRUNING_/_SHAVING_(PER_TREE)_QUANTITY],0) + coalesce(co.[TREE_ROOT_PRUNING_/_SHAVING_(PER_TREE)_QUANTITY],0 )) root_prune
-        , sum( coalesce(ee.[TREE_CANOPY_PRUNING_(PER_TREE)_QUANTITY],0) + coalesce(qc.[TREE_CANOPY_PRUNING_(PER_TREE)_QUANTITY],0) + coalesce(co.[TREE_CANOPY_PRUNING_(PER_TREE)_QUANTITY],0 )) canopy_prune
-        from vwHDRTreeSiteInfo rl
-        left join vwHDREngineeringEstimate ee on rl.Location_No = ee.Location_No
-        left join vwHDRQCQuantity qc on rl.Location_No = qc.Location_No
-        left join vwHDRChangeOrders co on rl.Location_No = co.Location_No");
-    tpp = totalPruneQuery.execute().getResult();
-    
-    SpreadsheetAddRow( myXls, "Total Number of Root Prune", 9,1); SpreadsheetSetCellValue( myXls, tpp.root_prune[1], 9,2);
-    SpreadsheetAddRow( myXls, "Total Number of Canopy Prune", 10,1); SpreadsheetSetCellValue( myXls, tpp.canopy_prune[1], 10,2);
     SpreadsheetWrite( myXls, myFile, "yes" );
 
 </cfscript>

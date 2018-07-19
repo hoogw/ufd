@@ -495,11 +495,8 @@ SELECT DISTINCT category FROM getType ORDER BY category
 
 </div>
 
-<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div id="processing_icon" align="center"></div>
+
 <div id="result_panel">
-
-
 
 
 <div name="ss_arrow" id="ss_arrow" onClick="toggleSearchBox();"
@@ -666,7 +663,7 @@ function submitForm() {
 	
 	<!---  ---- loading sign started ------  --->
 	 $("#result_panel").hide();
-	 show_loading_img_spinner('processing_icon', 'progressing_loading_sign')
+	 show_loading_img_spinner('search', 'progressing_loading_sign')
 	
 	
 	
@@ -841,11 +838,6 @@ function trim(stringToTrim) {
 }
 
 function goToSite(sid,spid) {
-	
-	//  ---- loading sign started ------  --->
-	 $("#result_panel").hide();
-	 show_loading_img_spinner('processing_icon', 'progressing_loading_sign')
-	 
 	location.replace(url + "forms/swSiteEdit.cfm?sid=" + sid + "&pid=" + spid + "&search=true");
 }
 

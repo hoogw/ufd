@@ -1381,7 +1381,11 @@
 		<cfif isdefined("ss_concnull")><cfset session.ss_concnull = 1><cfelse><cfset StructDelete(Session, "ss_concnull")></cfif>
 		
 		
-		
+		 
+         
+         
+         
+         
 		<cfset var data = {}>
 		
 		<cfset ss_name = trim(replace(ss_name,"'","''","ALL"))>

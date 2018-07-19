@@ -1019,67 +1019,24 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 <table align=center border="0" cellpadding="0" cellspacing="0">
 		<cfset w2 = (w-80)/2><cfset cs = 3><cfif url.pid gt 0 OR url.search is true OR url.crid gt 0><cfset w2 = (w-180)/2><cfset cs = 5></cfif>
 		<cfset v = getSite.removed>
-		<tr>
-             <td height="22" colspan="#cs#" class="right" style="width:#w#px;" >
-             
-               <span id="small_center_delete_icon">
-                
-                
-                
-                </span>
-                
-                
-              <!---  
-                
-                 <span id="small_right_delete_icon">
-                
-                  <img align="center" style="height:25px;width:25px;padding:3px 0px 0px 0px;"  src="../images/preloader.gif">
-                  </img>
-                
-                </span>
-                
-				
-				--->
-                
-                
-                
+		<tr><td height="22" colspan="#cs#" class="right" style="width:#w#px;">
 				<cfif session.user_level gt 2>
 					<cfif v is "">
-					<a  href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
+					<a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
 					onclick="showRemove();return false;">Delete</a>
 					<cfelse>
-					<a  href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
+					<a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
 					onclick="showRemove();return false;">Restore</a>
 					</cfif>
 				</cfif>
-                
-                
-                 
-                
-		      </td>
-        </tr>
-        
+		</td></tr>
 		<cfif v is "">
 		<tr>
-			<td id="small_right_icon" style="width:#w2#px;"></td>
-            
+			<td style="width:#w2#px;"></td>
 			<cfif session.user_level gt 0 AND session.user_power gte 0>
-            
-            
-                
 			<td align="center">
-            
-                
-            
 				<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-				onclick="submitForm();return false;">
-                       Update
-                   
-            
-                       
-                       </a>
-                       
-                       
+				onclick="submitForm();return false;">Update</a>
 			</td>
 			</cfif>
 			<cfif session.user_level is 0 AND session.user_power is 1 AND isBSS><!--- Added for BSS bonus power reset --->
@@ -1108,13 +1065,6 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 	 
      <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
  </div> <!--- id="result_panel"   --->
-    
-    
-    
-    
-    
-    
-    
     
     
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
@@ -3894,17 +3844,11 @@ function submitForm() {
 	       
 	      console.log("hide panel ============ ") 
 		  
-		  // This will disable  div 
-           //document.getElementById("result_panel").disabled = true;
-		   var nodes = document.getElementById("result_panel").getElementsByTagName('*');
-				for(var i = 0; i < nodes.length; i++){
-					 nodes[i].disabled = true;
-				}
+		  //var form = document.getElementById("form1");
+          //form.style.display = "none";
 		  
-		  
-		  
-	     //$("#result_panel").hide();
-		 show_loading_img_spinner('small_right_icon', 'progressing_loading_sign')
+	     $("#result_panel").hide();
+		  show_loading_img_spinner('processing_icon', 'progressing_loading_sign')
 		  
 		 // wait(3000); //failed 
 		  
@@ -3925,20 +3869,11 @@ function submitForm() {
 	      // pause 3 sec to show loading sign
 		  
 		    console.log("show panel ============ ") 
-			wait(3000);  //7 seconds in milliseconds
+			wait(2000);  //7 seconds in milliseconds
 			//console.log('after');
 		  
 		 remove_loading_img_spinner('progressing_loading_sign');
-		 
-		 
-		 // disable div
-		  //document.getElementById("result_panel").disabled = false;
-		 //$("#result_panel").show();
-		   var nodes = document.getElementById("result_panel").getElementsByTagName('*');
-				for(var i = 0; i < nodes.length; i++){
-					 nodes[i].disabled = false;
-				}
-		 
+		  $("#result_panel").show();
 		
 	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
 		
@@ -4487,18 +4422,8 @@ function deleteSite(idx) {
 	
 	
 	// joe hu  7/17/2018 ----- add progressing loading sign ------ 
-		//start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );
+		start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );
 		
-	 var nodes = document.getElementById("result_panel").getElementsByTagName('*');
-				for(var i = 0; i < nodes.length; i++){
-					 nodes[i].disabled = true;
-				}
-		  
-		  
-		  
-    show_loading_img_spinner('small_center_delete_icon', 'progressing_loading_sign')	
-	
-	
 	
 	
 	var frm = [];
