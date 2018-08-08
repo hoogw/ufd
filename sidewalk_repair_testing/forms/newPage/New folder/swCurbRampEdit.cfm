@@ -35,10 +35,6 @@
 <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 <!--- <link href="#request.stylesheet#" rel="stylesheet" type="text/css"> --->
 <cfinclude template="../css/css.cfm">
-
-
-
-
 </head>
 
 <style type="text/css">
@@ -117,10 +113,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 		  <tr>
 		  <td style="width:25%;text-align:right;">
 		  <cfif getMaxRamp.ramp_no is not "">
-		     <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
-		     <a  onclick='$(".overlay").show();'   href="swCurbRampEdit.cfm?crid=#getMaxRamp.ramp_no#&search=#search#">
-                    <img src="../images/arrow_left.png" width="20" height="29" title="Previous Site" id="leftarrow">
-              </a>
+		  <a href="swCurbRampEdit.cfm?crid=#getMaxRamp.ramp_no#&search=#search#"><img src="../images/arrow_left.png" width="20" height="29" title="Previous Site" id="leftarrow"></a>
 		  </cfif>
 		  </td>
 		  
@@ -128,10 +121,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 		  
 		  <td style="width:25%;">
 		 <cfif getMinRamp.ramp_no is not "">
-		   <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
-		       <a  onclick='$(".overlay").show();'    href="swCurbRampEdit.cfm?crid=#getMinRamp.ramp_no#&search=#search#">
-                            <img src="../images/arrow_right.png" width="20" height="29" title="Next Site" id="rightarrow">
-               </a>
+		  <a href="swCurbRampEdit.cfm?crid=#getMinRamp.ramp_no#&search=#search#"><img src="../images/arrow_right.png" width="20" height="29" title="Next Site" id="rightarrow"></a>
 		  </cfif>
 		  </td>		
 		  </tr>  
@@ -151,15 +141,6 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 <cfif session.user_level is 0><cfset dis="disabled"></cfif>
 <cfif session.user_power lt 0><cfset dis="disabled"></cfif>
 <!--- <cfif session.user_power is 1 AND session.user_level is 0 AND isBSS><cfset dis=""></cfif> --->
-
-
-<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
-
-
-
 <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:744px;">
 	<form name="form1" id="form1" method="post" action="" enctype="multipart/form-data">
 	<tr>
@@ -696,6 +677,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
                     <td height="22" class="right" colspan="#cs#"  style="width:#w#px;">
                    
                         
+                        
                          
                         
                             <cfif v is "">
@@ -723,8 +705,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
         
     
 	<tr>
-         
-         <td  style="width:#w2#px;"></td>
+         <td style="width:#w2#px;"></td>
          
     
 		<cfif session.user_power is 1 AND session.user_level is 0 AND isBSS>
@@ -784,6 +765,8 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 	
     
      <!--- ---- End -----  joe hu 6/14/2018   (1)------------     --->
+    
+    
     
     
     
@@ -933,16 +916,6 @@ function submitForm() {
 	
 	//console.log(frm);
 	
-	
-	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
-	
-	$(".overlay").show();
-	
-	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
-	
-	
-	
-	
 	$.ajax({
 	  type: "POST",
 	  url: url + "cfc/sw.cfc?method=updateCurbRamp&callback=",
@@ -950,17 +923,6 @@ function submitForm() {
 	  success: function(data) { 
 	  	data = jQuery.parseJSON(trim(data));
 	  	//console.log(data);
-		
-		
-		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-	    
-	   
-	    $(".overlay").hide();	
-				
-	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-		
-		
-		
 		
 		if(data.RESULT != "Success") {
 		
@@ -1099,18 +1061,6 @@ function showRemove() {
 
 
 function deleteCurbRamp(idx) {
-	
-	
-	<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
-	$(".overlay").show();
-    <!--- end joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
-	
-	
-	
-	
-	
 	var frm = [];
 	frm.push({"name" : "crid", "value" : crid });
 	//console.log(frm);

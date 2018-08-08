@@ -35,6 +35,17 @@
 <cfinclude template="../css/css.cfm">
 
 
+              <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (3) --->
+	
+                
+    
+	             <script language="JavaScript" src="../js/progressing_loading_sign.js" type="text/javascript"></script>
+                
+	
+    
+                  
+	         <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (3) --->
+
 
 </head>
 
@@ -58,8 +69,6 @@ SELECT * FROM tblSites WHERE id = #url.sid#
 <!--- Get Package --->
 <cfset isBSS = false>
 <cfset isCert = false>
-<cfset isUFD = false>
-<cfset isBCA = false>
 <cfset sw_pid = ""><cfset sw_grp = "">
 <cfif url.pid gt 0>
 	<cfquery name="getPackage" datasource="#request.sqlconn#" dbtype="ODBC">
@@ -84,21 +93,16 @@ SELECT * FROM tblSites WHERE id = #url.sid#
 <cfif isdefined("session.user_cert")>
 	<cfif session.user_cert is 1><cfset isCert = true></cfif>
 </cfif>
-<cfif isdefined("session.user_ufd")>
-	<cfif session.user_ufd is 1><cfset isUFD = true></cfif>
-</cfif>
-<cfif session.agency is "BCA"><cfset isBCA = true></cfif>
+
 
 <!--- Get Facility Type --->
 <cfquery name="getType" datasource="#request.sqlconn#" dbtype="ODBC">
 SELECT * FROM tblType ORDER BY type
-</cfquery>   
-
-<cfquery name="getIsCity" dbtype="query">    
+</cfquery>
+<cfquery name="getIsCity" dbtype="query">
 SELECT id FROM getType WHERE iscity = 1 ORDER BY id
 </cfquery>
 <cfset isCityList = ValueList(getIsCity.id)>
-
 
 <!--- Get Access Type --->
 <cfquery name="getAccess" datasource="#request.sqlconn#" dbtype="ODBC">
@@ -123,11 +127,6 @@ SELECT * FROM tblPhaseType ORDER BY id
 <!--- Get Status/BIC Type --->
 <cfquery name="getStatusBIC" datasource="#request.sqlconn#" dbtype="ODBC">
 SELECT * FROM tblStatusBICType ORDER BY id
-</cfquery>
-
-<!--- Get Classification Type --->
-<cfquery name="getClassification" datasource="#request.sqlconn#" dbtype="ODBC">
-SELECT * FROM tblClassificationTypes ORDER BY id
 </cfquery>
 
 
@@ -210,8 +209,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 </cfquery>
 
 <!--- Create Priority Check --->
-<cfset pchk = getSite.Severity_Index>
-<!--- <cfset pchk = getSite.Severity_Index & "|" & getSite.Access_Improvement & "|" & getSite.Cost_Effective & "|" & getSite.Within_High_Injury & "|" & getSite.Traveled_By_Disabled & "|" & getSite.Complaints_No & "|" & getSite.High_Pedestrian_Traffic> --->
+<cfset pchk = getSite.Severity_Index & "|" & getSite.Access_Improvement & "|" & getSite.Cost_Effective & "|" & getSite.Within_High_Injury & "|" & getSite.Traveled_By_Disabled & "|" & getSite.Complaints_No & "|" & getSite.High_Pedestrian_Traffic>
 
 <!--- <cfdump var="#pchk#"> --->
 
@@ -233,10 +231,17 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 		  <cfif isdefined("getMaxSite.id")>
 		  <!--- <cfif session.user_level gt 0> --->
 		  <cfset x = ""><cfif url.pid gt 0><cfset x = "&pid=" & url.pid></cfif>
-		  <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
-		  <a  onclick='$(".overlay").show();' href="swSiteEdit.cfm?sid=#getMaxSite.id##x#&search=#search#">
+          
+              
+          
+          <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
+		  <a  onclick='start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );' href="swSiteEdit.cfm?sid=#getMaxSite.id##x#&search=#search#">
                     <img src="../images/arrow_left.png" width="20" height="29" title="Previous Site" id="leftarrow">
           </a>
+          
+          
+          
+          
 		  <!--- </cfif> --->
 		  </cfif>
 		  </td>
@@ -245,10 +250,16 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 		  <cfif isdefined("getMinSite.id")>
 		  <!--- <cfif session.user_level gt 0> --->
 		  <cfset x = ""><cfif url.pid gt 0><cfset x = "&pid=" & url.pid></cfif>
-		 <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-		  <a  onclick='$(".overlay").show();'  href="swSiteEdit.cfm?sid=#getMinSite.id##x#&search=#search#">
+          
+          
+          
+          <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+		  <a  onclick='start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );'  href="swSiteEdit.cfm?sid=#getMinSite.id##x#&search=#search#">
               <img src="../images/arrow_right.png" width="20" height="29" title="Next Site" id="rightarrow">
           </a>
+          
+          
+          
 		  <!--- </cfif> --->
 		  </td>
 		  </cfif>
@@ -297,9 +308,8 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 
 
 <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
+<div id="processing_icon" align="center"></div>
+<div id="result_panel"> 
 
 
 
@@ -343,7 +353,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						
 						<cfif getSite.removed is "">
 						
-							<cfif session.user_power gte 2 OR (isCert AND isBSS) OR (isCert AND isBCA)> <!--- Right now, isCert only applies to BSS users for their projects. May need to change in future --->
+							<cfif session.user_power gte 2 OR (isCert AND isBSS)> <!--- Right now, isCert only applies to BSS users for their projects. May need to change in future --->
 								<td align="right" style="width:28px;">
 								<a href="" onClick="openCertificate();return false;" style="position:relative;top:0px;">
 								<img src="../images/certificate.png" width="20" height="20" title="Issue Certificates"></a>
@@ -470,34 +480,17 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						</select>
 						</td>
 						<td style="width:2px;"></td>
-						<th class="left middle" style="width:45px;">Priority:</th>
+						<th class="left middle" style="width:75px;">Priority No:</th>
 						<td style="width:2px;"></td>
-						
-						<td class="frm" style="width:116px;">
-						
-							<table cellpadding="0" cellspacing="0" border="0">
-							<tr>
-							
-							<td class="left middle small" style="width:22px;"><span style="position:relative;left:2px;top:0px;">T1:</span></td>
-							<cfset v = ""><cfif getSite.priority_tier1 is not ""><cfset v = getSite.priority_tier1></cfif>	
-							<td style="width:40px;">
-							<input type="Text" name="sw_priority_t1" id="sw_priority_t1" value="#v#" style="width:35px;text-align:center;padding:4px 1px 4px 1px;" class="rounded" <!--- #dis# ---> disabled>
-							</td>			
-							<td class="left middle small" style="width:22px;"><span style="position:relative;left:2px;top:0px;">T2:</span></td>
-							<cfset v = ""><cfif getSite.priority_tier2 is not ""><cfset v = getSite.priority_tier2></cfif>
-							<td style="width:40px;">
-							<input type="Text" name="sw_priority_t2" id="sw_priority_t2" value="#v#" style="width:35px;text-align:center;padding:4px 1px 4px 1px;" class="rounded" <!--- #dis# ---> disabled>
-							</td>
-							</tr>
-							</table>
-
-						</td>
+						<cfset v = ""><cfif getSite.priority_no is not ""><cfset v = getSite.priority_no></cfif>
+						<td class="frm" style="width:39px;">
+						<input type="Text" name="sw_priority" id="sw_priority" value="#v#" style="width:35px;text-align:center;padding:4px 1px 4px 1px;" class="rounded" <!--- #dis# ---> disabled></td>
 						<td style="width:2px;"></td>
 						<th class="left middle" style="width:72px;">Date Logged:</th>
 						<td style="width:2px;"></td>
 						<cfset v = ""><cfif getSite.date_logged is not ""><cfset v = dateformat(getSite.date_logged,"MM/DD/YYYY")></cfif>
-						<td class="frm" style="width:83px;">
-						<input type="Text" name="sw_logdate" id="sw_logdate" value="#v#" style="width:79px;text-align:center;" class="rounded" #dis#></td>
+						<td class="frm" style="width:130px;">
+						<input type="Text" name="sw_logdate" id="sw_logdate" value="#v#" style="width:125px;text-align:center;" class="rounded" #dis#></td>
 						<td style="width:2px;"></td>
 						<th class="left middle" style="height:30px;width:85px;">Field Assessed:</th>
 						<td style="width:2px;"></td>
@@ -535,14 +528,14 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						<th class="left middle" style="width:75px;">Design<br>Start Date:</th>
 						<td style="width:2px;"></td>
 						<cfset v = ""><cfif getSite.design_start_date is not ""><cfset v = dateformat(getSite.design_start_date,"MM/DD/YYYY")></cfif>
-						<td class="frm" style="width:86px;">
+						<td class="frm" style="width:83px;">
 						<cfset distmp = dis>
 						<cfif getSite.design_required is not 1><cfset dis = "disabled"></cfif>
-						<input type="Text" name="sw_dsgnstart" id="sw_dsgnstart" value="#v#" style="width:82px;text-align:center;" class="rounded" #dis#></td>
+						<input type="Text" name="sw_dsgnstart" id="sw_dsgnstart" value="#v#" style="width:79px;text-align:center;" class="rounded" #dis#></td>
 						<cfset dis = distmp>
 						<td style="width:2px;"></td>
 						<cfset v = ""><cfif getSite.design_finish_date is not ""><cfset v = dateformat(getSite.design_finish_date,"MM/DD/YYYY")></cfif>
-						<th class="left middle" style="width:72px;">Design<br>Finish Date:</th>
+						<th class="left middle" style="width:75px;">Design<br>Finish Date:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:83px;">
 						<cfset distmp = dis>
@@ -584,13 +577,13 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						<th class="left middle" style="width:75px;">Assessed By:</th>
 						<td style="width:2px;"></td>
 						<cfset v = ""><cfif getSite.field_assessor is not ""><cfset v = trim(getSite.field_assessor)></cfif>
-						<td class="frm" style="width:86px;">
-						<input type="Text" name="sw_assessor" id="sw_assessor" value="#v#" style="width:82px;" class="rounded" #dis#></td>
+						<td class="frm" style="width:83px;">
+						<input type="Text" name="sw_assessor" id="sw_assessor" value="#v#" style="width:79px;" class="rounded" #dis#></td>
 						<td style="width:2px;"></td>
-						<th class="left middle" style="height:30px;width:53px;">Repairs<br>Required:</th>
+						<th class="left middle" style="height:30px;width:98px;">Repairs Required:</th>
 						<td style="width:2px;"></td>
-						<td class="frm"  style="width:55px;">
-						<select name="sw_repairs" id="sw_repairs" class="rounded" style="width:50px;" #dis#>
+						<td class="frm"  style="width:60px;">
+						<select name="sw_repairs" id="sw_repairs" class="rounded" style="width:55px;" #dis#>
 						<option value=""></option>
 						<cfloop query="getYesNo">
 							<cfset sel = ""><cfif getSite.repairs_required is id><cfset sel = "selected"></cfif>
@@ -600,14 +593,13 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						</td>
 						
 						<td style="width:2px;"></td>
-						<th class="left middle" style="height:30px;width:70px;">Severity<br>Index:</th>
+						<th class="left middle" style="height:30px;width:50px;">Severity<br>Index:</th>
 						<td style="width:2px;"></td>
-						<td class="frm"  style="width:122px;">
-						<select name="sw_severity" id="sw_severity" class="rounded" style="width:117px;" #dis#>
+						<td class="frm"  style="width:95px;">
+						<select name="sw_severity" id="sw_severity" class="rounded" style="width:90px;" #dis#>
 						<option value=""></option>
-						<cfloop index="id" from="1" to="5">
-							<cfset lvl = "Very Minor"><cfif id is 2><cfset lvl = "Minor"><cfelseif id is 3><cfset lvl = "Moderate"></cfif>
-							<cfif id is 4><cfset lvl = "Severe"><cfelseif id is 5><cfset lvl = "Very Severe"></cfif>
+						<cfloop index="id" from="1" to="3">
+							<cfset lvl = "Minor"><cfif id is 2><cfset lvl = "Medium"><cfelseif id is 3><cfset lvl = "Major"></cfif>
 							<cfset sel = ""><cfif getSite.severity_index is id><cfset sel = "selected"></cfif>
 							<option value="#id#" #sel#>#id# - #lvl#</option>
 						</cfloop>
@@ -645,8 +637,8 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						<td style="width:2px;"></td>
 						<th class="left middle" style="height:30px;width:74px;">Status / BIC:</th>
 						<td style="width:2px;"></td>
-						<td class="frm"  style="width:125px;">
-						<select name="sw_bic" id="sw_bic" class="rounded" style="width:120px;" #dis#>
+						<td class="frm"  style="width:115px;">
+						<select name="sw_bic" id="sw_bic" class="rounded" style="width:110px;" #dis#>
 						<option value=""></option>
 						<cfloop query="getStatusBIC">
 							<cfset sel = ""><cfif getSite.statusbic is id><cfset sel = "selected"></cfif>
@@ -656,18 +648,8 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						</td>
 						
 						<td style="width:2px;"></td>
-						<th class="left middle" style="height:30px;width:75px;">Classification:</th>
-						<td style="width:2px;"></td>
-						<td class="frm"  style="width:198px;">
-						<select name="sw_class" id="sw_class" class="rounded" style="width:193px;" #dis#>
-						<option value=""></option>
-						<cfloop query="getClassification">
-							<cfset sel = ""><cfif getSite.classification is id><cfset sel = "selected"></cfif>
-							<option value="#id#" #sel#>#value#</option>
-						</cfloop>
-						</select>
-						</td>
-					
+						<th class="left middle" style="height:30px;width:290px;"></th>
+						
 						</tr>
 					</table>
 				</td>
@@ -712,7 +694,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			
 			
 			
-			<!--- <tr>	
+			<tr>	
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
@@ -752,10 +734,10 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						</tr>
 					</table>
 				</td>
-			</tr> --->
+			</tr>
 			
 			
-			<!--- <tr>	
+			<tr>	
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
@@ -814,7 +796,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						</tr>
 					</table>
 				</td>
-			</tr> --->
+			</tr>
 			
 			
 			<tr>	
@@ -1027,34 +1009,87 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 	</form>
 </table>
 
+   
+
+ 
+
+
+
+
 <table align=center border="0" cellpadding="0" cellspacing="0">
 		<cfset w2 = (w-80)/2><cfset cs = 3><cfif url.pid gt 0 OR url.search is true OR url.crid gt 0><cfset w2 = (w-180)/2><cfset cs = 5></cfif>
 		<cfset v = getSite.removed>
-		<tr><td height="22" colspan="#cs#" class="right" style="width:#w#px;">
-        
+		<tr>
+             <td height="22" colspan="#cs#" class="right" style="width:#w#px;" >
              
-        
-        
+             
+             
+             
+             <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+               <span id="small_center_delete_icon">
+                
+                
+                
+                </span>
+                
+                
+              <!---  
+                
+                 <span id="small_right_delete_icon">
+                
+                  <img align="center" style="height:25px;width:25px;padding:3px 0px 0px 0px;"  src="../images/preloader.gif">
+                  </img>
+                
+                </span>
+                
+				
+				--->
+                
+                
+                
 				<cfif session.user_level gt 2>
 					<cfif v is "">
-					<a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
+					<a  href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
 					onclick="showRemove();return false;">Delete</a>
 					<cfelse>
-					<a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
+					<a  href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
 					onclick="showRemove();return false;">Restore</a>
 					</cfif>
 				</cfif>
-		</td></tr>
+                
+                
+                 
+                
+		      </td>
+        </tr>
+        
 		<cfif v is "">
 		<tr>
-			
-			<td  style="width:#w2#px;"></td>
+        
+             <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+			<td id="small_right_icon" style="width:#w2#px;"></td>
+            
+            
+            
             
             
 			<cfif session.user_level gt 0 AND session.user_power gte 0>
+            
+            
+                
 			<td align="center">
+            
+                
+            
 				<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-				onclick="submitForm();return false;">Update</a>
+				onclick="submitForm();return false;">
+                       Update
+                   
+            
+                       
+                       </a>
+                       
+                       
 			</td>
 			</cfif>
 			<cfif session.user_level is 0 AND session.user_power is 1 AND isBSS><!--- Added for BSS bonus power reset --->
@@ -1080,9 +1115,18 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 	</table>
 	
 	
- 
- 
-	
+	 
+     <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+ </div> <!--- id="result_panel"   --->
+    
+    
+    
+    
+    
+    
+    
+    
+    
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
 	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="msg_header" class="box_header"><strong>The Following Error(s) Occured:</strong></div>
@@ -1814,12 +1858,9 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 
 <!--- Get Curbs --->
 <cfquery name="getCurbs" datasource="#request.sqlconn#" dbtype="ODBC">
-
 <!--- joe hu 7/20/2018 exclude removed=1 ---     ----->
 SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed IS NULL ORDER BY ramp_no
-
 </cfquery>
-
 
 
 <cfset crvis = "none"><cfif isdefined("url.editcr")><cfset crvis = "block"></cfif>
@@ -2925,7 +2966,6 @@ SELECT * FROM tblTreeTypes ORDER BY id
 						<cfif getCnt.cnt gt 0><cfset img = "map_small_chk.png"></cfif>
 						<cfset fuctn = "geocodeTree(#scnt#,#trcnt#,#getList.id#);">
 					</cfif>
-					<cfif session.user_power lt 0 AND isUFD is false><cfset fuctn = ""></cfif>
 					<div style="position:relative;left:0px;top:-1px">
 					<a id="tplink_#scnt#_#trcnt#" href="" onClick="#fuctn#return false;"><img id="tpicon_#scnt#_#trcnt#" name="tpicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#"></a>
 					</div>
@@ -2956,466 +2996,13 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<input type="Hidden" id="tr_add_cnt_#scnt#" name="tr_add_cnt_#scnt#" value="#tr_add_cnt#" #sirdis#>
 				</td>
 			</tr>
-            
-            
-            
-			
-	
-    
-    
-    
-    <!--- ------------ joe hu ------ 8/7/18  ---------- add tree pruning ---------------  --->
-    
-    
-    		<tr><td style="height:2px;"></td></tr>
-    
-    
-    		<cfquery name="chkList" dbtype="query">
-				SELECT max(tree_no) as mx FROM getTreeListInfo WHERE action_type = 1  AND group_no = #scnt#
-			</cfquery>
-            
-				   <cfset max_trcnt = 0>
-				   <cfif chkList.recordcount gt 0>
-				   
-				      <cfset max_trcnt = chkList.mx>
-                   </cfif>
-			
-			<tr>
-                <th class="drk left middle" colspan="2" style="height:20px;padding:0px;">
-				 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Root Pruning / Shaving</span>
-					<span style="position:relative;top:0px;left:25px;">(Total: <strong><span id="tp_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
-					<th class="drk right middle"><span style="position:relative;top:1px;">
-					<cfif session.user_level gte 0 AND session.user_power gte 0>
-					<a href="" onClick="addTree('add',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Root Pruning / Shaving" style="position:relative;right:4px;"></a>
-					<a href="" onClick="delTree('add',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Root Pruning / Shaving" style="position:relative;right:2px;"></a>
-					</cfif>
-					</span>
-					</th></tr>
-				 </table>
-			    </th>
-            </tr>
-            
 			<tr><td style="height:2px;"></td></tr>
-            
-			<tr>
-				<td colspan="2" style="padding:0px;">
-				
-				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-					<th class="center middle" style="height:28px;width:30px;"><span style="font-size:10px;">Tree<br>No:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:47px;"><span style="font-size:10px;">Box<br>Size:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Permit<br>Issuance<br>Date:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Tree<br>Planting<br>Date:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Start<br>Watering<br>Date:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">End<br>Watering<br>Date:</span></th>
-					<td style="width:2px;"></td>
-					<th class="left middle" style="width:190px;"><span style="font-size:10px;">Address:</span></th>
-					<td style="width:2px;"></td>
-					<th class="left middle" style="width:118px;"><span style="font-size:10px;">Species:</span></th>		
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:53px;"><span style="font-size:10px;">Parkway or<br>Tree Well<br>Size:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:46px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Overhead<br>Wires:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:40px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Sub<br>Position:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:48px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Post<br>Inspected:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="left middle" ><span style="font-size:10px;">Type:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="left middle" style="width:32px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Offsite:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:28px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Note:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:16px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;"></span></th>
-
-				</table>
-				
-				<cfloop index="i" from="1" to="#lngth2#">
-							<cfset trcnt = i>
-                            
-                            <cfquery name="chkList" dbtype="query">
-                                SELECT max(tree_no) as mx FROM getTreeListInfo WHERE action_type = 1  AND group_no = #scnt#
-                            </cfquery>
-                            
-                            <cfset max_trcnt = 0>
-                            
-							<cfif chkList.recordcount gt 0>
-							     <cfset max_trcnt = chkList.mx>
-                            </cfif>
-                            
-                            <cfset vis = "block"><cfset trdis = "">
-                            
-							    <cfif i gt max_trcnt><cfset vis = "none">
-								    <cfset trdis = "disabled">
-                                </cfif>
-                                
-                                
-                            <div id="tr_add_div_#scnt#_#trcnt#" style="display:#vis#;">
-                            
-                                 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-                                  <tr>
-                                    <td height="2px;">
-                                    </td>
-                                  </tr>
-                                 </table>
-                            
-                                 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-                            
-                                                    <cfquery name="getList" dbtype="query">
-                                                         SELECT * FROM getTreeListInfo WHERE action_type = 1 AND group_no = #scnt# AND tree_no = #trcnt#
-                                                    </cfquery>
-                                                    
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:29px;height:26px;">
-                                                            <cfset v = 24>
-                                                            
-                                                            <cfif trim(getList.tree_box_size) is not "">
-                                                                     <cfset v = trim(getList.tree_box_size)>
-                                                            </cfif>
-                                                            
-                                                            <input type="Text" name="tpcnt_#scnt#_#trcnt#" id="tpcnt_#scnt#_#trcnt#" value="#trcnt#" 
-                                                            style="width:26px;height:20px;padding:0px;" class="center roundedsmall" disabled>
-                                                    </td>
-                                                    
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:46px;">
-                                                       <select name="tpdia_#scnt#_#trcnt#" id="tpdia_#scnt#_#trcnt#" class="roundedsmall" style="width:45px;height:20px;font-size:9px;" onChange="calcTrees();" #trdis#>
-                                                       
-                                                                <cfloop index="i" from="1" to="#arrayLen(arrDia)#">
-                                                                    <cfset sel = "">
-                                                                    <cfif arrDia[i] is v>
-                                                                            <cfset sel = "selected">
-                                                                    </cfif>
-                                                                    <option value="#arrDia[i]#" #sel#>
-                                                                         #arrDia[i]# In.
-                                                                    </option>
-                                                                </cfloop>
-                                                        </select>
-                                                    </td>
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.permit_issuance_date) is not "">
-                                                       <cfset v = dateformat(trim(getList.permit_issuance_date),"mm/dd/yyyy")>
-                                                    </cfif>
-                                                    
-                                                    <td class="frm left middle" style="width:60px;">
-                                                    
-                                                            <input type="Text" name="tppidt_#scnt#_#trcnt#" id="tppidt_#scnt#_#trcnt#" value="#v#" 
-                                                            style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.tree_planting_date) is not "">
-                                                       <cfset v = dateformat(trim(getList.tree_planting_date),"mm/dd/yyyy")>
-                                                    </cfif>
-                                                    
-                                                    <td class="frm left middle" style="width:60px;">
-                                                        <input type="Text" name="tptrdt_#scnt#_#trcnt#" id="tptrdt_#scnt#_#trcnt#" value="#v#" 
-                                                    style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    
-                                                    <cfset v = "">
-                                                    
-                                                        <cfif trim(getList.start_watering_date) is not "">
-                                                    
-                                                            <cfset v = dateformat(trim(getList.start_watering_date),"mm/dd/yyyy")>
-                                                        </cfif>
-                                                        
-                                                    <td class="frm left middle" style="width:60px;">
-                                                    
-                                                        <input type="Text" name="tpswdt_#scnt#_#trcnt#" id="tpswdt_#scnt#_#trcnt#" value="#v#" 
-                                                        style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.end_watering_date) is not "">
-                                                            <cfset v = dateformat(trim(getList.end_watering_date),"mm/dd/yyyy")>
-                                                    </cfif>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:60px;">
-                                                        <input type="Text" name="tpewdt_#scnt#_#trcnt#" id="tpewdt_#scnt#_#trcnt#" value="#v#" 
-                                                    style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.address) is not "">
-                                                        <cfset v = trim(getList.address)>
-                                                    </cfif>
-                                                    <cfif getList.recordcount is 0>
-                                                            <cfset v = getSite.address>
-                                                    </cfif>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:191px;">
-                                                            <input type="Text" name="tpaddr_#scnt#_#trcnt#" id="tpaddr_#scnt#_#trcnt#" value="#v#" 
-                                                    style="width:188px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" class="roundedsmall" #trdis#>
-                                                    
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;">
-                                                    </td>
-                                                    
-                                                    <td class="frm left middle" style="width:119px;">
-                                                    
-                                                                <div class="ui-widget">
-                                                                        <cfset v = "">
-                                                                        <cfif trim(getList.species) is not "">
-                                                                            <cfset v = trim(getList.species)>
-                                                                        </cfif>
-                                                                       
-                                                                        <label for="tp_species_#scnt#_#trcnt#">
-                                                                        </label>
-                                                                        
-                                                                        <input type="Text" name="tpspecies_#scnt#_#trcnt#" id="tpspecies_#scnt#_#trcnt#" value="#v#" 
-                                                                        style="width:116px;height:20px;padding:0px 2px 0px 4px;font-size:9px;" class="roundedsmall" #trdis#>
-                                                                </div>
-                                                    
-                                                    </td>	
-                                
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                        
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.parkway_treewell_size) is not "">
-                                                        <cfset v = trim(getList.parkway_treewell_size)>
-                                                    </cfif>
-                                                    
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:52px;">
-                                                                <input type="Text" name="tpparkway_#scnt#_#trcnt#" id="tpparkway_#scnt#_#trcnt#" value="#v#" 
-                                                            style="width:49px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" maxlength="20" class="roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif getList.overhead_wires is 1>
-                                                            <cfset v = "checked">
-                                                    </cfif>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:46px;">
-                                                    
-                                                            <div style="position:relative;left:12px;">
-                                                                    <input id="tpoverhead_#scnt#_#trcnt#" name="tpoverhead_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
-                                                            </div>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.sub_position) is not "">
-                                                            <cfset v = trim(getList.sub_position)>
-                                                    </cfif>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:40px;"><input type="Text" name="tpsubpos_#scnt#_#trcnt#" id="tpsubpos_#scnt#_#trcnt#" value="#v#" 
-                                                                style="width:36px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" maxlength="3" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                            <cfif getList.post_inspected is 1>
-                                                                    <cfset v = "checked">
-                                                            </cfif>
-                                                            
-                                                            
-                                                    <td class="frm left middle" style="width:48px;">
-                                                            <div style="position:relative;left:12px;">
-                                                                    <input id="tppostinspect_#scnt#_#trcnt#" name="tppostinspect_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
-                                                            </div>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <td class="frm left middle">
-                                                        <select name="tptype_#scnt#_#trcnt#" id="tptype_#scnt#_#trcnt#" class="roundedsmall" style="width:95px;height:20px;font-size:9px;" #trdis#>
-                                                        <!--- <option value=""></option> --->
-                                                            <cfloop query="getTreeTypes">
-                                                                <cfset sel = "">
-                                                                <cfif getList.type is id>
-                                                                        <cfset sel = "selected">
-                                                                </cfif>
-                                                                
-                                                                <option value="#id#" #sel#>#value#</option>
-                                                                    
-                                                            </cfloop>
-                                                        </select>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                        <cfif getList.offsite is 1>
-                                                            <cfset v = "checked">
-                                                        </cfif>
-                                                        
-                                                    <td class="frm left middle" style="width:32px;">
-                                                    
-                                                         <div style="position:relative;left:5px;">
-                                                            <input id="tpoffsite_#scnt#_#trcnt#" name="tpoffsite_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
-                                                         </div>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <td class="frm left middle" style="width:28px;">
-                                                    
-                                                        <div style="position:relative;left:7px;top:-1px">
-                                                                <a href="" onClick="$('#chr(35)#tpnotediv_#scnt#_#trcnt#').toggle();return false;"><img src="../images/rep.gif" width="12" height="14" alt="Note" title="Note">
-                                                                </a>
-                                                        </div>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <td class="frm left middle" style="width:16px;">
-                                                    
-                                                                    <cfset img = "map_small.png">
-                                                                    <cfset msg = "Map Tree ID: #getList.id#">
-                                                                    
-                                                                    
-                                                                    <cfif getList.id is "">
-                                                                       
-                                                                            <cfset img = "map_small_x.png">
-                                                                            <cfset msg = "">
-                                                                            <cfset fuctn = "">
-                                                                    
-                                                                    
-                                                                    <cfelse>
-                                                                    
-                                                                    
-                                                                            <cfquery name="getCnt" datasource="ufd_inventory_spatial" dbtype="ODBC">
-                                                                                 SELECT count(*) as cnt FROM #request.tree_tbl# WHERE srp_tree_id = #getList.id#
-                                                                            </cfquery>
-                                                                            
-                                                                            <cfif getCnt.cnt gt 0><cfset img = "map_small_chk.png">
-                                                                            </cfif>
-                                                                            <cfset fuctn = "geocodeTree(#scnt#,#trcnt#,#getList.id#);">
-                                                                            
-                                                                    </cfif>
-                                                                    
-                                                                    
-                                                                    
-                                                                    <cfif session.user_power lt 0 AND isUFD is false>
-                                                                            <cfset fuctn = "">
-                                                                    </cfif>
-                                                                    
-                                                                    <div style="position:relative;left:0px;top:-1px">
-                                                                            <a id="tplink_#scnt#_#trcnt#" href="" onClick="#fuctn#return false;"><img id="tpicon_#scnt#_#trcnt#" name="tpicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#">
-                                                                            </a>
-                                                                    </div>
-                                                                    
-                                                                    
-                                                                    
-                                                    </td>
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    <td style="width:0px;position:absolute;">
-                                                    
-                                                    
-                                                            <div id="tpnotediv_#scnt#_#trcnt#" style="position:absolute;height:30px;width:400px;top:-2px;left:-456px;border:0px red solid;background:white;display:none;">
-                                                                    <table cellpadding="0" cellspacing="0" border="0" class="frame" style="width:100%;position:relative;top:0px;border-width:1px;">
-                                                                            <tr><td colspan="2" style="height:1px;"></td></tr>
-                                                                            
-                                                                            <tr>
-                                                                                    <td style="width:1px;"></td>
-                                                                                    
-                                                                                    <th class="left middle" style="width:28px;height:24px;"><span style="font-size:10px;">Note:</span></th>
-                                                                                    <td style="width:2px;"></td>
-                                                                                    
-                                                                                    <cfset v = "">
-                                                                                    <cfif trim(getList.note) is not "">
-                                                                                         <cfset v = trim(getList.note)>
-                                                                                    </cfif>
-                                                                                    
-                                                                                    <td class="frm left middle" style="">
-                                                                                                    <input type="Text" name="tpnote_#scnt#_#trcnt#" id="tpnote_#scnt#_#trcnt#" value="#v#" 
-                                                                                            style="width:354px;height:20px;padding:0px 2px 0px 4px;font-size:10px;top:-1px;position:relative;" class="roundedsmall" #trdis#>
-                                                                                    </td>	
-                                                                                    
-                                                                                    <td style="width:1px;"></td>
-                                                                            </tr>
-                                                                            
-                                                                            <tr><td colspan="2" style="height:1px;"></td></tr>
-                                                                            
-                                                                            
-                                                                    </table>
-                                                            </div>
-                                                    </td>
-                                
-                                             </table>
-                                    </div>
-				          </cfloop>
-                   
-							<cfset tr_add_cnt = max_trcnt>
-                            
-                            <input type="Hidden" id="tr_add_cnt_#scnt#" name="tr_add_cnt_#scnt#" value="#tr_add_cnt#" #sirdis#>
-                            
-                        </td>
-                    </tr>
-                    
-                    
-        
-        
-    
-    <!--- ----  End ----------   joe hu ------ 8/7/18  ---------- add tree pruning ---------------  --->
-    
-    
-    
-    
-    
-    		<tr><td style="height:2px;"></td></tr>
 			<tr><th class="drk" style="height:0px;"></th></tr>
 			</table>
 			<!--- <input type="Hidden" id="tr_add_cnt_#scnt#" name="tr_add_cnt_#scnt#" value="#tr_add_cnt#"> --->
 			</div>
 		</td>
 		</tr>
-		
-	
 		
 	</cfloop>
 		
@@ -3426,11 +3013,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 		<cfset arrTrees[4] = "EXISTING_STUMP_REMOVAL_">
 		<cfset arrTrees[5] = "FURNISH_AND_PLANT_24_INCH_BOX_SIZE_TREE_">
 		<cfset arrTrees[6] = "WATER_TREE__UP_TO_30_GALLONS_l_WEEK___FOR_ONE_MONTH_">
-    
-    
-    
-    
-    
+	
 		<tr>
 			<td style="padding:0px;" colspan="2">
 			
@@ -4244,6 +3827,15 @@ var arrSpecies = [];
 
 function submitForm() {
 
+
+
+
+    
+
+
+
+
+
 	$('#msg').hide();
 	var errors = '';var cnt = 0;
 	if (trim($('#sw_name').val()) == '')	{ cnt++; errors = errors + "- Facility Name is required!<br>"; }
@@ -4253,8 +3845,8 @@ function submitForm() {
 	//var chk = $.isNumeric(trim($('#sw_tcon').val().replace(/,/g,""))); var chk2 = trim($('#sw_tcon').val());
 	//if (chk2 != '' && chk == false)	{ cnt++; errors = errors + "- Total Concrete must be numeric!<br>"; }
 	
-	//var chk = $.isNumeric(trim($('#sw_priority').val().replace(/,/g,""))); var chk2 = trim($('#sw_priority').val());
-	//if (chk2 != '' && chk == false)	{ cnt++; errors = errors + "- Priority No. must be numeric!<br>"; }
+	var chk = $.isNumeric(trim($('#sw_priority').val().replace(/,/g,""))); var chk2 = trim($('#sw_priority').val());
+	if (chk2 != '' && chk == false)	{ cnt++; errors = errors + "- Priority No. must be numeric!<br>"; }
 	
 	var chk = $.isNumeric(trim($('#sw_zip').val().replace(/,/g,""))); var chk2 = trim($('#sw_zip').val());
 	if (chk2 != '' && chk == false)	{ cnt++; errors = errors + "- Zip Code must be numeric!<br>"; }
@@ -4301,19 +3893,33 @@ function submitForm() {
 	}
 	
 	//REMOVED because new priority will be set up
-	var pchk_new = trim($('#sw_severity').val());
-	//var pchk_new = trim($('#sw_severity').val()) + "|" + trim($('#sw_ait_type').val()) + "|" + trim($('#sw_costeffect').val()) + "|" + trim($('#sw_injury').val()) + "|" + trim($('#sw_disabled').val()) + "|" + trim($('#sw_complaints').val()) + "|" + trim($('#sw_pedestrian').val());
+	var pchk_new = trim($('#sw_severity').val()) + "|" + trim($('#sw_ait_type').val()) + "|" + trim($('#sw_costeffect').val()) + "|" + trim($('#sw_injury').val()) + "|" + trim($('#sw_disabled').val()) + "|" + trim($('#sw_complaints').val()) + "|" + trim($('#sw_pedestrian').val());
 	if (pchk != pchk_new) { frm.push({"name" : "do_priority", "value" : 1 });     }
 
 	//console.log(frm);
 	
+	  
 	
-	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
-	
-	$(".overlay").show();
-	
-	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
-	
+	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
+	  
+	       
+	      console.log("hide panel ============ ") 
+		  
+		  // This will disable  div 
+           //document.getElementById("result_panel").disabled = true;
+		   var nodes = document.getElementById("result_panel").getElementsByTagName('*');
+				for(var i = 0; i < nodes.length; i++){
+					 nodes[i].disabled = true;
+				}
+		  
+		  
+		  
+	     //$("#result_panel").hide();
+		 show_loading_img_spinner('small_right_icon', 'progressing_loading_sign')
+		  
+		 // wait(3000); //failed 
+		  
+	  <!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
 	
 	
 	
@@ -4323,13 +3929,28 @@ function submitForm() {
 	  data: frm,
 	  success: function(data) { 
 	  	data = jQuery.parseJSON(trim(data));
-	  	console.log(data);
+	  	//console.log(data);
 		
 		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-	    
-	   
-	    $(".overlay").hide();	
-				
+	
+	      // pause 3 sec to show loading sign
+		  
+		    console.log("show panel ============ ") 
+			//wait(3000);  //7 seconds in milliseconds
+			//console.log('after');
+		  
+		 remove_loading_img_spinner('progressing_loading_sign');
+		 
+		 
+		 // disable div
+		  //document.getElementById("result_panel").disabled = false;
+		 //$("#result_panel").show();
+		   var nodes = document.getElementById("result_panel").getElementsByTagName('*');
+				for(var i = 0; i < nodes.length; i++){
+					 nodes[i].disabled = false;
+				}
+		 
+		
 	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
 		
 		
@@ -4344,7 +3965,7 @@ function submitForm() {
 		
 		//REMOVED because new priority will be set up
 		if (pchk != pchk_new) {
-			$('#sw_priority_t2').val(data.PRIORITY);
+			if(data.PRIORITY != 0) { $('#sw_priority').val(data.PRIORITY); } else { $('#sw_priority').val(''); }
 			pchk = pchk_new;
 		}
 		
@@ -4392,8 +4013,6 @@ function goToPackage(pid) {
 
 
 function chkAccess() {
-
-	return false; // stopped because new priority set up
 
 	var idx = $('#sw_type').val();
 	var trig = false;
@@ -4867,17 +4486,29 @@ function continueUpdate(id) {
 }
 
 function showRemove() {
+	
+	
+	
+	
 	$('#msg10').css({top:'50%',left:'50%',margin:'-'+($('#msg10').height() / 2)+'px 0 0 -'+($('#msg10').width() / 2)+'px'});
 	$('#msg10').show();
 }
 
 function deleteSite(idx) {
 	
+	
 	<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
-	$(".overlay").show();
-    <!--- end joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
+		//start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );
+		
+	 var nodes = document.getElementById("result_panel").getElementsByTagName('*');
+				for(var i = 0; i < nodes.length; i++){
+					 nodes[i].disabled = true;
+				}
+		  
+		  
+		  
+    show_loading_img_spinner('small_center_delete_icon', 'progressing_loading_sign')	
+	
 	
 	
 	
@@ -5981,7 +5612,7 @@ if (chk != "") { search = "&search=" + escape(chk); }
 
 //console.log(search);
 <cfoutput>
-var url = "#request.tree_server#/treeinventory/geocoder.cfm?token=#session.token#&treeid=" + id + search;
+var url = "#request.server#/treeinventory/geocoder.cfm?token=#session.token#&treeid=" + id + search;
 </cfoutput>
 //console.log(url);
 

@@ -38,6 +38,17 @@
 
 
 
+        <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (3) --->
+	
+                
+    
+	             <script language="JavaScript" src="../js/progressing_loading_sign.js" type="text/javascript"></script>
+                
+	
+    
+                  
+	         <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (3) --->
+
 
 </head>
 
@@ -117,10 +128,16 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 		  <tr>
 		  <td style="width:25%;text-align:right;">
 		  <cfif getMaxRamp.ramp_no is not "">
-		     <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
-		     <a  onclick='$(".overlay").show();'   href="swCurbRampEdit.cfm?crid=#getMaxRamp.ramp_no#&search=#search#">
+          
+          
+          <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
+		     <a  onclick='start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );'   href="swCurbRampEdit.cfm?crid=#getMaxRamp.ramp_no#&search=#search#">
                     <img src="../images/arrow_left.png" width="20" height="29" title="Previous Site" id="leftarrow">
               </a>
+              
+              
+              
+              
 		  </cfif>
 		  </td>
 		  
@@ -128,10 +145,17 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 		  
 		  <td style="width:25%;">
 		 <cfif getMinRamp.ramp_no is not "">
-		   <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
-		       <a  onclick='$(".overlay").show();'    href="swCurbRampEdit.cfm?crid=#getMinRamp.ramp_no#&search=#search#">
+         
+         
+         
+         <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
+		       <a  onclick='start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );'    href="swCurbRampEdit.cfm?crid=#getMinRamp.ramp_no#&search=#search#">
                             <img src="../images/arrow_right.png" width="20" height="29" title="Next Site" id="rightarrow">
                </a>
+               
+               
+               
+               
 		  </cfif>
 		  </td>		
 		  </tr>  
@@ -153,10 +177,16 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 <!--- <cfif session.user_power is 1 AND session.user_level is 0 AND isBSS><cfset dis=""></cfif> --->
 
 
+
+
+
+
+
 <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
+<div id="processing_icon" align="center"></div>
+<div id="result_panel"> 
+
+
 
 
 
@@ -695,6 +725,12 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
                     
                     <td height="22" class="right" colspan="#cs#"  style="width:#w#px;">
                    
+                        <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+                               <span id="small_center_delete_icon">
+                                
+                                
+                                
+                                </span>
                         
                          
                         
@@ -723,9 +759,13 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
         
     
 	<tr>
+    
+    
+         <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+         <td id="small_right_icon"  style="width:#w2#px;"></td>
          
-         <td  style="width:#w2#px;"></td>
-         
+    
+    
     
 		<cfif session.user_power is 1 AND session.user_level is 0 AND isBSS>
 				<cfset dis="">
@@ -784,6 +824,19 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 	
     
      <!--- ---- End -----  joe hu 6/14/2018   (1)------------     --->
+    
+    
+    
+    
+    
+    
+	 
+     <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+ </div> <!--- id="result_panel"   --->
+    
+    
+    
+    
     
     
     
@@ -934,11 +987,29 @@ function submitForm() {
 	//console.log(frm);
 	
 	
-	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
+	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
+	  
+	       
+	      console.log("hide panel ============ ") 
+		  
+		  // This will disable  div 
+           //document.getElementById("result_panel").disabled = true;
+		   var nodes = document.getElementById("result_panel").getElementsByTagName('*');
+				for(var i = 0; i < nodes.length; i++){
+					 nodes[i].disabled = true;
+				}
+		  
+		  
+		  
+	     //$("#result_panel").hide();
+		 show_loading_img_spinner('small_right_icon', 'progressing_loading_sign')
+		  
+		 // wait(3000); //failed 
+		  
+	  <!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
 	
-	$(".overlay").show();
 	
-	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
+	
 	
 	
 	
@@ -952,12 +1023,34 @@ function submitForm() {
 	  	//console.log(data);
 		
 		
+		
+		
 		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-	    
-	   
-	    $(".overlay").hide();	
-				
+	
+	      // pause 3 sec to show loading sign
+		  
+		    console.log("show panel ============ ") 
+			//wait(3000);  //7 seconds in milliseconds
+			//console.log('after');
+		  
+		 remove_loading_img_spinner('progressing_loading_sign');
+		 
+		 
+		 // disable div
+		  //document.getElementById("result_panel").disabled = false;
+		 //$("#result_panel").show();
+		   var nodes = document.getElementById("result_panel").getElementsByTagName('*');
+				for(var i = 0; i < nodes.length; i++){
+					 nodes[i].disabled = false;
+				}
+		 
+		
 	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+		
+		
+		
+		
+		
 		
 		
 		
@@ -1102,11 +1195,17 @@ function deleteCurbRamp(idx) {
 	
 	
 	<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
-	$(".overlay").show();
-    <!--- end joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
-	
+     //start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );
+		
+	 var nodes = document.getElementById("result_panel").getElementsByTagName('*');
+				for(var i = 0; i < nodes.length; i++){
+					 nodes[i].disabled = true;
+				}
+		  
+		  
+		  
+    show_loading_img_spinner('small_center_delete_icon', 'progressing_loading_sign')	
+	<!--- End -----  joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
 	
 	
 	

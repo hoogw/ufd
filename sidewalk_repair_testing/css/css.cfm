@@ -860,19 +860,30 @@ div.fileinputs {
 	behavior: url(htc/PIE.htc);			
 }
 
+/*
+  ===================== joe hu  7/17/2018 ----- add progressing loading sign 
+*/
 
 
-#overlay {
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 999;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+#loading-img {
+    background: url(../images/preloader.gif) center center no-repeat;
     height: 100%;
-    display: none;
+    z-index: 20;
 }
 
-
+.overlay {
+    background: #e9e9e9;  
+    display: none;        
+    position: absolute;   
+    top: 0;                  
+    right: 0;               
+    bottom: 0;
+    left: 0;
+    opacity: 0.5;
+	z-index:1000;
+}
+/*
+   ====== end ========= joe hu  7/17/2018 ----- add progressing loading sign 
+*/
 
 </style> 

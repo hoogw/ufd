@@ -117,7 +117,6 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 		  <cfif getMaxSite.id is not "">
 		  		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
 		  		
-                
                 <a onclick='$(".overlay").show();' href="swPackageEdit.cfm?pid=#getMaxSite.id#"><img src="../images/arrow_left.png" width="20" height="29" title="Previous Package"></a>
 		  </cfif>
 		  </td>

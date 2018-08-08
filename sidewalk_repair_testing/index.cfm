@@ -116,29 +116,34 @@ function getIFrameWidth() {
 					  	<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 							<tr>
 								<td id="div_home" class="center menubar" style="width:80px;" 
-								onclick="changeFrame('swWelcome.cfm');hideDDs();" onmouseover="this.style.cursor='pointer';">
+								onclick="changeFrame('swWelcome.cfm');hideDDs();" onMouseOver="this.style.cursor='pointer';">
 								Home&nbsp;Page
 								</td>
 								<cfif isdefined("session.userid")>
 									<cfif session.user_power gte 0 AND session.user_level gt 0>
-									<td id="div_create" class="center menubar" style="width:80px;" onclick="showDDs('dd_create');">
-									<div onmouseover="this.style.cursor='pointer';showDDs('dd_create');" 
+									<td id="div_create" class="center menubar" style="width:80px;" onClick="showDDs('dd_create');">
+									<div onMouseOver="this.style.cursor='pointer';showDDs('dd_create');" 
 									onmouseout="hideDDs();" style="height:20px;border:0px red solid;position:relative;top:3px;">Create</div>
 									</td>
 									</cfif>
 								<td id="div_search" class="center menubar" style="width:70px;">
-								<div onmouseover="this.style.cursor='pointer';showDDs('dd_search');" onclick="showDDs('dd_search');"
+								<div onMouseOver="this.style.cursor='pointer';showDDs('dd_search');" onClick="showDDs('dd_search');"
 								onmouseout="hideDDs();" style="height:20px;border:0px red solid;position:relative;top:3px;">Search</div>
 								</td>
 									<cfif session.user_level gte 2 AND session.user_power gte 0>
-									<td id="div_add" class="center menubar" style="width:70px;" onclick="showDDs('dd_add');">
-									<div onmouseover="this.style.cursor='pointer';showDDs('dd_add');"
+									<td id="div_add" class="center menubar" style="width:70px;" onClick="showDDs('dd_add');">
+									<div onMouseOver="this.style.cursor='pointer';showDDs('dd_add');"
 									onmouseout="hideDDs();" style="height:20px;border:0px red solid;position:relative;top:3px;">Add</div>
 									</td>
 									</cfif>
-									<cfif session.user_level gte 2 OR (session.user_power is 1 AND session.user_level is 0)>
+                                    
+                                    
+                                    <!--- joe hu 7/31/18 report access --->
+									<cfif session.user_level gte 2 OR (session.user_power is 1 AND session.user_level is 0) OR (len(session.user_report) gt 0)>
+                                    
+                                    
 									<td class="center menubar" style="width:80px;"
-									onclick="changeFrame('search/swReports.cfm');hideDDs();" onmouseover="this.style.cursor='pointer';">
+									onclick="changeFrame('search/swReports.cfm');hideDDs();" onMouseOver="this.style.cursor='pointer';">
 									Reports
 									</td>
 									</cfif>
@@ -147,16 +152,16 @@ function getIFrameWidth() {
 								<cfif isdefined("session.userid")>
 									<cfif session.user_level gte 3>
 									<td class="center menubar" style="width:60px;" 
-									onclick="changeFrame('search/swDownloadData.cfm');hideDDs();" onmouseover="this.style.cursor='pointer';">
+									onclick="changeFrame('search/swDownloadData.cfm');hideDDs();" onMouseOver="this.style.cursor='pointer';">
 									Data
 									</td>
 									</cfif>
 								</cfif>
 								<cfif isdefined("session.userid") is false>
-								<td class="center menubar" style="width:70px;" onclick="showLogin();" onmouseover="this.style.cursor='pointer';">Login</td>
+								<td class="center menubar" style="width:70px;" onClick="showLogin();" onMouseOver="this.style.cursor='pointer';">Login</td>
 								<cfelse>
-								<td class="center menubar" style="width:110px;" onclick="showDDs('dd_account');">
-								<div onmouseover="this.style.cursor='pointer';showDDs('dd_account');"
+								<td class="center menubar" style="width:110px;" onClick="showDDs('dd_account');">
+								<div onMouseOver="this.style.cursor='pointer';showDDs('dd_account');"
 								onmouseout="hideDDs();" style="height:20px;border:0px red solid;position:relative;top:3px;">My&nbsp;Account</div>
 								</td>
 								</cfif>
@@ -195,7 +200,7 @@ function getIFrameWidth() {
 </div>
 
 <div id="login" class="box" style="top:40px;left:1px;width:320px;height:200px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#login').hide();return false;"><img src="images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#login').hide();return false;"><img src="images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="msg_header5" class="box_header"><strong></strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 
@@ -241,7 +246,7 @@ function getIFrameWidth() {
 </div>
 
 <cfset t = 136><cfif brow is "M"><cfset t = 133></cfif>
-<div id="dd_account" style="position:absolute;top:#t#px;right:0px;display:none;z-index:999;" onmouseover="$('#chr(35)#dd_account').show();" onmouseout="$('#chr(35)#dd_account').hide();">
+<div id="dd_account" style="position:absolute;top:#t#px;right:0px;display:none;z-index:999;" onMouseOver="$('#chr(35)#dd_account').show();" onMouseOut="$('#chr(35)#dd_account').hide();">
 <table align="center" bgcolor="#request.color#" cellspacing="0" cellpadding="0" border="0">
 <tr>	
 	<td colspan="4" style="padding:1px">
@@ -249,13 +254,13 @@ function getIFrameWidth() {
 			<!--- <tr><td style="height:4px;"></td></tr> --->
 			<tr>
 			<th class="dropdown left middle" style="height:20px;width:110px;" 
-			onclick="changeFrame('changePassword.cfm');$('#chr(35)#dd_account').hide();" onmouseover="this.style.cursor='pointer';">
+			onclick="changeFrame('changePassword.cfm');$('#chr(35)#dd_account').hide();" onMouseOver="this.style.cursor='pointer';">
 			Change Password
 			</th>
 			</tr>
 			<tr><td style="height:1px;"></td></tr>
 			<tr>
-			<th class="dropdown left middle" style="height:21px;" onclick="doLogOff();" onmouseover="this.style.cursor='pointer';">
+			<th class="dropdown left middle" style="height:21px;" onClick="doLogOff();" onMouseOver="this.style.cursor='pointer';">
 			Log off
 			</th>
 			</tr>
@@ -265,7 +270,7 @@ function getIFrameWidth() {
 </table>
 </div>
 
-<div id="dd_create" style="position:absolute;top:#t#px;left:0px;display:none;z-index:999;" onmouseover="$('#chr(35)#dd_create').show();" onmouseout="$('#chr(35)#dd_create').hide();">
+<div id="dd_create" style="position:absolute;top:#t#px;left:0px;display:none;z-index:999;" onMouseOver="$('#chr(35)#dd_create').show();" onMouseOut="$('#chr(35)#dd_create').hide();">
 <table align="center" bgcolor="#request.color#" cellspacing="0" cellpadding="0" border="0">
 <tr>	
 	<td colspan="4" style="padding:1px">
@@ -273,7 +278,7 @@ function getIFrameWidth() {
 			<!--- <tr><td style="height:4px;"></td></tr> --->
 			<tr>
 			<th class="dropdown left middle" style="height:20px;width:150px;" 
-			onclick="changeFrame('forms/swSiteEntry.cfm');$('#chr(35)#dd_create').hide();" onmouseover="this.style.cursor='pointer';">
+			onclick="changeFrame('forms/swSiteEntry.cfm');$('#chr(35)#dd_create').hide();" onMouseOver="this.style.cursor='pointer';">
 			New Sidewalk Repair Site
 			</th>
 			</tr>
@@ -282,7 +287,7 @@ function getIFrameWidth() {
 				<tr><td style="height:1px;"></td></tr>
 				<tr>
 				<th class="dropdown left middle" style="height:21px;"
-				onclick="changeFrame('forms/swPackageEntry.cfm','type=new');$('#chr(35)#dd_create').hide();" onmouseover="this.style.cursor='pointer';">
+				onclick="changeFrame('forms/swPackageEntry.cfm','type=new');$('#chr(35)#dd_create').hide();" onMouseOver="this.style.cursor='pointer';">
 				New Repair Package
 				</th>
 				</tr>
@@ -291,7 +296,7 @@ function getIFrameWidth() {
 			<tr><td style="height:1px;"></td></tr>
 			<tr>
 			<th class="dropdown left middle" style="height:20px;width:150px;" 
-			onclick="changeFrame('forms/swCurbRampEntry.cfm');$('#chr(35)#dd_create').hide();" onmouseover="this.style.cursor='pointer';">
+			onclick="changeFrame('forms/swCurbRampEntry.cfm');$('#chr(35)#dd_create').hide();" onMouseOver="this.style.cursor='pointer';">
 			New Curb Ramp
 			</th>
 			</tr>
@@ -301,7 +306,7 @@ function getIFrameWidth() {
 </table>
 </div>
 
-<div id="dd_search" style="position:absolute;top:#t#px;left:0px;display:none;z-index:999;" onmouseover="$('#chr(35)#dd_search').show();" onmouseout="$('#chr(35)#dd_search').hide();">
+<div id="dd_search" style="position:absolute;top:#t#px;left:0px;display:none;z-index:999;" onMouseOver="$('#chr(35)#dd_search').show();" onMouseOut="$('#chr(35)#dd_search').hide();">
 <table align="center" bgcolor="#request.color#" cellspacing="0" cellpadding="0" border="0">
 <tr>	
 	<td colspan="4" style="padding:1px">
@@ -309,20 +314,20 @@ function getIFrameWidth() {
 			<!--- <tr><td style="height:4px;"></td></tr> --->
 			<tr>
 			<th class="dropdown left middle" style="height:20px;width:150px;" 
-			onclick="changeFrame('search/swSiteSearch.cfm');$('#chr(35)#dd_search').hide();" onmouseover="this.style.cursor='pointer';">
+			onclick="changeFrame('search/swSiteSearch.cfm');$('#chr(35)#dd_search').hide();" onMouseOver="this.style.cursor='pointer';">
 			Sidewalk Repair Site
 			</th>
 			</tr>
 			<tr><td style="height:1px;"></td></tr>
 			<tr>
 			<th class="dropdown left middle" style="height:21px;"
-			onclick="changeFrame('search/swPackageSearch.cfm');$('#chr(35)#dd_search').hide();" onmouseover="this.style.cursor='pointer';">
+			onclick="changeFrame('search/swPackageSearch.cfm');$('#chr(35)#dd_search').hide();" onMouseOver="this.style.cursor='pointer';">
 			Sidewalk Repair Package
 			</th>
 			<tr><td style="height:1px;"></td></tr>
 			<tr>
 			<th class="dropdown left middle" style="height:21px;"
-			onclick="changeFrame('search/swCurbRampSearch.cfm');$('#chr(35)#dd_search').hide();" onmouseover="this.style.cursor='pointer';">
+			onclick="changeFrame('search/swCurbRampSearch.cfm');$('#chr(35)#dd_search').hide();" onMouseOver="this.style.cursor='pointer';">
 			Curb Ramp Repairs
 			</th>
 			</tr>
@@ -332,7 +337,7 @@ function getIFrameWidth() {
 </table>
 </div>
 
-<div id="dd_add" style="position:absolute;top:#t#px;left:0px;display:none;z-index:999;" onmouseover="$('#chr(35)#dd_add').show();" onmouseout="$('#chr(35)#dd_add').hide();">
+<div id="dd_add" style="position:absolute;top:#t#px;left:0px;display:none;z-index:999;" onMouseOver="$('#chr(35)#dd_add').show();" onMouseOut="$('#chr(35)#dd_add').hide();">
 <table align="center" bgcolor="#request.color#" cellspacing="0" cellpadding="0" border="0">
 <tr>	
 	<td colspan="4" style="padding:1px">
@@ -340,7 +345,7 @@ function getIFrameWidth() {
 			<!--- <tr><td style="height:4px;"></td></tr> --->
 			<tr>
 			<th class="dropdown left middle" style="height:20px;width:160px;" 
-			onclick="changeFrame('forms/swPackageEntry.cfm','type=add');$('#chr(35)#dd_add').hide();" onmouseover="this.style.cursor='pointer';">
+			onclick="changeFrame('forms/swPackageEntry.cfm','type=add');$('#chr(35)#dd_add').hide();" onMouseOver="this.style.cursor='pointer';">
 			Site to an Existing Package
 			</th>
 			</tr>

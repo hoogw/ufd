@@ -11,7 +11,13 @@
 	</script>
 	<cfabort>
 </cfif>
-<cfif session.user_level lt 2 AND session.user_power is not 1>
+
+
+
+<!--- joe hu 7/31/18 report access --->
+<cfif (session.user_level lt 2 AND session.user_power is not 1) AND (len(session.user_report) eq 0)>
+
+
 	<script>
 	self.location.replace("../login.cfm?relog=false&r=#Rand()#&s=6&chk=authority");
 	</script>
@@ -70,8 +76,11 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 </table>
 
 <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:300px;">
-	<tr>
-	<td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
+	
+    
+    
+    <tr>
+	   <td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
 		<table align=center bgcolor=white cellspacing="2" cellpadding="2" border="0">
 		<tr>
 			<th class="drk left middle" colspan="4" style="height:30px;padding:0px 0px 0px 0px;">
@@ -82,6 +91,13 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 					</table>
 			</th>
 		</tr>
+        
+        
+        
+    <!--- joe hu 7/31/18 report access --->
+	<cfif ((len(session.user_report) eq 0) OR (FindNoCase(",10,", session.user_report) gt 0))>
+        
+        
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
@@ -93,6 +109,10 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+     </cfif>   
+        
+        
 		<!--- <tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
@@ -106,6 +126,12 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 		</tr> --->
 		
 		
+        
+        
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",20,", session.user_report) gt 0))>
+        
+        
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
@@ -126,6 +152,15 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",30,", session.user_report) gt 0))>
+        
+         
+         
+         
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -137,7 +172,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 						<td><a id="eer" href="../reports/Estimating.cfm?my_package=#getGroups.pkg#" target="_blank" style="color:#request.color#">Engineer Estimates Report</a></td>
 						<td style="width:5px;"></td>
 						<td>
-						<select name="pkg" id="pkg" class="rounded" style="position:relative;top:1px;width:85px;" onchange="setURL();">
+						<select name="pkg" id="pkg" class="rounded" style="position:relative;top:1px;width:85px;" onChange="setURL();">
 						<cfloop query="getGroups">
 							<option value="#pkg#">#pkg#</option>
 						</cfloop>
@@ -150,6 +185,18 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",40,", session.user_report) gt 0))>
+        
+         
+        
+        
+        
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
@@ -160,7 +207,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 						<td><a id="bf" href="../reports/Bidding.cfm?my_package=#getGroups.pkg#" target="_blank" style="color:#request.color#;position:relative;left:16px;">Contractor Bid Form</a></td>
 						<td style="width:5px;"></td>
 						<td>
-						<select name="pkg2" id="pkg2" class="rounded" style="position:relative;top:1px;left:16px;width:85px;" onchange="setURL2();">
+						<select name="pkg2" id="pkg2" class="rounded" style="position:relative;top:1px;left:16px;width:85px;" onChange="setURL2();">
 						<cfloop query="getGroups">
 							<option value="#pkg#">#pkg#</option>
 						</cfloop>
@@ -173,6 +220,16 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",50,", session.user_report) gt 0))>
+        
+        
+        
+        
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
@@ -183,7 +240,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 						<td><a id="cp" href="../reports/Pricing.cfm?my_package=#getGroups.pkg#" target="_blank" style="color:#request.color#;position:relative;left:3px;">Contractor Pricing Report</a></td>
 						<td style="width:5px;"></td>
 						<td>
-						<select name="pkg3" id="pkg3" class="rounded" style="position:relative;top:1px;left:3px;width:85px;" onchange="setURL3();">
+						<select name="pkg3" id="pkg3" class="rounded" style="position:relative;top:1px;left:3px;width:85px;" onChange="setURL3();">
 						<cfloop query="getGroups">
 							<option value="#pkg#">#pkg#</option>
 						</cfloop>
@@ -197,6 +254,14 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			</td>
 		</tr>
 		
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",60,", session.user_report) gt 0))>
+        
+        
+        
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
@@ -207,7 +272,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 						<td><a id="fq" href="../reports/FinalQuantities.cfm?my_package=#getGroups.pkg#" target="_blank" style="color:#request.color#;position:relative;left:14px;">Final Quantites Form</a></td>
 						<td style="width:5px;"></td>
 						<td>
-						<select name="pkg5" id="pkg5" class="rounded" style="position:relative;top:1px;left:14px;width:85px;" onchange="setURL7();">
+						<select name="pkg5" id="pkg5" class="rounded" style="position:relative;top:1px;left:14px;width:85px;" onChange="setURL7();">
 						<cfloop query="getGroups">
 							<option value="#pkg#">#pkg#</option>
 						</cfloop>
@@ -220,6 +285,17 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",70,", session.user_report) gt 0))>
+        
+        
+        
+        
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -245,6 +321,17 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",80,", session.user_report) gt 0))>
+        
+        
+        
+        
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -256,7 +343,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 						<td><a id="tp" href="../reports/TreePermits.cfm?package=#getGroups.pkg#" target="_blank" style="color:#request.color#;position:relative;left:2px;">Bid Package Tree Permits</a></td>
 						<td style="width:5px;"></td>
 						<td>
-						<select name="pkg6" id="pkg6" class="rounded" style="position:relative;top:1px;left:2px;width:85px;" onchange="setURL8();">
+						<select name="pkg6" id="pkg6" class="rounded" style="position:relative;top:1px;left:2px;width:85px;" onChange="setURL8();">
 						<cfloop query="getGroups">
 							<option value="#pkg#">#pkg#</option>
 						</cfloop>
@@ -270,6 +357,15 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			</td>
 		</tr>
 		
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",90,", session.user_report) gt 0))>
+        
+        
+        
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
@@ -280,7 +376,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 						<td><a id="eel" href="../reports/EstimatingByLocation.cfm?my_loc=#getLocations.loc#" target="_blank" style="color:#request.color#;">Engineer Estimate by Site</a></td>
 						<td style="width:5px;"></td>
 						<td>
-						<select name="loc1" id="loc1" class="rounded" style="position:relative;top:1px;width:68px;" onchange="setURL4();">
+						<select name="loc1" id="loc1" class="rounded" style="position:relative;top:1px;width:68px;" onChange="setURL4();">
 						<cfloop query="getLocations">
 							<option value="#loc#">#loc#</option>
 						</cfloop>
@@ -293,6 +389,14 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",100,", session.user_report) gt 0))>
+        
+        
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -304,7 +408,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 						<td><a id="cpl" href="../reports/PricingByLocation.cfm?my_loc=#getLocations2.loc#" target="_blank" style="color:#request.color#;">Contractor Pricing by Site</a></td>
 						<td style="width:5px;"></td>
 						<td>
-						<select name="loc2" id="loc2" class="rounded" style="position:relative;top:1px;width:68px;" onchange="setURL5();">
+						<select name="loc2" id="loc2" class="rounded" style="position:relative;top:1px;width:68px;" onChange="setURL5();">
 						<cfloop query="getLocations2">
 							<option value="#loc#">#loc#</option>
 						</cfloop>
@@ -317,6 +421,16 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+        
+          </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",110,", session.user_report) gt 0))>
+        
+        
+        
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -330,6 +444,17 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			</td>
 		</tr>
 		
+        
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",120,", session.user_report) gt 0))>
+        
+        
+        
+        
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
@@ -341,8 +466,18 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",130,", session.user_report) gt 0))>
+        
+        
+        
+        
 		
-		<tr>	
+		<tr>
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
@@ -353,6 +488,16 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+       
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",140,", session.user_report) gt 0))>
+        
+        
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -369,9 +514,9 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 						<tr>
 						<td >
 						&nbsp;&nbsp;&nbsp;&nbsp;From:&nbsp;
-						<input type="Text" name="rpt_trpfrm" id="rpt_trpfrm" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onchange="setURL10();">
+						<input type="Text" name="rpt_trpfrm" id="rpt_trpfrm" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onChange="setURL10();">
 						&nbsp;&nbsp;&nbsp;&nbsp;To:&nbsp;
-						<input type="Text" name="rpt_trpto" id="rpt_trpto" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onchange="setURL10();">
+						<input type="Text" name="rpt_trpto" id="rpt_trpto" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onChange="setURL10();">
 						</td>
 						</tr>
 					</table>
@@ -380,6 +525,17 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",150,", session.user_report) gt 0))>
+        
+        
+        
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -392,6 +548,15 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",160,", session.user_report) gt 0))>
+        
+        
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -404,6 +569,17 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+        
+        
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",170,", session.user_report) gt 0))>
+        
+        
+        
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -416,6 +592,19 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+         
+         </cfif>  
+         
+         <!--- joe hu 7/31/18 report access --->
+	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",180,", session.user_report) gt 0))>
+        
+        
+        
+        
+        
+        
 		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -432,9 +621,9 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 						<tr>
 						<td >
 						&nbsp;&nbsp;&nbsp;&nbsp;From:&nbsp;
-						<input type="Text" name="rpt_acfrm" id="rpt_acfrm" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onchange="setURL6();">
+						<input type="Text" name="rpt_acfrm" id="rpt_acfrm" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onChange="setURL6();">
 						&nbsp;&nbsp;&nbsp;&nbsp;To:&nbsp;
-						<input type="Text" name="rpt_acto" id="rpt_acto" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onchange="setURL6();">
+						<input type="Text" name="rpt_acto" id="rpt_acto" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onChange="setURL6();">
 						</td>
 						</tr>
 					</table>
@@ -443,6 +632,13 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
+        
+        
+        
+         <!--- joe hu 7/31/18 report access --->
+       </cfif>  
+        
+        
 		
 		<!--- <tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">

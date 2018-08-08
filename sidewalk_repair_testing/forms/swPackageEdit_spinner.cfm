@@ -34,6 +34,19 @@
 <cfinclude template="../css/css.cfm">
 
 
+
+       <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (3) --->
+	
+                
+    
+	             <script language="JavaScript" src="../js/progressing_loading_sign.js" type="text/javascript"></script>
+                
+	
+    
+                  
+	         <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (3) --->
+
+
 </head>
 
 <style type="text/css">
@@ -41,6 +54,7 @@ body{background-color: transparent}
 </style>
 
 <cfparam name="url.pid" default="1">
+
 
 <!--- Get Package --->
 <cfquery name="getPackage" datasource="#request.sqlconn#" dbtype="ODBC">
@@ -102,12 +116,6 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 <body alink="#request.color#" vlink="#request.color#" link="#request.color#" bottommargin="0" marginheight="0" topmargin="2" rightmargin="0" style="overflow:auto;">
 </cfoutput>
 
-
-
-
-
-
-
 <table width="100%" border="0" cellspacing="0" cellpadding="3">
   <tr>
     <td>
@@ -115,17 +123,30 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 		  <tr><td colspan="3" height="15"></td></tr>
           <tr><td style="width:25%;text-align:right;">
 		  <cfif getMaxSite.id is not "">
-		  		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
-		  		
+          
+          
+          <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
+		        <a   onclick='start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );'   href="swPackageEdit.cfm?pid=#getMaxSite.id#">
+                        <img src="../images/arrow_left.png" width="20" height="29" title="Previous Package">
+                </a>
                 
-                <a onclick='$(".overlay").show();' href="swPackageEdit.cfm?pid=#getMaxSite.id#"><img src="../images/arrow_left.png" width="20" height="29" title="Previous Package"></a>
+                
 		  </cfif>
 		  </td>
 		  <td align="center" class="pagetitle">Edit Package Information</td>
 		  <td style="width:25%;">
 		  <cfif getMinSite.id is not "">
-		  		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
-		        <a  onclick='$(".overlay").show();' href="swPackageEdit.cfm?pid=#getMinSite.id#"><img src="../images/arrow_right.png" width="20" height="29" title="Next Package"></a>
+          
+          
+          
+          <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
+		          <a  onclick='start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );'   href="swPackageEdit.cfm?pid=#getMinSite.id#">
+                          <img src="../images/arrow_right.png" width="20" height="29" title="Next Package">
+                  </a>
+                  
+                  
+                  
+                  
 		  </td>
 		  </cfif>
 		  </tr>
@@ -153,10 +174,18 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 
 
 
+
+
+
+
 <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
+<div id="processing_icon" align="center"></div>
+<div id="result_panel"> 
+
+
+
+
+
 
 
 
@@ -180,23 +209,88 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 						<!--- <td class="drk right middle" style="width:40px;padding:2px 3px 0px 0px;">#getPackage.package_no#
 						</td> --->
 						
-						<td align="left" style="width:332px;">
+                        
+                        
+                        
+                        
+                         <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+                                       <td id="small_right_update_icon">
+                                        
+                                        
+                                        
+                                        </td>
+                        
+                        
+                                        
+                                        
+                        
+						<td align="left" style="width:320px;">
 							<cfif session.user_level gt 1 AND session.user_power gte 0>
-							<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-							onclick="submitForm();return false;">Update</a>
+                            
+							            <a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+							                        onclick="submitForm();return false;">
+                                                    
+                                                    Update
+                                                    
+                                                    
+                                                    </a>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
 							</cfif>
 							<cfif session.user_level is 0 AND session.user_power is 1 AND (ucase(getPackage.contractor) is "BSS" OR ucase(getPackage.package_group) is "BSS")><!--- Added for BSS bonus power --->
-							<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-							onclick="submitForm();return false;">Update</a>
+                            
+                            
+                            
+							      <a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+							                        onclick="submitForm();return false;">
+                                                    
+                                                    Update
+                                                    
+                                                    
+                                  </a>
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
 							</cfif>
 						</td>
+                        
+                        
+                       
+                             
+                             
+                             
+                             
+                        
 						
-						<td align="right" style="width:90px;">
+						<td align="right" style="width:60px;">
 							<cfif session.user_level gt 2>
-							<a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
-							onclick="showRemove();return false;">Delete</a>
+                            
+                            
+							         <a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
+							                              onclick="showRemove();return false;">
+                                                          
+                                                          Delete
+                                                          
+                                     </a>
+                                     
 							</cfif>
 						</td>
+                        
+                        
+                         <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+                                       <td id="small_left_delete_icon">
+                                        
+                                        
+                                        
+                                        </td>
+                             
+                        
 						
 						</tr>
 					</table>
@@ -638,9 +732,7 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 						<th class="center middle nopad" style="width:70px;">Construction<br>Started</th>
 						<td style="width:2px;"></td>
 						<th class="center middle nopad" style="width:70px;">Construction<br>Completed</th>
-						<!--- <td style="width:2px;"></td>
-						<th class="center middle nopad" style="width:75px;">Anticipated<br>Completion<br>Date</th> --->
-						<td style="width:2px;"></td>
+					    <td style="width:2px;"></td>
 						<th class="center middle nopad" style="width:75px;">Date<br>Added</th> 
 						<td style="width:2px;"></td>
 						<th class="center middle nopad" style="width:50px;">Remove</th>
@@ -684,13 +776,13 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
 							<td style="width:2px;"></td>
 							<cfset v = ""><cfif construction_completed_date is not ""><cfset v = dateformat(construction_completed_date,"MM/DD/YYYY")></cfif>
 							<td class="small center frm">#v#</td>
-							<!--- <td style="width:2px;"></td>
-							<cfset v = ""><cfif anticipated_completion_date is not ""><cfset v = dateformat(anticipated_completion_date,"MM/DD/YYYY")></cfif>
-							<td class="small center frm">#v#</td> --->
 							<td style="width:2px;"></td>
+                                
 							<cfset v = ""><cfif packaged_date is not ""><cfset v = dateformat(packaged_date,"MM/DD/YYYY")></cfif>
 							<td class="small center frm">#v#</td> 
 							<td style="width:2px;"></td>
+                            
+                            
 							<cfset bssdis = ""><!--- Added for BSS bonus power --->
 							<cfif session.user_power is 1 AND session.user_level is 0 AND (ucase(getPackage.contractor) is "BSS" OR ucase(getPackage.package_group) is "BSS")>
 							<cfset bssdis = "disabled"></cfif>
@@ -725,6 +817,19 @@ SELECT sum(engineers_estimate_total_cost) as cost FROM tblEngineeringEstimate WH
   </tr>
   <tr><td style="height:5px;"></td></tr>
 </table>
+
+
+
+
+
+
+	 
+     <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+ </div> <!--- id="result_panel"   --->
+
+
+
+
 
 
 
@@ -964,11 +1069,38 @@ function submitForm(rmv) {
 
 	if (dis == 'disabled') { return false; }
 	
-	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
 	
-	$(".overlay").show();
 	
-	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
+	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
+	  
+	      
+		   
+	      console.log("hide panel ============ ") 
+		  
+		  // This will disable  div 
+           //document.getElementById("result_panel").disabled = true;
+		   var nodes = document.getElementById("result_panel").getElementsByTagName('*');
+				for(var i = 0; i < nodes.length; i++){
+					 nodes[i].disabled = true;
+				}
+		  
+		  
+		  
+		  
+		   if (rmv == 1) { 
+		   
+		         show_loading_img_spinner('small_left_delete_icon', 'progressing_loading_sign')
+		   
+		   
+		   } else {
+				 //$("#result_panel").hide();
+				 show_loading_img_spinner('small_right_update_icon', 'progressing_loading_sign')
+		   }
+		  
+		 // wait(3000); //failed 
+		  
+	  <!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
+	
 	
 	
 	
@@ -980,12 +1112,38 @@ function submitForm(rmv) {
 	  	data = jQuery.parseJSON(trim(data));
 	  	//console.log(data);
 		
+		
+		
+		
+		
+		
+		
 		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-	    
-	   
-	    $(".overlay").hide();	
-				
+	
+	      // pause 3 sec to show loading sign
+		  
+		    console.log("show panel ============ ") 
+			wait(3000);  //7 seconds in milliseconds
+			//console.log('after');
+		  
+		 remove_loading_img_spinner('progressing_loading_sign');
+		 
+		 
+		 // disable div
+		  //document.getElementById("result_panel").disabled = false;
+		 //$("#result_panel").show();
+		   var nodes = document.getElementById("result_panel").getElementsByTagName('*');
+				for(var i = 0; i < nodes.length; i++){
+					 nodes[i].disabled = false;
+				}
+		 
+		
 	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+		
+		
+		
+		
+		
 		
 		
 		
@@ -1081,13 +1239,26 @@ function showRemoveAttach(idx) {
 }
 
 function doRemoveAttach() {
-
+	
+	
 	<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
-	$(".overlay").show();
-    <!--- end joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
-
+		//start_processing_sign("result_panel","processing_icon","progressing_loading_sign" );
+		
+	 var nodes = document.getElementById("result_panel").getElementsByTagName('*');
+				for(var i = 0; i < nodes.length; i++){
+					 nodes[i].disabled = true;
+				}
+		  
+		  
+		  
+    show_loading_img_spinner('small_center_delete_icon', 'progressing_loading_sign')	
+	
+	
+	
+	
+	
+	
+	
 
 	var ref = $('#a_rmvl').attr('href');
 	var typ = $('#attached_type').val();

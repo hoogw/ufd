@@ -1,4 +1,4 @@
-<cfapplication name="sidewalk_repair" clientmanagement="Yes" sessionmanagement="Yes" sessiontimeout="#Createtimespan(9990,8,0,0)#" applicationtimeout="#Createtimespan(99999,0,0,0)#">
+<cfapplication name="sidewalk_repair_testing" clientmanagement="Yes" sessionmanagement="Yes" sessiontimeout="#Createtimespan(100,8,0,0)#" applicationtimeout="#Createtimespan(1000,0,0,0)#">
 
 <cfif 
 	FindNoCase(";DECLARE",cgi.query_string) 
@@ -47,10 +47,12 @@
 
 <cfset request.dir="d:\sidewalk_repair">
 <cfset request.server="http://78boe99prod/">
+
+<!---<cfset request.url="http://78boe99prod/sidewalk_repair/">  --->
 <cfset request.url="http://78boe99prod/sidewalk_repair_testing/">
+
 <cfset request.js_sfx="">
 <cfset request.tree_tbl = "tbl_tree_inventory_testing">
-<cfset request.tree_server = request.server>
 
 <cfif request.production eq 1>
 	<cfset request.dir="d:\sidewalk_repair">
@@ -58,14 +60,12 @@
 	<cfset request.url="http://boemaps.eng.ci.la.ca.us/sidewalk_repair/">
 	<cfset request.js_sfx="_cmp">
 	<cfset request.tree_tbl = "tbl_tree_inventory">
-	<cfset request.tree_server = replace(request.server,"http","https","ALL")>
 <cfelseif request.production eq 2>
 	<cfset request.dir="d:\sidewalk_repair">
 	<cfset request.server="http://navigatela.lacity.org/">
 	<cfset request.url="http://navigatela.lacity.org/sidewalk_repair/">
 	<cfset request.js_sfx="_cmp">
 	<cfset request.tree_tbl = "tbl_tree_inventory">
-	<cfset request.tree_server = replace(request.server,"http","https","ALL")>
 </cfif>
 
 <cfset request.PDFlocation="#request.dir#"&"\pdfs\">

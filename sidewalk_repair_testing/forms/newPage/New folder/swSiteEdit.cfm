@@ -33,9 +33,6 @@
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <!--- <link href="#request.stylesheet#" rel="stylesheet" type="text/css"> --->
 <cfinclude template="../css/css.cfm">
-
-
-
 </head>
 
 <style type="text/css">
@@ -59,7 +56,6 @@ SELECT * FROM tblSites WHERE id = #url.sid#
 <cfset isBSS = false>
 <cfset isCert = false>
 <cfset isUFD = false>
-<cfset isBCA = false>
 <cfset sw_pid = ""><cfset sw_grp = "">
 <cfif url.pid gt 0>
 	<cfquery name="getPackage" datasource="#request.sqlconn#" dbtype="ODBC">
@@ -87,18 +83,16 @@ SELECT * FROM tblSites WHERE id = #url.sid#
 <cfif isdefined("session.user_ufd")>
 	<cfif session.user_ufd is 1><cfset isUFD = true></cfif>
 </cfif>
-<cfif session.agency is "BCA"><cfset isBCA = true></cfif>
+
 
 <!--- Get Facility Type --->
 <cfquery name="getType" datasource="#request.sqlconn#" dbtype="ODBC">
 SELECT * FROM tblType ORDER BY type
-</cfquery>   
-
-<cfquery name="getIsCity" dbtype="query">    
+</cfquery>
+<cfquery name="getIsCity" dbtype="query">
 SELECT id FROM getType WHERE iscity = 1 ORDER BY id
 </cfquery>
 <cfset isCityList = ValueList(getIsCity.id)>
-
 
 <!--- Get Access Type --->
 <cfquery name="getAccess" datasource="#request.sqlconn#" dbtype="ODBC">
@@ -233,10 +227,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 		  <cfif isdefined("getMaxSite.id")>
 		  <!--- <cfif session.user_level gt 0> --->
 		  <cfset x = ""><cfif url.pid gt 0><cfset x = "&pid=" & url.pid></cfif>
-		  <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ () --->
-		  <a  onclick='$(".overlay").show();' href="swSiteEdit.cfm?sid=#getMaxSite.id##x#&search=#search#">
-                    <img src="../images/arrow_left.png" width="20" height="29" title="Previous Site" id="leftarrow">
-          </a>
+		  <a href="swSiteEdit.cfm?sid=#getMaxSite.id##x#&search=#search#"><img src="../images/arrow_left.png" width="20" height="29" title="Previous Site" id="leftarrow"></a>
 		  <!--- </cfif> --->
 		  </cfif>
 		  </td>
@@ -245,10 +236,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 		  <cfif isdefined("getMinSite.id")>
 		  <!--- <cfif session.user_level gt 0> --->
 		  <cfset x = ""><cfif url.pid gt 0><cfset x = "&pid=" & url.pid></cfif>
-		 <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-		  <a  onclick='$(".overlay").show();'  href="swSiteEdit.cfm?sid=#getMinSite.id##x#&search=#search#">
-              <img src="../images/arrow_right.png" width="20" height="29" title="Next Site" id="rightarrow">
-          </a>
+		  <a href="swSiteEdit.cfm?sid=#getMinSite.id##x#&search=#search#"><img src="../images/arrow_right.png" width="20" height="29" title="Next Site" id="rightarrow"></a>
 		  <!--- </cfif> --->
 		  </td>
 		  </cfif>
@@ -294,16 +282,6 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 <cfif session.user_level is 0><cfset dis="disabled"></cfif>
 <cfif session.user_power lt 0><cfset dis="disabled"></cfif>
 <cfif session.user_level is 0 AND session.user_power is 1 AND isBSS><cfset dis=""></cfif><!--- Added for BSS bonus power --->
-
-
-<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
-
-
-
-
 <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:#w#px;">
 	<form name="form1" id="form1" method="post" action="" enctype="multipart/form-data">
 	<tr>
@@ -330,7 +308,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 							</cfif>
 										
 						<th class="drk left middle" style="width:55px;">Package:</th>
-						<td class="left middle pagetitle" style="width:190px;padding:1px 3px 0px 0px;"><span onMouseOver="this.style.cursor='pointer';" onClick="goToPackage(#x#);return false;">#sw_grp# - #sw_pid#</span>
+						<td class="left middle pagetitle" style="width:190px;padding:1px 3px 0px 0px;"><span onmouseover="this.style.cursor='pointer';" onclick="goToPackage(#x#);return false;">#sw_grp# - #sw_pid#</span>
 						</td>
 						<cfelse>
 						<th class="drk left middle" style="width:270px;"></th>
@@ -343,54 +321,54 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						
 						<cfif getSite.removed is "">
 						
-							<cfif session.user_power gte 2 OR (isCert AND isBSS) OR (isCert AND isBCA)> <!--- Right now, isCert only applies to BSS users for their projects. May need to change in future --->
+							<cfif session.user_power gte 2 OR (isCert AND isBSS)> <!--- Right now, isCert only applies to BSS users for their projects. May need to change in future --->
 								<td align="right" style="width:28px;">
-								<a href="" onClick="openCertificate();return false;" style="position:relative;top:0px;">
+								<a href="" onclick="openCertificate();return false;" style="position:relative;top:0px;">
 								<img src="../images/certificate.png" width="20" height="20" title="Issue Certificates"></a>
 								</td>	
 							</cfif>
 						
 							<cfif session.user_level gte 0>
 								<td align="right" style="width:50px;">
-								<a href="" onClick="openAttachments();toggleArrows();return false;" style="position:relative;top:0px;">
+								<a href="" onclick="openAttachments();toggleArrows();return false;" style="position:relative;top:0px;">
 								<img src="../images/attach_box.png" width="20" height="20" title="Open Attachments"></a>
 								</td>	
 							</cfif>
 						
 							<cfif session.user_level gt 0 OR (session.user_level is 0 AND session.user_power is 1 AND isBSS)>
 								<td align="right" style="width:50px;">
-								<a href="" onClick="openAssessment();toggleArrows();return false;" style="position:relative;top:0px;">
+								<a href="" onclick="openAssessment();toggleArrows();return false;" style="position:relative;top:0px;">
 								<img src="../images/assessment.png" width="20" height="20" title="Open Assessment Form"></a>
 								</td>						
 								
 								<td align="right" style="width:28px;">
-								<a href="" onClick="openEstimate();toggleArrows();return false;" style="position:relative;top:0px;">
+								<a href="" onclick="openEstimate();toggleArrows();return false;" style="position:relative;top:0px;">
 								<img src="../images/dollar.png" width="20" height="20" title="Open Engineering Estimate / Contractor Pricing Form"></a>
 								</td>
 								
 								<td align="right" style="width:28px;">
-								<a href="" onClick="openChangeOrders();toggleArrows();return false;" style="position:relative;top:0px;">
+								<a href="" onclick="openChangeOrders();toggleArrows();return false;" style="position:relative;top:0px;">
 								<img src="../images/change.png" width="20" height="20" title="Open Change Orders Form"></a>
 								</td>
 								
 								<td align="right" style="width:42px;">
-								<a href="" onClick="$('#chr(35)#box_curb').show();toggleArrows();return false;" style="position:relative;top:0px;">
+								<a href="" onclick="$('#chr(35)#box_curb').show();toggleArrows();return false;" style="position:relative;top:0px;">
 								<img src="../images/ramp.png" width="20" height="20" title="Open ADA Curb Ramp Form"></a>
 								</td>
 							</cfif>
 							
 							<td align="right" style="width:28px;">
-							<a href="" onClick="openTreeForm();return false;" style="position:relative;top:0px;">
+							<a href="" onclick="openTreeForm();return false;" style="position:relative;top:0px;">
 							<img src="../images/tree.png" width="20" height="20" title="Open Tree Removal Form"></a>
 							</td>
 							
 							<!--- <cfif session.user_level gt 0 AND session.user_power gte 0> --->
 								<td align="right" style="width:31px;">
 								<cfif getGeocode.recordcount gt 0>
-								<a href="" onClick="openViewer();return false;" style="position:relative;top:2px;">
+								<a href="" onclick="openViewer();return false;" style="position:relative;top:2px;">
 								<img src="../Images/MapChk.png" width="24" height="24" alt="Re-Geocode Site" title="Re-Geocode Site"></a>
 								<cfelse>
-								<a href="" onClick="openViewer();return false;" style="position:relative;top:0px;left:-4px;">
+								<a href="" onclick="openViewer();return false;" style="position:relative;top:0px;left:-4px;">
 								<img src="../Images/Map.png" width="20" height="20" alt="Geocode Site" title="Geocode Site"></a>
 								</cfif>
 								</td>
@@ -411,7 +389,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 				<input type="Text" name="sw_name" id="sw_name" value="#v#" style="width:293px;" class="rounded" #dis#></td>
 				<th class="left middle" style="width:93px;">Subtype:</th>
 				<td class="frm"  style="width:182px;">
-				<select name="sw_type" id="sw_type" class="rounded" style="width:181px;" onChange="chkAccess();" #dis#>
+				<select name="sw_type" id="sw_type" class="rounded" style="width:181px;" onchange="chkAccess();" #dis#>
 				<option value=""></option>
 				<cfloop query="getType">
 					<cfset sel = ""><cfif getSite.type is id><cfset sel = "selected"></cfif>
@@ -523,7 +501,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						<th class="left middle" style="height:30px;width:119px;">Design Required:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:60px;">
-						<select name="sw_designreq" id="sw_designreq" class="rounded" style="width:55px;" #dis# onChange="chkDesign();">
+						<select name="sw_designreq" id="sw_designreq" class="rounded" style="width:55px;" #dis# onchange="chkDesign();">
 						<option value=""></option>
 						<cfloop query="getYesNo">
 							<cfset sel = ""><cfif getSite.design_required is id><cfset sel = "selected"></cfif>
@@ -555,7 +533,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						<th class="left middle" style="height:30px;width:85px;padding:0px 3px 0px 2px;">Curb Ramp Only:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:60px;">
-						<select name="sw_curbramp" id="sw_curbramp" class="rounded" style="width:55px;" #dis# onChange="chkRampOnly();">
+						<select name="sw_curbramp" id="sw_curbramp" class="rounded" style="width:55px;" #dis# onchange="chkRampOnly();">
 						<cfloop query="getYesNo">
 							<cfset sel = ""><cfif getSite.curb_ramp_only is id><cfset sel = "selected"></cfif>
 							<!--- <cfif getSite.curb_ramp_only is "" AND id is 0><cfset selected = "selected"></cfif> --->
@@ -698,8 +676,8 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						<th class="right middle" style="height:30px;width:60px;">
 						<span style="position:relative;top:1px;">
 						<cfif dis is "">
-						<a href="" onClick="showSRID(0);return false;"><img src="../images/add2.png" width="16" height="16" title="Add Associated SRID" alt="Add Associated SRID" style="position:relative;right:10px;"></a>
-						<a href="" onClick="showSRID(1);return false;"><img src="../images/delete2.png" width="16" height="16" title="Remove Associated SRID" alt="Remove Associated SRID" style="position:relative;right:8px;"></a>
+						<a href="" onclick="showSRID(0);return false;"><img src="../images/add2.png" width="16" height="16" title="Add Associated SRID" alt="Add Associated SRID" style="position:relative;right:10px;"></a>
+						<a href="" onclick="showSRID(1);return false;"><img src="../images/delete2.png" width="16" height="16" title="Remove Associated SRID" alt="Remove Associated SRID" style="position:relative;right:8px;"></a>
 						</cfif>
 						</span>
 						</th>
@@ -921,7 +899,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 								<th class="middle">ADA Compliance Exceptions (See Notes):</th>
 								<cfset v = ""><cfif getSite.ada_exception is 1><cfset v = "checked"></cfif>
 								<th class="middle">
-								<div style="position:relative;top:1px;"><input id="sw_excptn" name="sw_excptn" type="checkbox" #v# #dis# onClick="toggleADANotes();"></div></th>
+								<div style="position:relative;top:1px;"><input id="sw_excptn" name="sw_excptn" type="checkbox" #v# #dis# onclick="toggleADANotes();"></div></th>
 								</tr>
 							</table>
 						</th>
@@ -947,7 +925,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			<tr><th class="left middle" colspan="4" style="height:16px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">Tree Removal Notes:</th>
-					<td class="right" style="padding:0px;"><a href="" onClick="expandTextArea('sw_tree_notes',2,14);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
+					<td class="right" style="padding:0px;"><a href="" onclick="expandTextArea('sw_tree_notes',2,14);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
 				</table>
 			</th></tr>
 			<tr>
@@ -967,7 +945,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			<tr><th class="left middle" colspan="4" style="height:16px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">Notes:</th>
-					<td class="right" style="padding:0px;"><a href="" onClick="expandTextArea('sw_notes',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
+					<td class="right" style="padding:0px;"><a href="" onclick="expandTextArea('sw_notes',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
 				</table>
 			</th></tr>
 			<tr>
@@ -983,7 +961,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			<tr><th class="left middle" colspan="4" style="height:16px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">Site Description:</th>
-					<td class="right" style="padding:0px;"><a href="" onClick="expandTextArea('sw_loc',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13" title="Expand to View All Text"></a></td></tr>
+					<td class="right" style="padding:0px;"><a href="" onclick="expandTextArea('sw_loc',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13" title="Expand to View All Text"></a></td></tr>
 				</table>
 			</th></tr>
 			<tr>
@@ -996,7 +974,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			<tr><th class="left middle" colspan="4" style="height:16px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">Damage Description:</th>
-					<td class="right" style="padding:0px;"><a href="" onClick="expandTextArea('sw_damage',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
+					<td class="right" style="padding:0px;"><a href="" onclick="expandTextArea('sw_damage',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
 				</table></th></tr>
 			<tr>
 				<cfset v = getSite.damage_description>
@@ -1009,7 +987,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			<tr><th class="left middle" colspan="4" style="height:16px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">ADA Compliance Exception Notes:</th>
-					<td class="right" style="padding:0px;"><a href="" onClick="expandTextArea('sw_excptn_notes',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
+					<td class="right" style="padding:0px;"><a href="" onclick="expandTextArea('sw_excptn_notes',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
 				</table></th></tr>
 			<tr>
 				<cfset v = getSite.ada_exception_notes>
@@ -1031,10 +1009,6 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 		<cfset w2 = (w-80)/2><cfset cs = 3><cfif url.pid gt 0 OR url.search is true OR url.crid gt 0><cfset w2 = (w-180)/2><cfset cs = 5></cfif>
 		<cfset v = getSite.removed>
 		<tr><td height="22" colspan="#cs#" class="right" style="width:#w#px;">
-        
-             
-        
-        
 				<cfif session.user_level gt 2>
 					<cfif v is "">
 					<a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
@@ -1047,10 +1021,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 		</td></tr>
 		<cfif v is "">
 		<tr>
-			
-			<td  style="width:#w2#px;"></td>
-            
-            
+			<td style="width:#w2#px;"></td>
 			<cfif session.user_level gt 0 AND session.user_power gte 0>
 			<td align="center">
 				<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
@@ -1080,11 +1051,9 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 	</table>
 	
 	
- 
- 
 	
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="msg_header" class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -1104,7 +1073,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 </div>
 
 <div id="msg10" class="box" style="top:40px;left:1px;width:350px;height:90px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg10').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg10').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="msg_header10" class="box_header"><strong>Warning:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<cfset v = getSite.removed>
@@ -1139,7 +1108,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 	
 	
 <div id="srid_box" class="box" style="top:40px;left:1px;width:180px;height:94px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#srid_box').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#srid_box').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="srid_header" class="box_header"><strong>Add SRID:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="srid_add" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 0px;align:center;text-align:center;">
@@ -1310,7 +1279,7 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 					<th class="center middle" style="width:50px;">Unit Price</th>
 					<cfif session.user_level gt 0 AND session.user_power gte 0>
 					<td>
-					<a onClick="updateDefaultPrice();return false;" href="">
+					<a onclick="updateDefaultPrice();return false;" href="">
 					<img style="position:relative;top:0px;" src="../images/refresh.png" width="16" height="16" title="Refresh Default Unit Prices">
 					</a>
 					</td>
@@ -1326,7 +1295,7 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 					<th class="center middle" style="width:60px;">Estimated<br>Price</th>
 					<cfif session.user_level gt 0 AND session.user_power gte 0>
 					<td>
-					<a onClick="calcSubTotal();return false;" href="">
+					<a onclick="calcSubTotal();return false;" href="">
 					<img style="position:relative;top:1px;" src="../images/Calculator.png" width="16" height="16" title="Calculate Engineer's Estimate">
 					</a>
 					</td>
@@ -1348,14 +1317,14 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 					<th class="center middle" style="width:40px;">Contractor's<br>Unit Price</th>
 					<cfif (session.user_level gt 0 AND session.user_power gte 0) OR (session.user_level is 0 AND session.user_power is 1)>
 					<td>
-					<a onClick="clearConTotal();return false;" href="">
+					<a onclick="clearConTotal();return false;" href="">
 					<img style="position:relative;top:1px;" src="../images/clear.png" width="16" height="16" title="Clear Contractor's Unit Prices">
 					</a>
 					</td>
 						<cfif sw_pid is not "" AND sw_grp is not "">
 						<td style="width:5px;"></td>
 						<td>
-						<a onClick="showMsgAll();return false;" href="">
+						<a onclick="showMsgAll();return false;" href="">
 						<img style="position:relative;top:1px;left:0px;" src="../images/accept.png" width="14" height="14" title="Apply Contractor's Unit Prices to All Sites Within this Bid Package">
 						</a>
 						</td>
@@ -1375,7 +1344,7 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 					<th class="center middle" style="width:40px;">Contractor's<br>Price&nbsp;</th>
 					<cfif session.user_level gt 0 AND session.user_power gte 0>
 					<td>
-					<a onClick="calcConTotal();return false;" href="">
+					<a onclick="calcConTotal();return false;" href="">
 					<img style="position:relative;top:1px;" src="../images/Calculator.png" width="16" height="16" title="Calculate Contractor's Cost">
 					</a>
 					</td>
@@ -1614,7 +1583,7 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 					<td style="width:2px;"></td>
 					<cfif session.user_level gt 0 AND session.user_power gte 0>
 					<td>
-					<a onClick="calcConTotal();return false;" href="">
+					<a onclick="calcConTotal();return false;" href="">
 					<img style="position:relative;top:-1px;" src="../images/Calculator.png" width="16" height="16" title="Calculate Contractor's Cost">
 					</a>
 					</td>
@@ -1634,7 +1603,7 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 					<td style="width:2px;"></td>
 					<cfif session.user_level gt 0 AND session.user_power gte 0>
 					<td>
-					<a onClick="calcSubTotal();return false;" href="">
+					<a onclick="calcSubTotal();return false;" href="">
 					<img style="position:relative;top:-1px;" src="../images/Calculator.png" width="16" height="16" title="Calculate Engineer's Estimate">
 					</a>
 					</td>
@@ -1727,7 +1696,7 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 	</table>
 	
 <div id="msg2" class="box" style="top:40px;left:1px;width:480px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg2').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg2').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text2" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -1755,7 +1724,7 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 </div>
 
 <div id="msg_all" class="box" style="top:40px;left:1px;width:480px;height:154px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg_all').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg_all').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div class="box_header"><strong>Warning:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text_all" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -1780,7 +1749,7 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 
 
 <div id="msg3" class="box_bottom" style="bottom:40px;left:1px;width:480px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg3').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg3').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text3" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -1814,12 +1783,8 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 
 <!--- Get Curbs --->
 <cfquery name="getCurbs" datasource="#request.sqlconn#" dbtype="ODBC">
-
-<!--- joe hu 7/20/2018 exclude removed=1 ---     ----->
-SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed IS NULL ORDER BY ramp_no
-
+SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# ORDER BY ramp_no
 </cfquery>
-
 
 
 <cfset crvis = "none"><cfif isdefined("url.editcr")><cfset crvis = "block"></cfif>
@@ -1905,7 +1870,7 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 <table cellspacing="0" cellpadding="0" border="0" style="width:100%;"><tr><td style="height:10px;"></td></tr></table>
 	
 <div id="msg4" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg4').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg4').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text4" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -2120,12 +2085,12 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 				
 				
 				<td class="frm left middle"><input type="Text" name="ass_#fld#_quantity" id="ass_#fld#_quantity" value="#q#" 
-				style="width:67px;text-align:center;" class="center rounded" tabindex="#tab4#" onKeyUp="addTotal('#fld#');" #treedis# #bssdis#></td>
+				style="width:67px;text-align:center;" class="center rounded" tabindex="#tab4#" onkeyup="addTotal('#fld#');" #treedis# #bssdis#></td>
 				<cfset tab4 = tab4+1>
 				
 				<cfset out=""><cfif session.user_level lt 2><cfset out = "disabled"><cfelse><cfset treedis = ""></cfif>
 				<td class="frm left middle"><input type="Text" name="ass_q_#fld#_quantity" id="ass_q_#fld#_quantity" value="#c#" 
-				style="width:67px;text-align:center;" class="center rounded" tabindex="#tab5#" onKeyUp="addTotal('#fld#');" #out# #treedis#></td>
+				style="width:67px;text-align:center;" class="center rounded" tabindex="#tab5#" onkeyup="addTotal('#fld#');" #out# #treedis#></td>
 				<cfset tab5 = tab5+1>
 				<cfset c2 = c>
 				<cfif c2 is ""><cfset c2 = 0></cfif>
@@ -2371,7 +2336,7 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 				<cfif session.user_level is 0 AND session.user_power is 1><cfset out=""></cfif>
 				<cfif session.user_power is 3><cfset out = ""></cfif>
 				<td class="frm left middle"><input type="Text" name="cor_#fld#_quantity" id="cor_#fld#_quantity" value="#co#" 
-				style="width:53px;text-align:center;" class="center rounded" tabindex="#tab6#" onKeyUp="addCORTotal('#fld#');" #out#></td>
+				style="width:53px;text-align:center;" class="center rounded" tabindex="#tab6#" onkeyup="addCORTotal('#fld#');" #out#></td>
 				<cfset tab6 = tab6+1>
 				
 				<cfset arrCOQ = listToArray(co+q,".")>
@@ -2552,8 +2517,8 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<td class="center"><span class="pagetitle" style="position:relative;top:0px;font-size: 12px;">Site No: #getSite.location_no# - #getSite.name#</span></td>
 				<td class="right" style="width:55px;"><span style="position:relative;top:1px;right:-5px;">
 				<cfif session.user_level gte 0 AND session.user_power gte 0>
-				<a href="" onClick="addSIR();return false;"><img src="../images/add_sir.png" width="24" height="24" title="Add New SIR" style="position:relative;right:0px;"></a>
-				<a href="" onClick="delSIR();return false;"><img src="../images/remove_sir.png" width="24" height="24" title="Remove Last SIR" style="position:relative;right:0px;"></a>
+				<a href="" onclick="addSIR();return false;"><img src="../images/add_sir.png" width="24" height="24" title="Add New SIR" style="position:relative;right:0px;"></a>
+				<a href="" onclick="delSIR();return false;"><img src="../images/remove_sir.png" width="24" height="24" title="Remove Last SIR" style="position:relative;right:0px;"></a>
 				</cfif>
 				</span>
 				</td></tr>
@@ -2639,8 +2604,8 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<span style="position:relative;top:0px;left:20px;">(Total: <strong><span id="tr_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
 					<th class="drk right middle"><span style="position:relative;top:1px;">
 					<cfif session.user_level gte 0 AND session.user_power gte 0>
-					<a href="" onClick="addTree('rmv',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Removal" style="position:relative;right:4px;"></a>
-					<a href="" onClick="delTree('rmv',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Removal" style="position:relative;right:2px;"></a>
+					<a href="" onclick="addTree('rmv',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Removal" style="position:relative;right:4px;"></a>
+					<a href="" onclick="delTree('rmv',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Removal" style="position:relative;right:2px;"></a>
 					</cfif>
 					</span>
 					</th></tr>
@@ -2756,8 +2721,8 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<span style="position:relative;top:0px;left:25px;">(Total: <strong><span id="tp_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
 					<th class="drk right middle"><span style="position:relative;top:1px;">
 					<cfif session.user_level gte 0 AND session.user_power gte 0>
-					<a href="" onClick="addTree('add',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Planting" style="position:relative;right:4px;"></a>
-					<a href="" onClick="delTree('add',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Planting" style="position:relative;right:2px;"></a>
+					<a href="" onclick="addTree('add',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Planting" style="position:relative;right:4px;"></a>
+					<a href="" onclick="delTree('add',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Planting" style="position:relative;right:2px;"></a>
 					</cfif>
 					</span>
 					</th></tr>
@@ -2824,7 +2789,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					style="width:26px;height:20px;padding:0px;" class="center roundedsmall" disabled></td>
 					<td style="width:2px;"></td>
 					<td class="frm left middle" style="width:46px;">
-					<select name="tpdia_#scnt#_#trcnt#" id="tpdia_#scnt#_#trcnt#" class="roundedsmall" style="width:45px;height:20px;font-size:9px;" onChange="calcTrees();" #trdis#>
+					<select name="tpdia_#scnt#_#trcnt#" id="tpdia_#scnt#_#trcnt#" class="roundedsmall" style="width:45px;height:20px;font-size:9px;" onchange="calcTrees();" #trdis#>
 					<cfloop index="i" from="1" to="#arrayLen(arrDia)#">
 						<cfset sel = ""><cfif arrDia[i] is v><cfset sel = "selected"></cfif>
 						<option value="#arrDia[i]#" #sel#>#arrDia[i]# In.</option>
@@ -2909,7 +2874,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<td style="width:2px;"></td>
 					<td class="frm left middle" style="width:28px;">
 					<div style="position:relative;left:7px;top:-1px">
-					<a href="" onClick="$('#chr(35)#tpnotediv_#scnt#_#trcnt#').toggle();return false;"><img src="../images/rep.gif" width="12" height="14" alt="Note" title="Note"></a>
+					<a href="" onclick="$('#chr(35)#tpnotediv_#scnt#_#trcnt#').toggle();return false;"><img src="../images/rep.gif" width="12" height="14" alt="Note" title="Note"></a>
 					</div>
 					</td>
 					
@@ -2927,7 +2892,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					</cfif>
 					<cfif session.user_power lt 0 AND isUFD is false><cfset fuctn = ""></cfif>
 					<div style="position:relative;left:0px;top:-1px">
-					<a id="tplink_#scnt#_#trcnt#" href="" onClick="#fuctn#return false;"><img id="tpicon_#scnt#_#trcnt#" name="tpicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#"></a>
+					<a id="tplink_#scnt#_#trcnt#" href="" onclick="#fuctn#return false;"><img id="tpicon_#scnt#_#trcnt#" name="tpicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#"></a>
 					</div>
 					</td>
 					
@@ -2956,466 +2921,13 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<input type="Hidden" id="tr_add_cnt_#scnt#" name="tr_add_cnt_#scnt#" value="#tr_add_cnt#" #sirdis#>
 				</td>
 			</tr>
-            
-            
-            
-			
-	
-    
-    
-    
-    <!--- ------------ joe hu ------ 8/7/18  ---------- add tree pruning ---------------  --->
-    
-    
-    		<tr><td style="height:2px;"></td></tr>
-    
-    
-    		<cfquery name="chkList" dbtype="query">
-				SELECT max(tree_no) as mx FROM getTreeListInfo WHERE action_type = 1  AND group_no = #scnt#
-			</cfquery>
-            
-				   <cfset max_trcnt = 0>
-				   <cfif chkList.recordcount gt 0>
-				   
-				      <cfset max_trcnt = chkList.mx>
-                   </cfif>
-			
-			<tr>
-                <th class="drk left middle" colspan="2" style="height:20px;padding:0px;">
-				 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Root Pruning / Shaving</span>
-					<span style="position:relative;top:0px;left:25px;">(Total: <strong><span id="tp_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
-					<th class="drk right middle"><span style="position:relative;top:1px;">
-					<cfif session.user_level gte 0 AND session.user_power gte 0>
-					<a href="" onClick="addTree('add',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Root Pruning / Shaving" style="position:relative;right:4px;"></a>
-					<a href="" onClick="delTree('add',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Root Pruning / Shaving" style="position:relative;right:2px;"></a>
-					</cfif>
-					</span>
-					</th></tr>
-				 </table>
-			    </th>
-            </tr>
-            
 			<tr><td style="height:2px;"></td></tr>
-            
-			<tr>
-				<td colspan="2" style="padding:0px;">
-				
-				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-					<th class="center middle" style="height:28px;width:30px;"><span style="font-size:10px;">Tree<br>No:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:47px;"><span style="font-size:10px;">Box<br>Size:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Permit<br>Issuance<br>Date:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Tree<br>Planting<br>Date:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Start<br>Watering<br>Date:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">End<br>Watering<br>Date:</span></th>
-					<td style="width:2px;"></td>
-					<th class="left middle" style="width:190px;"><span style="font-size:10px;">Address:</span></th>
-					<td style="width:2px;"></td>
-					<th class="left middle" style="width:118px;"><span style="font-size:10px;">Species:</span></th>		
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:53px;"><span style="font-size:10px;">Parkway or<br>Tree Well<br>Size:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:46px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Overhead<br>Wires:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:40px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Sub<br>Position:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:48px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Post<br>Inspected:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="left middle" ><span style="font-size:10px;">Type:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="left middle" style="width:32px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Offsite:</span></th>	
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:28px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Note:</span></th>
-					<td style="width:2px;"></td>
-					<th class="center middle" style="width:16px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;"></span></th>
-
-				</table>
-				
-				<cfloop index="i" from="1" to="#lngth2#">
-							<cfset trcnt = i>
-                            
-                            <cfquery name="chkList" dbtype="query">
-                                SELECT max(tree_no) as mx FROM getTreeListInfo WHERE action_type = 1  AND group_no = #scnt#
-                            </cfquery>
-                            
-                            <cfset max_trcnt = 0>
-                            
-							<cfif chkList.recordcount gt 0>
-							     <cfset max_trcnt = chkList.mx>
-                            </cfif>
-                            
-                            <cfset vis = "block"><cfset trdis = "">
-                            
-							    <cfif i gt max_trcnt><cfset vis = "none">
-								    <cfset trdis = "disabled">
-                                </cfif>
-                                
-                                
-                            <div id="tr_add_div_#scnt#_#trcnt#" style="display:#vis#;">
-                            
-                                 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-                                  <tr>
-                                    <td height="2px;">
-                                    </td>
-                                  </tr>
-                                 </table>
-                            
-                                 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-                            
-                                                    <cfquery name="getList" dbtype="query">
-                                                         SELECT * FROM getTreeListInfo WHERE action_type = 1 AND group_no = #scnt# AND tree_no = #trcnt#
-                                                    </cfquery>
-                                                    
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:29px;height:26px;">
-                                                            <cfset v = 24>
-                                                            
-                                                            <cfif trim(getList.tree_box_size) is not "">
-                                                                     <cfset v = trim(getList.tree_box_size)>
-                                                            </cfif>
-                                                            
-                                                            <input type="Text" name="tpcnt_#scnt#_#trcnt#" id="tpcnt_#scnt#_#trcnt#" value="#trcnt#" 
-                                                            style="width:26px;height:20px;padding:0px;" class="center roundedsmall" disabled>
-                                                    </td>
-                                                    
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:46px;">
-                                                       <select name="tpdia_#scnt#_#trcnt#" id="tpdia_#scnt#_#trcnt#" class="roundedsmall" style="width:45px;height:20px;font-size:9px;" onChange="calcTrees();" #trdis#>
-                                                       
-                                                                <cfloop index="i" from="1" to="#arrayLen(arrDia)#">
-                                                                    <cfset sel = "">
-                                                                    <cfif arrDia[i] is v>
-                                                                            <cfset sel = "selected">
-                                                                    </cfif>
-                                                                    <option value="#arrDia[i]#" #sel#>
-                                                                         #arrDia[i]# In.
-                                                                    </option>
-                                                                </cfloop>
-                                                        </select>
-                                                    </td>
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.permit_issuance_date) is not "">
-                                                       <cfset v = dateformat(trim(getList.permit_issuance_date),"mm/dd/yyyy")>
-                                                    </cfif>
-                                                    
-                                                    <td class="frm left middle" style="width:60px;">
-                                                    
-                                                            <input type="Text" name="tppidt_#scnt#_#trcnt#" id="tppidt_#scnt#_#trcnt#" value="#v#" 
-                                                            style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.tree_planting_date) is not "">
-                                                       <cfset v = dateformat(trim(getList.tree_planting_date),"mm/dd/yyyy")>
-                                                    </cfif>
-                                                    
-                                                    <td class="frm left middle" style="width:60px;">
-                                                        <input type="Text" name="tptrdt_#scnt#_#trcnt#" id="tptrdt_#scnt#_#trcnt#" value="#v#" 
-                                                    style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    
-                                                    <cfset v = "">
-                                                    
-                                                        <cfif trim(getList.start_watering_date) is not "">
-                                                    
-                                                            <cfset v = dateformat(trim(getList.start_watering_date),"mm/dd/yyyy")>
-                                                        </cfif>
-                                                        
-                                                    <td class="frm left middle" style="width:60px;">
-                                                    
-                                                        <input type="Text" name="tpswdt_#scnt#_#trcnt#" id="tpswdt_#scnt#_#trcnt#" value="#v#" 
-                                                        style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.end_watering_date) is not "">
-                                                            <cfset v = dateformat(trim(getList.end_watering_date),"mm/dd/yyyy")>
-                                                    </cfif>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:60px;">
-                                                        <input type="Text" name="tpewdt_#scnt#_#trcnt#" id="tpewdt_#scnt#_#trcnt#" value="#v#" 
-                                                    style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.address) is not "">
-                                                        <cfset v = trim(getList.address)>
-                                                    </cfif>
-                                                    <cfif getList.recordcount is 0>
-                                                            <cfset v = getSite.address>
-                                                    </cfif>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:191px;">
-                                                            <input type="Text" name="tpaddr_#scnt#_#trcnt#" id="tpaddr_#scnt#_#trcnt#" value="#v#" 
-                                                    style="width:188px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" class="roundedsmall" #trdis#>
-                                                    
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;">
-                                                    </td>
-                                                    
-                                                    <td class="frm left middle" style="width:119px;">
-                                                    
-                                                                <div class="ui-widget">
-                                                                        <cfset v = "">
-                                                                        <cfif trim(getList.species) is not "">
-                                                                            <cfset v = trim(getList.species)>
-                                                                        </cfif>
-                                                                       
-                                                                        <label for="tp_species_#scnt#_#trcnt#">
-                                                                        </label>
-                                                                        
-                                                                        <input type="Text" name="tpspecies_#scnt#_#trcnt#" id="tpspecies_#scnt#_#trcnt#" value="#v#" 
-                                                                        style="width:116px;height:20px;padding:0px 2px 0px 4px;font-size:9px;" class="roundedsmall" #trdis#>
-                                                                </div>
-                                                    
-                                                    </td>	
-                                
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                        
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.parkway_treewell_size) is not "">
-                                                        <cfset v = trim(getList.parkway_treewell_size)>
-                                                    </cfif>
-                                                    
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:52px;">
-                                                                <input type="Text" name="tpparkway_#scnt#_#trcnt#" id="tpparkway_#scnt#_#trcnt#" value="#v#" 
-                                                            style="width:49px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" maxlength="20" class="roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif getList.overhead_wires is 1>
-                                                            <cfset v = "checked">
-                                                    </cfif>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:46px;">
-                                                    
-                                                            <div style="position:relative;left:12px;">
-                                                                    <input id="tpoverhead_#scnt#_#trcnt#" name="tpoverhead_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
-                                                            </div>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    
-                                                    
-                                                    <cfset v = "">
-                                                    <cfif trim(getList.sub_position) is not "">
-                                                            <cfset v = trim(getList.sub_position)>
-                                                    </cfif>
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:40px;"><input type="Text" name="tpsubpos_#scnt#_#trcnt#" id="tpsubpos_#scnt#_#trcnt#" value="#v#" 
-                                                                style="width:36px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" maxlength="3" class="center roundedsmall" #trdis#>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                            <cfif getList.post_inspected is 1>
-                                                                    <cfset v = "checked">
-                                                            </cfif>
-                                                            
-                                                            
-                                                    <td class="frm left middle" style="width:48px;">
-                                                            <div style="position:relative;left:12px;">
-                                                                    <input id="tppostinspect_#scnt#_#trcnt#" name="tppostinspect_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
-                                                            </div>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <td class="frm left middle">
-                                                        <select name="tptype_#scnt#_#trcnt#" id="tptype_#scnt#_#trcnt#" class="roundedsmall" style="width:95px;height:20px;font-size:9px;" #trdis#>
-                                                        <!--- <option value=""></option> --->
-                                                            <cfloop query="getTreeTypes">
-                                                                <cfset sel = "">
-                                                                <cfif getList.type is id>
-                                                                        <cfset sel = "selected">
-                                                                </cfif>
-                                                                
-                                                                <option value="#id#" #sel#>#value#</option>
-                                                                    
-                                                            </cfloop>
-                                                        </select>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <cfset v = "">
-                                                        <cfif getList.offsite is 1>
-                                                            <cfset v = "checked">
-                                                        </cfif>
-                                                        
-                                                    <td class="frm left middle" style="width:32px;">
-                                                    
-                                                         <div style="position:relative;left:5px;">
-                                                            <input id="tpoffsite_#scnt#_#trcnt#" name="tpoffsite_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
-                                                         </div>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <td class="frm left middle" style="width:28px;">
-                                                    
-                                                        <div style="position:relative;left:7px;top:-1px">
-                                                                <a href="" onClick="$('#chr(35)#tpnotediv_#scnt#_#trcnt#').toggle();return false;"><img src="../images/rep.gif" width="12" height="14" alt="Note" title="Note">
-                                                                </a>
-                                                        </div>
-                                                    </td>
-                                                    
-                                                    <td style="width:2px;"></td>
-                                                    
-                                                    <td class="frm left middle" style="width:16px;">
-                                                    
-                                                                    <cfset img = "map_small.png">
-                                                                    <cfset msg = "Map Tree ID: #getList.id#">
-                                                                    
-                                                                    
-                                                                    <cfif getList.id is "">
-                                                                       
-                                                                            <cfset img = "map_small_x.png">
-                                                                            <cfset msg = "">
-                                                                            <cfset fuctn = "">
-                                                                    
-                                                                    
-                                                                    <cfelse>
-                                                                    
-                                                                    
-                                                                            <cfquery name="getCnt" datasource="ufd_inventory_spatial" dbtype="ODBC">
-                                                                                 SELECT count(*) as cnt FROM #request.tree_tbl# WHERE srp_tree_id = #getList.id#
-                                                                            </cfquery>
-                                                                            
-                                                                            <cfif getCnt.cnt gt 0><cfset img = "map_small_chk.png">
-                                                                            </cfif>
-                                                                            <cfset fuctn = "geocodeTree(#scnt#,#trcnt#,#getList.id#);">
-                                                                            
-                                                                    </cfif>
-                                                                    
-                                                                    
-                                                                    
-                                                                    <cfif session.user_power lt 0 AND isUFD is false>
-                                                                            <cfset fuctn = "">
-                                                                    </cfif>
-                                                                    
-                                                                    <div style="position:relative;left:0px;top:-1px">
-                                                                            <a id="tplink_#scnt#_#trcnt#" href="" onClick="#fuctn#return false;"><img id="tpicon_#scnt#_#trcnt#" name="tpicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#">
-                                                                            </a>
-                                                                    </div>
-                                                                    
-                                                                    
-                                                                    
-                                                    </td>
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    <td style="width:0px;position:absolute;">
-                                                    
-                                                    
-                                                            <div id="tpnotediv_#scnt#_#trcnt#" style="position:absolute;height:30px;width:400px;top:-2px;left:-456px;border:0px red solid;background:white;display:none;">
-                                                                    <table cellpadding="0" cellspacing="0" border="0" class="frame" style="width:100%;position:relative;top:0px;border-width:1px;">
-                                                                            <tr><td colspan="2" style="height:1px;"></td></tr>
-                                                                            
-                                                                            <tr>
-                                                                                    <td style="width:1px;"></td>
-                                                                                    
-                                                                                    <th class="left middle" style="width:28px;height:24px;"><span style="font-size:10px;">Note:</span></th>
-                                                                                    <td style="width:2px;"></td>
-                                                                                    
-                                                                                    <cfset v = "">
-                                                                                    <cfif trim(getList.note) is not "">
-                                                                                         <cfset v = trim(getList.note)>
-                                                                                    </cfif>
-                                                                                    
-                                                                                    <td class="frm left middle" style="">
-                                                                                                    <input type="Text" name="tpnote_#scnt#_#trcnt#" id="tpnote_#scnt#_#trcnt#" value="#v#" 
-                                                                                            style="width:354px;height:20px;padding:0px 2px 0px 4px;font-size:10px;top:-1px;position:relative;" class="roundedsmall" #trdis#>
-                                                                                    </td>	
-                                                                                    
-                                                                                    <td style="width:1px;"></td>
-                                                                            </tr>
-                                                                            
-                                                                            <tr><td colspan="2" style="height:1px;"></td></tr>
-                                                                            
-                                                                            
-                                                                    </table>
-                                                            </div>
-                                                    </td>
-                                
-                                             </table>
-                                    </div>
-				          </cfloop>
-                   
-							<cfset tr_add_cnt = max_trcnt>
-                            
-                            <input type="Hidden" id="tr_add_cnt_#scnt#" name="tr_add_cnt_#scnt#" value="#tr_add_cnt#" #sirdis#>
-                            
-                        </td>
-                    </tr>
-                    
-                    
-        
-        
-    
-    <!--- ----  End ----------   joe hu ------ 8/7/18  ---------- add tree pruning ---------------  --->
-    
-    
-    
-    
-    
-    		<tr><td style="height:2px;"></td></tr>
 			<tr><th class="drk" style="height:0px;"></th></tr>
 			</table>
 			<!--- <input type="Hidden" id="tr_add_cnt_#scnt#" name="tr_add_cnt_#scnt#" value="#tr_add_cnt#"> --->
 			</div>
 		</td>
 		</tr>
-		
-	
 		
 	</cfloop>
 		
@@ -3426,11 +2938,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 		<cfset arrTrees[4] = "EXISTING_STUMP_REMOVAL_">
 		<cfset arrTrees[5] = "FURNISH_AND_PLANT_24_INCH_BOX_SIZE_TREE_">
 		<cfset arrTrees[6] = "WATER_TREE__UP_TO_30_GALLONS_l_WEEK___FOR_ONE_MONTH_">
-    
-    
-    
-    
-    
+	
 		<tr>
 			<td style="padding:0px;" colspan="2">
 			
@@ -3561,7 +3069,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfset v = 0><cfif evaluate("getEst.#arrTrees[3]#QUANTITY") is not "">
 					<cfset v = evaluate("getEst.#arrTrees[3]#QUANTITY")></cfif>
 					<td class="frm left middle" style="width:135px;"><input type="Text" name="tree_#tr_fld#QUANTITY" id="tree_#tr_fld#QUANTITY" value="#v#" 
-					style="width:130px;text-align:center;" class="center rounded" onKeyUp="autoLock();"></td>
+					style="width:130px;text-align:center;" class="center rounded" onkeyup="autoLock();"></td>
 					
 					<td></td>
 					
@@ -3703,7 +3211,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr><th class="left middle" colspan="11" style="height:20px;">
 					<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="left middle" style="padding:1px 0px 0px 0px">Tree Removal Notes:</th>
-					<td class="right" style="padding:0px;"><a href="" onClick="expandTextArea('tree_trn',4,14);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
+					<td class="right" style="padding:0px;"><a href="" onclick="expandTextArea('tree_trn',4,14);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
 					</table>
 				</th></tr>
 				<tr><td style="height:2px;"></td></tr>
@@ -3788,7 +3296,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 	
 	
 <div id="msg5" class="box" style="top:40px;left:1px;width:380px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg5').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg5').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text5" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -3901,7 +3409,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_cert" #href_cert# target="_blank"><img id="img_cert" src="#src_cert#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Certification Form</span></a>
-					<span id="rmv_cert" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(2);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Certification Form" style="position:relative;top:-2px;left:7px;"></a></span>
+					<span id="rmv_cert" style="visibility:#attvis#;"><a href="" onclick="showRemoveAttach(2);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Certification Form" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -3911,7 +3419,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_roe" #href_roe# target="_blank"><img id="img_roe" src="#src_roe#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">ROE Form</span></a>
-					<span id="rmv_roe" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(3);return false;"><img src="../images/grey_x.png" width="8" height="8" title="ROE Form" style="position:relative;top:-2px;left:7px;"></a></span>
+					<span id="rmv_roe" style="visibility:#attvis#;"><a href="" onclick="showRemoveAttach(3);return false;"><img src="../images/grey_x.png" width="8" height="8" title="ROE Form" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -3921,7 +3429,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_memo" #href_memo# target="_blank"><img id="img_memo" src="#src_memo#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Memos</span></a>
-					<span id="rmv_memo" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(4);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Memos" style="position:relative;top:-2px;left:7px;"></a></span>
+					<span id="rmv_memo" style="visibility:#attvis#;"><a href="" onclick="showRemoveAttach(4);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Memos" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -3931,7 +3439,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_curb" #href_curb# target="_blank"><img id="img_curb" src="#src_curb#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Curb Ramp Plans</span></a>
-					<span id="rmv_curb" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(5);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Curb Ramp Plans" style="position:relative;top:-2px;left:7px;"></a></span>
+					<span id="rmv_curb" style="visibility:#attvis#;"><a href="" onclick="showRemoveAttach(5);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Curb Ramp Plans" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -3941,7 +3449,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_rcurb" #href_rcurb# target="_blank"><img id="img_rcurb" src="#src_rcurb#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Revised Curb Ramp Plans</span></a>
-					<span id="rmv_rcurb" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(7);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Revised Curb Ramp Plans" style="position:relative;top:-2px;left:7px;"></a></span>
+					<span id="rmv_rcurb" style="visibility:#attvis#;"><a href="" onclick="showRemoveAttach(7);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Revised Curb Ramp Plans" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -3950,7 +3458,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_rmvl" #href_rmvl# target="_blank"><img id="img_rmvl" src="#src_rmvl#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Tree Removal Permits</span></a>
-					<span id="rmv_rmvl" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(0);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Tree Removal Permits" style="position:relative;top:-2px;left:7px;"></a></span>
+					<span id="rmv_rmvl" style="visibility:#attvis#;"><a href="" onclick="showRemoveAttach(0);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Tree Removal Permits" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -3959,7 +3467,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_prn" #href_prn# target="_blank"><img id="img_prn" src="#src_prn#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Tree Prune Permits</span></a>
-					<span id="rmv_prn" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(6);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Tree Prune Permits" style="position:relative;top:-2px;left:7px;"></a></span>
+					<span id="rmv_prn" style="visibility:#attvis#;"><a href="" onclick="showRemoveAttach(6);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Tree Prune Permits" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -3968,11 +3476,11 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:120px;"><a id="a_arb" #href_arb# target="_blank"><img id="img_arb" src="#src_arb#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Arborist Report</span></a>
-					<span id="rmv_arb" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(1);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Arborist Report" style="position:relative;top:-2px;left:7px;"></a></span>
+					<span id="rmv_arb" style="visibility:#attvis#;"><a href="" onclick="showRemoveAttach(1);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Arborist Report" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr>
-					<th><cfif session.user_power gte 0><a href="" onClick="showAttach();return false;"><img src="../images/attach.png" width="9" height="15" title="Attach Files" style="position:relative;top:3px;right:5px;">
+					<th><cfif session.user_power gte 0><a href="" onclick="showAttach();return false;"><img src="../images/attach.png" width="9" height="15" title="Attach Files" style="position:relative;top:3px;right:5px;">
 					<span style="position:relative;top:0px;right:5px;" title="Attach Files">Attach Files</span></a></cfif></td>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -4035,9 +3543,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_cert" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_cert" style="display:block;">
-					<input id="file_cert" name="file_cert" type="file" class="file" style="top:15px;left:#lft+90#px;display:block;" onChange="setFileName('cert');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_cert" name="file_cert" type="file" class="file" style="top:15px;left:#lft+90#px;display:block;" onchange="setFileName('cert');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_cert" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:16px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:16px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-8px;">ROE Form PDF:</strong></th></tr>
@@ -4047,9 +3555,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_roe" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_roe" style="display:block;">
-					<input id="file_roe" name="file_roe" type="file" class="file" style="top:#15+dt#px;left:#lft+90#px;display:block;" onChange="setFileName('roe');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_roe" name="file_roe" type="file" class="file" style="top:#15+dt#px;left:#lft+90#px;display:block;" onchange="setFileName('roe');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_roe" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:58px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:58px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-13px;">Memos PDF:</strong></th></tr>
@@ -4059,9 +3567,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_memo" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_memo" style="display:block;">
-					<input id="file_memo" name="file_memo" type="file" class="file" style="top:#15+2*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('memo');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_memo" name="file_memo" type="file" class="file" style="top:#15+2*dt#px;left:#lft+90#px;display:block;" onchange="setFileName('memo');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_memo" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+2*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+2*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-18px;">Curb Ramp Plans PDF:</strong></th></tr>
@@ -4071,9 +3579,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_curb" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_curb" style="display:block;">
-					<input id="file_curb" name="file_curb" type="file" class="file" style="top:#15+3*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('curb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_curb" name="file_curb" type="file" class="file" style="top:#15+3*dt#px;left:#lft+90#px;display:block;" onchange="setFileName('curb');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_curb" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+3*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+3*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-23px;">Revised Curb Ramp Plans PDF:</strong></th></tr>
@@ -4083,9 +3591,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_rcurb" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_rcurb" style="display:block;">
-					<input id="file_rcurb" name="file_rcurb" type="file" class="file" style="top:#15+4*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('rcurb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_rcurb" name="file_rcurb" type="file" class="file" style="top:#15+4*dt#px;left:#lft+90#px;display:block;" onchange="setFileName('rcurb');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_rcurb" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+4*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+4*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-28px;">Tree Removal Permit PDF:</strong></th></tr>
@@ -4095,9 +3603,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_rmvl" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_rmvl" style="display:block;">
-					<input id="file_rmvl" name="file_rmvl" type="file" class="file" style="top:#15+5*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('rmvl');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_rmvl" name="file_rmvl" type="file" class="file" style="top:#15+5*dt#px;left:#lft+90#px;display:block;" onchange="setFileName('rmvl');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_rmvl" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+5*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+5*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-33px;">Tree Prune Permit PDF:</strong></th></tr>
@@ -4107,9 +3615,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_prn" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_prn" style="display:block;">
-					<input id="file_prn" name="file_prn" type="file" class="file" style="top:#15+6*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('prn');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_prn" name="file_prn" type="file" class="file" style="top:#15+6*dt#px;left:#lft+90#px;display:block;" onchange="setFileName('prn');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_prn" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+6*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+6*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-38px;">Arborist Report PDF:</strong></th></tr>
@@ -4119,9 +3627,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_arb" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_arb" style="display:block;">
-					<input id="file_arb" name="file_arb" type="file" class="file" style="top:#15+7*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('arb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_arb" name="file_arb" type="file" class="file" style="top:#15+7*dt#px;left:#lft+90#px;display:block;" onchange="setFileName('arb');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_arb" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+7*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+7*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 					
 					<cfelse> <!--- Added for just BSS adding data  --->
@@ -4133,9 +3641,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_rmvl" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_rmvl" style="display:block;">
-					<input id="file_rmvl" name="file_rmvl" type="file" class="file" style="top:#15#px;left:#lft+90#px;display:block;" onChange="setFileName('rmvl');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_rmvl" name="file_rmvl" type="file" class="file" style="top:#15#px;left:#lft+90#px;display:block;" onchange="setFileName('rmvl');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_rmvl" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-8px;">Tree Prune Permit PDF:</strong></th></tr>
@@ -4145,9 +3653,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_prn" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_prn" style="display:block;">
-					<input id="file_prn" name="file_prn" type="file" class="file" style="top:#15+dt#px;left:#lft+90#px;display:block;" onChange="setFileName('prn');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_prn" name="file_prn" type="file" class="file" style="top:#15+dt#px;left:#lft+90#px;display:block;" onchange="setFileName('prn');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_prn" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-13px;">Arborist Report PDF:</strong></th></tr>
@@ -4157,9 +3665,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<div id="fi_arb" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_arb" style="display:block;">
-					<input id="file_arb" name="file_arb" type="file" class="file" style="top:#15+2*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('arb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_arb" name="file_arb" type="file" class="file" style="top:#15+2*dt#px;left:#lft+90#px;display:block;" onchange="setFileName('arb');return false;" onclick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_arb" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+2*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+2*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onclick="return false;">Browse</a>
 					</td></tr>
 
 					</cfif>
@@ -4175,7 +3683,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 	<table cellspacing="0" cellpadding="0" border="0" style="width:100%;"><tr><td style="height:10px;"></td></tr></table>
 	
 	<div id="msg7" class="box" style="top:40px;left:1px;width:350px;height:80px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg7').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg7').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div id="msg_header5" class="box_header"><strong>Warning:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text7" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
@@ -4307,16 +3815,6 @@ function submitForm() {
 
 	//console.log(frm);
 	
-	
-	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
-	
-	$(".overlay").show();
-	
-	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
-	
-	
-	
-	
 	$.ajax({
 	  type: "POST",
 	  url: url + "cfc/sw.cfc?method=updateSite&callback=",
@@ -4324,18 +3822,6 @@ function submitForm() {
 	  success: function(data) { 
 	  	data = jQuery.parseJSON(trim(data));
 	  	console.log(data);
-		
-		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-	    
-	   
-	    $(".overlay").hide();	
-				
-	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-		
-		
-		
-		
-		
 		
 		if(data.RESULT != "Success") {
 			showMsg(data.RESULT,1);
@@ -4872,15 +4358,6 @@ function showRemove() {
 }
 
 function deleteSite(idx) {
-	
-	<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
-	$(".overlay").show();
-    <!--- end joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-
-	
-	
-	
 	var frm = [];
 	frm.push({"name" : "sid", "value" : sid });
 	//console.log(frm);

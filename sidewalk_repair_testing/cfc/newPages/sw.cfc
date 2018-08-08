@@ -3673,10 +3673,6 @@
 			<cfset session.user_num = login_chk.user_id>
 			<cfset session.user_cert = login_chk.user_cert>
 			<cfset session.user_ufd = login_chk.user_ufd>
-            
-             <!--- joe hu 7/31/18 report access --->
-            <cfset session.user_report = login_chk.user_report>
-             
 			<cfset data.response = "Success">
 			
 			<cfset session.token = CreateUUID()>

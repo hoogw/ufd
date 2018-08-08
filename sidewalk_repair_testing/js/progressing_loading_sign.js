@@ -60,6 +60,9 @@
 
                  
                  // =====  End =====  ajax loading image  ============
+				 
+				 
+				
 
           }//show_loading_img_spinner
 

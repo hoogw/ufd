@@ -50,7 +50,7 @@ findNoCase('Touch', cgi.http_user_agent,1)>
 <cfinclude template="../css/css.cfm">
 
 
- <script language="JavaScript" src="../js/progressing_loading_sign.js" type="text/javascript"></script>
+
 
 </head>
 
@@ -496,7 +496,11 @@ SELECT DISTINCT category FROM getType ORDER BY category
 </div>
 
 
-<div id="result_panel">
+<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+<div class="overlay">
+    <div id="loading-img"></div>
+</div>
+
 
 
 <div name="ss_arrow" id="ss_arrow" onClick="toggleSearchBox();"
@@ -551,9 +555,7 @@ style="position:relative;top:8px;left:5px;height:100%;width:100%;border:2px #req
 <table id="tbl_results" border="0" cellpadding="0" cellspacing="0" ><tr><td></td></tr></table>
 </div>
 
-	
-</div> <!--- id="result_panel"   --->    
-    
+
     
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
 	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
@@ -661,10 +663,11 @@ function submitForm() {
 	//console.log(frm);
 	//console.log(top.ssearch);
 	
-	<!---  ---- loading sign started ------  --->
-	 $("#result_panel").hide();
-	 show_loading_img_spinner('search', 'progressing_loading_sign')
+	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
 	
+	$(".overlay").show();
+	
+	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
 	
 	
 	
@@ -685,9 +688,12 @@ function submitForm() {
 		}
 		
 		
-		<!---  ---- loading sign ended ------  --->
-		remove_loading_img_spinner('progressing_loading_sign');
-		$("#result_panel").show();
+		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+	    
+	   
+	    $(".overlay").hide();	
+				
+	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
 		
 		
 		var sno; var ssfx; var sp; var sg; var sname; var saddr; var stype; var swo; var sid; var spid; var spry; var cd; var tc; var tcon; var eest;
@@ -838,6 +844,14 @@ function trim(stringToTrim) {
 }
 
 function goToSite(sid,spid) {
+	
+	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
+	
+	$(".overlay").show();
+	
+	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
+	
+	 
 	location.replace(url + "forms/swSiteEdit.cfm?sid=" + sid + "&pid=" + spid + "&search=true");
 }
 

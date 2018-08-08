@@ -49,6 +49,8 @@ findNoCase('Touch', cgi.http_user_agent,1)>
 <!--- <link href="#request.stylesheet#" rel="stylesheet" type="text/css"> --->
 <cfinclude template="../css/css.cfm">
 
+<script language="JavaScript" src="../js/progressing_loading_sign.js" type="text/javascript"></script>
+
 
 </head>
 
@@ -443,10 +445,8 @@ SELECT * FROM tblCurbRequestType ORDER BY type
 
 
 <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
-
+<div id="processing_icon" align="center"></div>
+<div id="result_panel">
 
 
 
@@ -492,6 +492,8 @@ style="position:relative;top:8px;left:5px;height:100%;width:100%;border:2px #req
 <table id="tbl_results" border="0" cellpadding="0" cellspacing="0" ><tr><td></td></tr></table>
 </div>
 
+
+</div> <!--- id="result_panel"   --->    
 
 	
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
@@ -598,11 +600,9 @@ function submitForm() {
 	//console.log(top.ssearch);
 	
 	
-	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
-	
-	$(".overlay").show();
-	
-	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
+	<!---  ---- loading sign started ------  --->
+	 $("#result_panel").hide();
+	 show_loading_img_spinner('processing_icon', 'progressing_loading_sign')
 	 
 	 
 	 
@@ -625,11 +625,10 @@ function submitForm() {
 		
 		
 		
-		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-	    
-	    $(".overlay").hide();	
-				
-	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+		<!---  ---- loading sign ended ------  --->
+		//wait(3000);  //3 seconds in milliseconds
+		remove_loading_img_spinner('progressing_loading_sign');
+		$("#result_panel").show();
 		
 		
 		var sno; var rid; var pst; var sst; var sconc; var spry; var stype; var ic; var cd; var db; var dfd;
@@ -764,13 +763,9 @@ function trim(stringToTrim) {
 
 function goToSite(crid) {
 	
-	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
-	
-	$(".overlay").show();
-	
-	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
-	
-	
+	//  ---- loading sign started ------  --->
+	 $("#result_panel").hide();
+	 show_loading_img_spinner('processing_icon', 'progressing_loading_sign')
 	
 	location.replace(url + "forms/swCurbRampEdit.cfm?crid=" + crid + "&search=true");
 }

@@ -50,7 +50,6 @@ findNoCase('Touch', cgi.http_user_agent,1)>
 <cfinclude template="../css/css.cfm">
 
 
-<script language="JavaScript" src="../js/progressing_loading_sign.js" type="text/javascript"></script>
 
 </head>
 
@@ -191,7 +190,13 @@ SELECT * FROM tblPackageGroup ORDER BY package_group
 </div>
 
 
-<div id="result_panel">
+<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+<div class="overlay">
+    <div id="loading-img"></div>
+</div>
+
+
+
 
 <div name="ss_arrow" id="ss_arrow" onClick="toggleSearchBox();"
 style="position:absolute;top:192px;left:0px;height:15px;width:50px;border:0px red solid;overflow:hidden;display:none;">
@@ -223,10 +228,7 @@ style="position:relative;top:8px;left:5px;height:100%;width:100%;border:2px #req
 <table id="tbl_results" border="0" cellpadding="0" cellspacing="0" ><tr><td></td></tr></table>
 </div>
 
-										
-</div> <!--- id="result_panel"   --->    										
-	
-	
+
 	
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
 	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
@@ -322,9 +324,11 @@ function submitForm() {
 	//console.log(top.psearch);
 	
 	
-	<!---  ---- loading sign started ------  --->
-	 $("#result_panel").hide();
-	 show_loading_img_spinner('search', 'progressing_loading_sign')
+	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
+	
+	$(".overlay").show();
+	
+	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
 	
 	
 	$.ajax({
@@ -343,16 +347,13 @@ function submitForm() {
 		
 		
 		
-		  
-		     
-			
-			
 		
 		
-		<!---  ---- loading sign ended ------  --->
-		//wait(3000);  //3 seconds in milliseconds
-		remove_loading_img_spinner('progressing_loading_sign');
-		$("#result_panel").show();
+		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+	    
+	    $(".overlay").hide();	
+				
+	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
 		
 		
 		
@@ -433,6 +434,14 @@ function trim(stringToTrim) {
 }
 
 function goToPackage(pid) {
+	
+	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
+	
+	$(".overlay").show();
+	
+	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
+	 
+	
 	location.replace(url + "forms/swPackageEdit.cfm?pid=" + pid);
 }
 
