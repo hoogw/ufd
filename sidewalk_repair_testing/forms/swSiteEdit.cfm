@@ -36,6 +36,9 @@
 
 
 
+
+
+
 </head>
 
 <style type="text/css">
@@ -296,10 +299,33 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 <cfif session.user_level is 0 AND session.user_power is 1 AND isBSS><cfset dis=""></cfif><!--- Added for BSS bonus power --->
 
 
-<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
+	<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+      <!---
+            <div class="overlay" >
+                <div id="loading-img"></div>
+            </div>
+       --->		
+    <!--- End  joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+
+
+
+
+
+   <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+
+        <!--- fix bug ---- avoid user accidently click tree form button before it is fully loaded --->
+        <!--- without style="display: block;", user can get form 'undefined' error ------ --->
+        <!--- css default style="display: none;", inline style override css rule,  style="display: block;" ------ --->  
+
+            <div class="overlay" style="display: block;" >
+                <div id="loading-img"></div>
+            </div>
+
+
+    <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+
+
+
 
 
 
@@ -1822,6 +1848,7 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 
 
 
+
 <cfset crvis = "none"><cfif isdefined("url.editcr")><cfset crvis = "block"></cfif>
 <div id="box_curb" style="position:absolute;top:0px;left:0px;height:100%;width:100%;border:0px red solid;z-index:500;display:#crvis#;">
 
@@ -2745,6 +2772,21 @@ SELECT * FROM tblTreeTypes ORDER BY id
 			</tr>
 			<tr><td style="height:2px;"></td></tr>
 			
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 				<cfquery name="chkList" dbtype="query">
 				SELECT max(tree_no) as mx FROM getTreeListInfo WHERE action_type = 1  AND group_no = #scnt#
 				</cfquery>
@@ -2964,31 +3006,72 @@ SELECT * FROM tblTreeTypes ORDER BY id
     
     
     
-    <!--- ------------ joe hu ------ 8/7/18  ---------- add tree pruning ---------------  --->
+    <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
     
     
+    
+				<!---   test1 ======== dbtype="query"  failed to get v value, not sure why, adobe's bug?
+                
+                
+                <tr>
+                    <td>
+                         <cfquery name="test0" datasource="#request.sqlconn#" dbtype="ODBC">
+                            SELECT * FROM tblTreeList WHERE location_no = #getSite.location_no# AND deleted <> 1 and ACTION_TYPE = 2  AND group_no = #scnt#
+                           </cfquery>
+                           
+                           
+                           
+                           
+                           
+                           <cfquery name="test1" dbtype="query">
+                            SELECT * FROM getTreeListInfo WHERE ACTION_TYPE = 2 AND group_no = #scnt#
+                           </cfquery>
+                        
+                       
+                        #test1.ID#, #test1.action_type#, #test0.ID#, #test0.action_type#
+                       
+                        
+                     </td>   
+                </tr>
+               --->
+   
+   
+   
+   
+   
     		<tr><td style="height:2px;"></td></tr>
     
-    
-    		<cfquery name="chkList" dbtype="query">
-				SELECT max(tree_no) as mx FROM getTreeListInfo WHERE action_type = 1  AND group_no = #scnt#
+     <!---   failed, 
+    		<cfquery name="chkList" datasource="#request.sqlconn#" dbtype="ODBC">
+				SELECT max(tree_no) as mx FROM tblTreeList WHERE location_no = #getSite.location_no# AND deleted <> 1 and ACTION_TYPE = 2  AND group_no = #scnt#
 			</cfquery>
+       --->
+       
+      
+            
+            <cfquery name="chkList" dbtype="query">
+				SELECT max(tree_no) as mx FROM getTreeListInfo WHERE ACTION_TYPE = 2  AND group_no = #scnt#
+			</cfquery>
+           
+            
             
 				   <cfset max_trcnt = 0>
-				   <cfif chkList.recordcount gt 0>
+				   <cfif len(chkList.mx) >
 				   
 				      <cfset max_trcnt = chkList.mx>
                    </cfif>
+		
 			
 			<tr>
                 <th class="drk left middle" colspan="2" style="height:20px;padding:0px;">
 				 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Root Pruning / Shaving</span>
-					<span style="position:relative;top:0px;left:25px;">(Total: <strong><span id="tp_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
+					<span style="position:relative;top:0px;left:25px;">(Total: <strong><span id="trps_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
 					<th class="drk right middle"><span style="position:relative;top:1px;">
+                    
 					<cfif session.user_level gte 0 AND session.user_power gte 0>
-					<a href="" onClick="addTree('add',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Root Pruning / Shaving" style="position:relative;right:4px;"></a>
-					<a href="" onClick="delTree('add',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Root Pruning / Shaving" style="position:relative;right:2px;"></a>
+					<a href="" onClick="addTree('root',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Root Pruning / Shaving" style="position:relative;right:4px;"></a>
+					<a href="" onClick="delTree('root',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Root Pruning / Shaving" style="position:relative;right:2px;"></a>
 					</cfif>
 					</span>
 					</th></tr>
@@ -3008,11 +3091,15 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Permit<br>Issuance<br>Date:</span></th>
 					<td style="width:2px;"></td>
+                    
+                    <!---
 					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Tree<br>Planting<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Start<br>Watering<br>Date:</span></th>
+                    --->
+                    
+					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Root<br>Prune<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">End<br>Watering<br>Date:</span></th>
+					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Follow Up<br>Root Prune<br>Date:</span></th>
 					<td style="width:2px;"></td>
 					<th class="left middle" style="width:190px;"><span style="font-size:10px;">Address:</span></th>
 					<td style="width:2px;"></td>
@@ -3020,17 +3107,36 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:53px;"><span style="font-size:10px;">Parkway or<br>Tree Well<br>Size:</span></th>
 					<td style="width:2px;"></td>
+                    
+                    <!---
 					<th class="center middle" style="width:46px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Overhead<br>Wires:</span></th>	
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:40px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Sub<br>Position:</span></th>	
+					--->
+                    
+                    
+                    <th class="center middle" style="width:40px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Sub<br>Position:</span></th>	
 					<td style="width:2px;"></td>
+                    
+                    <!---
 					<th class="center middle" style="width:48px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Post<br>Inspected:</span></th>	
 					<td style="width:2px;"></td>
-					<th class="left middle" ><span style="font-size:10px;">Type:</span></th>	
+					--->
+                    
+                    <th class="left middle" style="width:95px;padding: 1px 1px 1px 3px;" ><span style="font-size:10px;">Type:</span></th>	
 					<td style="width:2px;"></td>
+                    
+                    <!---
 					<th class="left middle" style="width:32px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Offsite:</span></th>	
 					<td style="width:2px;"></td>
+					--->
+					
+					
+					 <!---
 					<th class="center middle" style="width:28px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Note:</span></th>
+                    --->
+                    <th class="center middle" ><span style="font-size:10px;">Note:</span></th>
+                    
+                    
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:16px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;"></span></th>
 
@@ -3039,9 +3145,23 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<cfloop index="i" from="1" to="#lngth2#">
 							<cfset trcnt = i>
                             
-                            <cfquery name="chkList" dbtype="query">
-                                SELECT max(tree_no) as mx FROM getTreeListInfo WHERE action_type = 1  AND group_no = #scnt#
+                           <!--- failed, 
+                            
+                            <cfquery name="chkList" datasource="#request.sqlconn#" dbtype="ODBC">
+                                SELECT max(tree_no) as mx FROM tblTreeList WHERE location_no = #getSite.location_no# AND deleted <> 1 and action_type = 2  AND group_no = #scnt#
                             </cfquery>
+							
+							--->
+                            
+                             
+                            
+                             <cfquery name="chkList" dbtype="query">
+                                    SELECT max(tree_no) as mx FROM getTreeListInfo WHERE ACTION_TYPE = 2  AND group_no = #scnt#
+                                </cfquery>
+								
+							
+                            
+                            	
                             
                             <cfset max_trcnt = 0>
                             
@@ -3056,7 +3176,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                 </cfif>
                                 
                                 
-                            <div id="tr_add_div_#scnt#_#trcnt#" style="display:#vis#;">
+                            <div id="tr_root_div_#scnt#_#trcnt#" style="display:#vis#;">
                             
                                  <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
                                   <tr>
@@ -3066,31 +3186,55 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                  </table>
                             
                                  <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-                            
-                                                    <cfquery name="getList" dbtype="query">
-                                                         SELECT * FROM getTreeListInfo WHERE action_type = 1 AND group_no = #scnt# AND tree_no = #trcnt#
+                                                 
+                                                   
+                                                    <cfquery name="getList" datasource="#request.sqlconn#" dbtype="ODBC">
+                                                         SELECT * FROM tblTreeList WHERE location_no = #getSite.location_no# AND deleted <> 1 and action_type = 2 AND group_no = #scnt# AND tree_no = #trcnt#
                                                     </cfquery>
                                                     
                                                     
                                                     
+													 <!---  failed to get v value, not sure why, adobe' bug?
+													 
+                                                     <cfquery name="getList" dbtype="query">
+                                                        SELECT * FROM getTreeListInfo WHERE ACTION_TYPE = 2 AND group_no = #scnt# AND tree_no = #trcnt#
+                                                    </cfquery>
+													
+													--->
+                                                    
+                                                    
                                                     <td class="frm left middle" style="width:29px;height:26px;">
+                                                    
                                                             <cfset v = 24>
                                                             
                                                             <cfif trim(getList.tree_box_size) is not "">
                                                                      <cfset v = trim(getList.tree_box_size)>
                                                             </cfif>
                                                             
-                                                            <input type="Text" name="tpcnt_#scnt#_#trcnt#" id="tpcnt_#scnt#_#trcnt#" value="#trcnt#" 
+                                                            <input type="Text" name="trpscnt_#scnt#_#trcnt#" id="trpscnt_#scnt#_#trcnt#" value="#trcnt#" 
                                                             style="width:26px;height:20px;padding:0px;" class="center roundedsmall" disabled>
                                                     </td>
                                                     
                                                     
                                                     
+                                   
+                                                    
                                                     <td style="width:2px;"></td>
                                                     
                                                     
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                      
+                                              
+                                                    
+                                                    
+                                                    
+                                                    
                                                     <td class="frm left middle" style="width:46px;">
-                                                       <select name="tpdia_#scnt#_#trcnt#" id="tpdia_#scnt#_#trcnt#" class="roundedsmall" style="width:45px;height:20px;font-size:9px;" onChange="calcTrees();" #trdis#>
+                                                       <select name="trpsdia_#scnt#_#trcnt#" id="trpsdia_#scnt#_#trcnt#" class="roundedsmall" style="width:45px;height:20px;font-size:9px;" onChange="calcTrees();" #trdis#>
                                                        
                                                                 <cfloop index="i" from="1" to="#arrayLen(arrDia)#">
                                                                     <cfset sel = "">
@@ -3116,7 +3260,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                     
                                                     <td class="frm left middle" style="width:60px;">
                                                     
-                                                            <input type="Text" name="tppidt_#scnt#_#trcnt#" id="tppidt_#scnt#_#trcnt#" value="#v#" 
+                                                            <input type="Text" name="trpspidt_#scnt#_#trcnt#" id="trpspidt_#scnt#_#trcnt#" value="#v#" 
                                                             style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
                                                     </td>
                                                     
@@ -3126,33 +3270,36 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                     
                                                     
                                                     
+                                                   
                                                     
                                                     <cfset v = "">
                                                     <cfif trim(getList.tree_planting_date) is not "">
                                                        <cfset v = dateformat(trim(getList.tree_planting_date),"mm/dd/yyyy")>
                                                     </cfif>
                                                     
-                                                    <td class="frm left middle" style="width:60px;">
-                                                        <input type="Text" name="tptrdt_#scnt#_#trcnt#" id="tptrdt_#scnt#_#trcnt#" value="#v#" 
+                                                    <td class="frm left middle" style="width:60px; display:none;">
+                                                        <input type="Text" name="trpstrdt_#scnt#_#trcnt#" id="trpstrdt_#scnt#_#trcnt#" value="#v#" 
                                                     style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
                                                     </td>
                                                     
-                                                    
+                                                     <!---    hide above display:none;
                                                     
                                                     <td style="width:2px;"></td>
                                                     
+													--->
+													
                                                     
                                                     
                                                     <cfset v = "">
                                                     
-                                                        <cfif trim(getList.start_watering_date) is not "">
+                                                        <cfif trim(getList.root_pruning_date) is not "">
                                                     
-                                                            <cfset v = dateformat(trim(getList.start_watering_date),"mm/dd/yyyy")>
+                                                            <cfset v = dateformat(trim(getList.root_pruning_date),"mm/dd/yyyy")>
                                                         </cfif>
                                                         
                                                     <td class="frm left middle" style="width:60px;">
                                                     
-                                                        <input type="Text" name="tpswdt_#scnt#_#trcnt#" id="tpswdt_#scnt#_#trcnt#" value="#v#" 
+                                                        <input type="Text" name="trpsrpdt_#scnt#_#trcnt#" id="trpsrpdt_#scnt#_#trcnt#" value="#v#" 
                                                         style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
                                                     </td>
                                                     
@@ -3160,13 +3307,15 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                     <td style="width:2px;"></td>
                                                     
                                                     <cfset v = "">
-                                                    <cfif trim(getList.end_watering_date) is not "">
-                                                            <cfset v = dateformat(trim(getList.end_watering_date),"mm/dd/yyyy")>
+                                                    <cfif trim(getList.follow_up_root_pruning_date) is not "">
+                                                            <cfset v = dateformat(trim(getList.follow_up_root_pruning_date),"mm/dd/yyyy")>
                                                     </cfif>
                                                     
                                                     
+                                                    
+                                                    
                                                     <td class="frm left middle" style="width:60px;">
-                                                        <input type="Text" name="tpewdt_#scnt#_#trcnt#" id="tpewdt_#scnt#_#trcnt#" value="#v#" 
+                                                        <input type="Text" name="trpsfurpdt_#scnt#_#trcnt#" id="trpsfurpdt_#scnt#_#trcnt#" value="#v#" 
                                                     style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
                                                     </td>
                                                     
@@ -3182,7 +3331,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                     
                                                     
                                                     <td class="frm left middle" style="width:191px;">
-                                                            <input type="Text" name="tpaddr_#scnt#_#trcnt#" id="tpaddr_#scnt#_#trcnt#" value="#v#" 
+                                                            <input type="Text" name="trpsaddr_#scnt#_#trcnt#" id="trpsaddr_#scnt#_#trcnt#" value="#v#" 
                                                     style="width:188px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" class="roundedsmall" #trdis#>
                                                     
                                                     </td>
@@ -3198,10 +3347,10 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                                             <cfset v = trim(getList.species)>
                                                                         </cfif>
                                                                        
-                                                                        <label for="tp_species_#scnt#_#trcnt#">
+                                                                        <label for="trps_species_#scnt#_#trcnt#">
                                                                         </label>
                                                                         
-                                                                        <input type="Text" name="tpspecies_#scnt#_#trcnt#" id="tpspecies_#scnt#_#trcnt#" value="#v#" 
+                                                                        <input type="Text" name="trpsspecies_#scnt#_#trcnt#" id="trpsspecies_#scnt#_#trcnt#" value="#v#" 
                                                                         style="width:116px;height:20px;padding:0px 2px 0px 4px;font-size:9px;" class="roundedsmall" #trdis#>
                                                                 </div>
                                                     
@@ -3218,11 +3367,15 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                     
                                                     
                                                     <td class="frm left middle" style="width:52px;">
-                                                                <input type="Text" name="tpparkway_#scnt#_#trcnt#" id="tpparkway_#scnt#_#trcnt#" value="#v#" 
+                                                                <input type="Text" name="trpsparkway_#scnt#_#trcnt#" id="trpsparkway_#scnt#_#trcnt#" value="#v#" 
                                                             style="width:49px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" maxlength="20" class="roundedsmall" #trdis#>
                                                     </td>
                                                     
                                                     <td style="width:2px;"></td>
+                                                    
+                                                    
+                                                    
+                                                  
                                                     
                                                     <cfset v = "">
                                                     <cfif getList.overhead_wires is 1>
@@ -3230,14 +3383,18 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                     </cfif>
                                                     
                                                     
-                                                    <td class="frm left middle" style="width:46px;">
+                                                    <td class="frm left middle" style="width:46px; display:none;">
                                                     
                                                             <div style="position:relative;left:12px;">
-                                                                    <input id="tpoverhead_#scnt#_#trcnt#" name="tpoverhead_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
+                                                                    <input id="trpsoverhead_#scnt#_#trcnt#" name="trpsoverhead_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
                                                             </div>
                                                     </td>
-                                                    
+                                                 <!---   hide above display:none;
                                                     <td style="width:2px;"></td>
+                                                    
+                                                 --->
+                                                    
+                                                    
                                                     
                                                     
                                                     
@@ -3247,11 +3404,15 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                     </cfif>
                                                     
                                                     
-                                                    <td class="frm left middle" style="width:40px;"><input type="Text" name="tpsubpos_#scnt#_#trcnt#" id="tpsubpos_#scnt#_#trcnt#" value="#v#" 
+                                                    <td class="frm left middle" style="width:40px;"><input type="Text" name="trpssubpos_#scnt#_#trcnt#" id="trpssubpos_#scnt#_#trcnt#" value="#v#" 
                                                                 style="width:36px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" maxlength="3" class="center roundedsmall" #trdis#>
                                                     </td>
                                                     
                                                     <td style="width:2px;"></td>
+                                                    
+                                                    
+                                                    
+                                                    
                                                     
                                                     <cfset v = "">
                                                             <cfif getList.post_inspected is 1>
@@ -3259,16 +3420,20 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                             </cfif>
                                                             
                                                             
-                                                    <td class="frm left middle" style="width:48px;">
+                                                    <td class="frm left middle" style="width:48px; display:none;">
                                                             <div style="position:relative;left:12px;">
-                                                                    <input id="tppostinspect_#scnt#_#trcnt#" name="tppostinspect_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
+                                                                    <input id="trpspostinspect_#scnt#_#trcnt#" name="trpspostinspect_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
                                                             </div>
                                                     </td>
-                                                    
+                                                    <!--- hide above display:none;
                                                     <td style="width:2px;"></td>
+													
+													--->
+													
+													
                                                     
                                                     <td class="frm left middle">
-                                                        <select name="tptype_#scnt#_#trcnt#" id="tptype_#scnt#_#trcnt#" class="roundedsmall" style="width:95px;height:20px;font-size:9px;" #trdis#>
+                                                        <select name="trpstype_#scnt#_#trcnt#" id="trpstype_#scnt#_#trcnt#" class="roundedsmall" style="width:95px;height:20px;font-size:9px;" #trdis#>
                                                         <!--- <option value=""></option> --->
                                                             <cfloop query="getTreeTypes">
                                                                 <cfset sel = "">
@@ -3284,27 +3449,51 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                     
                                                     <td style="width:2px;"></td>
                                                     
+                                                    
+                                                    
                                                     <cfset v = "">
                                                         <cfif getList.offsite is 1>
                                                             <cfset v = "checked">
                                                         </cfif>
                                                         
-                                                    <td class="frm left middle" style="width:32px;">
+                                                    <td class="frm left middle" style="width:32px; display:none;">
                                                     
                                                          <div style="position:relative;left:5px;">
-                                                            <input id="tpoffsite_#scnt#_#trcnt#" name="tpoffsite_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
+                                                            <input id="trpsoffsite_#scnt#_#trcnt#" name="trpsoffsite_#scnt#_#trcnt#" type="checkbox" #v# #trdis#>
                                                          </div>
                                                     </td>
-                                                    
+                                                    <!---     hide above display:none;
                                                     <td style="width:2px;"></td>
-                                                    
+													
+													--->
+													
+													
+                                                    <!---   note with click button, replace by below without click button
                                                     <td class="frm left middle" style="width:28px;">
                                                     
                                                         <div style="position:relative;left:7px;top:-1px">
-                                                                <a href="" onClick="$('#chr(35)#tpnotediv_#scnt#_#trcnt#').toggle();return false;"><img src="../images/rep.gif" width="12" height="14" alt="Note" title="Note">
+                                                                <a href="" onClick="$('#chr(35)#trpsnotediv_#scnt#_#trcnt#').toggle();return false;"><img src="../images/rep.gif" width="12" height="14" alt="Note" title="Note">
                                                                 </a>
                                                         </div>
                                                     </td>
+													--->
+													
+                                                    
+                                                    <cfset v = "">
+													<cfif trim(getList.note) is not "">
+													     <cfset v = trim(getList.note)>
+                                                    </cfif>
+                                                    
+					                                <td class="frm left middle">
+                                                    
+                                                           <input type="Text" name="trpsnote_#scnt#_#trcnt#" id="trpsnote_#scnt#_#trcnt#" value="#v#" 
+					                                                  style="width:237px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#>
+                                                    </td>
+                                                    
+                                                    
+													
+                                                    
+                                                    
                                                     
                                                     <td style="width:2px;"></td>
                                                     
@@ -3341,7 +3530,8 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                                     </cfif>
                                                                     
                                                                     <div style="position:relative;left:0px;top:-1px">
-                                                                            <a id="tplink_#scnt#_#trcnt#" href="" onClick="#fuctn#return false;"><img id="tpicon_#scnt#_#trcnt#" name="tpicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#">
+                                                                            <a id="trpslink_#scnt#_#trcnt#" href="" onClick="#fuctn#return false;">
+                                                                                  <img id="trpsicon_#scnt#_#trcnt#" name="trpsicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#">
                                                                             </a>
                                                                     </div>
                                                                     
@@ -3351,12 +3541,12 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                     
                                                     
                                                     
-                                                    
+                                                    <!---  without click note button, should comment out this part. 
                                                     
                                                     <td style="width:0px;position:absolute;">
                                                     
                                                     
-                                                            <div id="tpnotediv_#scnt#_#trcnt#" style="position:absolute;height:30px;width:400px;top:-2px;left:-456px;border:0px red solid;background:white;display:none;">
+                                                            <div id="trpsnotediv_#scnt#_#trcnt#" style="position:absolute;height:30px;width:400px;top:-2px;left:-456px;border:0px red solid;background:white;display:none;">
                                                                     <table cellpadding="0" cellspacing="0" border="0" class="frame" style="width:100%;position:relative;top:0px;border-width:1px;">
                                                                             <tr><td colspan="2" style="height:1px;"></td></tr>
                                                                             
@@ -3372,7 +3562,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                                                     </cfif>
                                                                                     
                                                                                     <td class="frm left middle" style="">
-                                                                                                    <input type="Text" name="tpnote_#scnt#_#trcnt#" id="tpnote_#scnt#_#trcnt#" value="#v#" 
+                                                                                                    <input type="Text" name="trpsnote_#scnt#_#trcnt#" id="trpsnote_#scnt#_#trcnt#" value="#v#" 
                                                                                             style="width:354px;height:20px;padding:0px 2px 0px 4px;font-size:10px;top:-1px;position:relative;" class="roundedsmall" #trdis#>
                                                                                     </td>	
                                                                                     
@@ -3385,14 +3575,17 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                                     </table>
                                                             </div>
                                                     </td>
+                                                    
+                                                    --->
+                                                    
                                 
                                              </table>
                                     </div>
 				          </cfloop>
                    
-							<cfset tr_add_cnt = max_trcnt>
+							<cfset tr_root_cnt = max_trcnt>
                             
-                            <input type="Hidden" id="tr_add_cnt_#scnt#" name="tr_add_cnt_#scnt#" value="#tr_add_cnt#" #sirdis#>
+                            <input type="Hidden" id="tr_root_cnt_#scnt#" name="tr_root_cnt_#scnt#" value="#tr_root_cnt#" #sirdis#>
                             
                         </td>
                     </tr>
@@ -3463,20 +3656,36 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr>
 					<th class="left middle" style="height:30px;width:220px;">Tree Root Pruning / Shaving (Per Tree):&nbsp;</th>
 					<td style="width:2px;"></td>
+                    
+                    
 					<cfset tr_fld = arrTrees[1]>
 					<cfquery name="getDefault" datasource="#request.sqlconn#" dbtype="ODBC">
 					SELECT * FROM tblEstimateDefaults WHERE fieldname = '#left(tr_fld,len(tr_fld)-1)#'
 					</cfquery>
 					<cfset v = getDefault.units><cfif evaluate("getEst.#arrTrees[1]#UNITS") is not "">
 					<cfset v = evaluate("getEst.#arrTrees[1]#UNITS")></cfif>
-					<td class="frm left middle" style="width:43px;"><input type="Text" name="tree_#tr_fld#UNITS" id="tree_#tr_fld#UNITS" value="#v#" 
-					style="width:40px;text-align:center;" class="center rounded" disabled></td>
+                    
+                    
+					<td class="frm left middle" style="width:43px;">
+                          <input type="Text" name="tree_#tr_fld#UNITS" id="tree_#tr_fld#UNITS" value="#v#" 
+					            style="width:40px;text-align:center;" class="center rounded" disabled>
+                    </td>
+                    
 					<td></td>
-					<cfset v = 0><cfif evaluate("getEst.#arrTrees[1]#QUANTITY") is not "">
-					<cfset v = evaluate("getEst.#arrTrees[1]#QUANTITY")></cfif>
-					<td class="frm left middle" style="width:135px;"><input type="Text" name="tree_#tr_fld#QUANTITY" id="tree_#tr_fld#QUANTITY" value="#v#" 
-					style="width:130px;text-align:center;" class="center rounded"></td>
+                    
+					  <cfset v = 0>
+					  <cfif evaluate("getEst.#arrTrees[1]#QUANTITY") is not "">
+					         <cfset v = evaluate("getEst.#arrTrees[1]#QUANTITY")>
+                      </cfif>
 					
+                    
+                    <td class="frm left middle" style="width:135px;">
+                          <input type="Text" name="tree_#tr_fld#QUANTITY" id="tree_#tr_fld#QUANTITY" value="#v#" 
+					style="width:130px;text-align:center;" class="center rounded" disabled>
+                    
+                    </td>
+					
+                    
 					<td style="width:2px;"></td>
 					
 					<th class="left middle" style="height:30px;">Existing Stump Removal:&nbsp;</th>
@@ -3524,14 +3733,24 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					</cfquery>
 					<cfset v = getDefault.units><cfif evaluate("getEst.#arrTrees[5]#UNITS") is not "">
 					<cfset v = evaluate("getEst.#arrTrees[5]#UNITS")></cfif>
+                    
 					<td class="frm left middle"><input type="Text" name="tree_#tr_fld#UNITS" id="tree_#tr_fld#UNITS" value="#v#" 
 					style="width:40px;text-align:center;" class="center rounded" disabled></td>
 					<td></td>
-					<cfset v = 0><cfif evaluate("getEst.#arrTrees[5]#QUANTITY") is not "">
-					<cfset v = evaluate("getEst.#arrTrees[5]#QUANTITY")></cfif>
+                    
+                    
+                    
+					  <cfset v = 0>
+					  <cfif evaluate("getEst.#arrTrees[5]#QUANTITY") is not "">
+					       <cfset v = evaluate("getEst.#arrTrees[5]#QUANTITY")>
+                      </cfif>
 					<td class="frm left middle" style="width:135px;"><input type="Text" name="tree_#tr_fld#QUANTITY" id="tree_#tr_fld#QUANTITY" value="#v#" 
 					style="width:130px;text-align:center;" class="center rounded" disabled></td>
 					
+                    
+                    
+                    
+                    
 				</tr>
 				<tr><td style="height:2px;"></td></tr>
 				<tr>
@@ -4212,7 +4431,16 @@ SELECT * FROM tblTreeTypes ORDER BY id
 <cfset ro = 0>
 <cfif session.user_level gt 0 AND session.user_power gte 0><cfset ro = 1></cfif>
 
+
+
 <script>
+
+
+
+
+
+
+
 
 <cfoutput>
 var url = "#request.url#";
@@ -5224,6 +5452,14 @@ function chkForm7() {
 
 }
 
+
+<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+
+   <!--- update tree form button clicked  --------   --->
+
+
+
+
 function submitForm7() {
 
 	var chk = chkForm7().split(':');
@@ -5236,13 +5472,31 @@ function submitForm7() {
 	
 	var frm = $('#form7').serializeArray();
 	frm.push({"name" : "tree_trn", "value" : trim($('#tree_trn').val()) });
+	
+	
 	<cfoutput>
-	<cfloop index="i" from="1" to="#arrayLen(arrTrees)#">
-	frm.push({"name" : "tree_#arrTrees[i]#UNITS", "value" : trim($('#chr(35)#tree_#arrTrees[i]#UNITS').val()) });
-	</cfloop>
-	<cfloop index="i" from="5" to="6">
-	frm.push({"name" : "tree_#arrTrees[i]#QUANTITY", "value" : trim($('#chr(35)#tree_#arrTrees[i]#QUANTITY').val()) }); //Added because is now disabled in form
-	</cfloop>
+	
+		<cfloop index="i" from="1" to="#arrayLen(arrTrees)#">
+		frm.push({"name" : "tree_#arrTrees[i]#UNITS", "value" : trim($('#chr(35)#tree_#arrTrees[i]#UNITS').val()) });
+		</cfloop>
+		
+		
+	
+		
+	 	<cfloop index="i" from="5" to="6">   
+		
+		
+		frm.push({"name" : "tree_#arrTrees[i]#QUANTITY", "value" : trim($('#chr(35)#tree_#arrTrees[i]#QUANTITY').val()) }); //Added because is now disabled in form
+		</cfloop>
+		
+		
+		
+		<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+		
+		  frm.push({"name" : "tree_#arrTrees[1]#QUANTITY", "value" : trim($('#chr(35)#tree_#arrTrees[1]#QUANTITY').val()) }); 
+		<!--- ---------- End -- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+		
+		
 	</cfoutput>
 	
 	if ($('#tree_lock').is(':checked') == false) {	
@@ -5275,6 +5529,49 @@ function submitForm7() {
 	</cfloop>
 	</cfoutput>
 	
+	
+	
+	<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+	
+	
+	
+	  <cfoutput>
+	<cfloop index="i" from="1" to="#lngth1#">
+		<cfloop index="j" from="1" to="#lngth2#">
+		if ($("#chr(35)#trpsoffsite_#i#_#j#").is(':visible')) {	
+			if ($('#chr(35)#trpsoffsite_#i#_#j#').is(':checked') == false) {	
+				frm.push({"name" : "trpsoffsite_#i#_#j#", "value" : "off"});
+			}
+		} 
+		
+		
+		if ($("#chr(35)#trpsoverhead_#i#_#j#").is(':visible')) {	
+			if ($('#chr(35)#trpsoverhead_#i#_#j#').is(':checked') == false) {	
+				frm.push({"name" : "trpsoverhead_#i#_#j#", "value" : "off"});
+			}
+		}
+		
+		if ($("#chr(35)#trpspostinspect_#i#_#j#").is(':visible')) {	
+			if ($('#chr(35)#trpspostinspect_#i#_#j#').is(':checked') == false) {	
+				frm.push({"name" : "trpspostinspect_#i#_#j#", "value" : "off"});
+			}
+		}
+		
+		</cfloop>
+	</cfloop>
+	</cfoutput>
+	
+	
+	
+	
+	
+	
+	
+	    $(".overlay").show();
+	
+	
+	<!--- ---------- End -- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+	
 	//console.log(frm);
 
 	$.ajax({
@@ -5287,6 +5584,11 @@ function submitForm7() {
 		
 		console.log(data);
 		
+
+             <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+              $(".overlay").hide();	
+             <!--- ---------- End -- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+
 
 		if(data.RESULT != "Success") {
 			showMsg5(data.RESULT,1);
@@ -5324,6 +5626,16 @@ function submitForm7() {
 					$('#tpicon_' + i + '_' + j).attr("alt","");
 					$('#tpicon_' + i + '_' + j).attr("title","");
 					$('#tplink_' + i + '_' + j).attr("onclick","return false;");
+					
+					
+					<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+					$('#trpsicon_' + i + '_' + j).attr("src","../images/map_small_x.png");
+					$('#trpsicon_' + i + '_' + j).attr("alt","");
+					$('#trpsicon_' + i + '_' + j).attr("title","");
+					$('#trpslink_' + i + '_' + j).attr("onclick","return false;");
+					<!--- ---------- End -- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+					
+					
 				}
 			}
 			
@@ -5333,10 +5645,37 @@ function submitForm7() {
 				//console.log(arrItem);
 				var icon = "../images/map_small.png";
 				if (arrItem[4] == "1") { icon = "../images/map_small_chk.png"; }
-				$('#tpicon_' + arrItem[1] + '_' + arrItem[2]).attr("src",icon);
-				$('#tpicon_' + arrItem[1] + '_' + arrItem[2]).attr("alt","Map Tree ID: " + arrItem[3]);
-				$('#tpicon_' + arrItem[1] + '_' + arrItem[2]).attr("title","Map TreeID: " + arrItem[3]);
-				$('#tplink_' + arrItem[1] + '_' + arrItem[2]).attr("onclick","geocodeTree(" + arrItem[1] + "," + arrItem[2] + "," + arrItem[3] + ");return false;");
+				
+				
+				
+				<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+				
+				if(arrItem[5] == "planting") 
+				{
+					
+					$('#tpicon_' + arrItem[1] + '_' + arrItem[2]).attr("src",icon);
+					$('#tpicon_' + arrItem[1] + '_' + arrItem[2]).attr("alt","Map Tree ID: " + arrItem[3]);
+					$('#tpicon_' + arrItem[1] + '_' + arrItem[2]).attr("title","Map TreeID: " + arrItem[3]);
+					$('#tplink_' + arrItem[1] + '_' + arrItem[2]).attr("onclick","geocodeTree(" + arrItem[1] + "," + arrItem[2] + "," + arrItem[3] + ");return false;");
+				
+				}
+				
+				
+				if(arrItem[5] == "root_pruning") 
+				{
+				
+				
+						$('#trpsicon_' + arrItem[1] + '_' + arrItem[2]).attr("src",icon);
+						$('#trpsicon_' + arrItem[1] + '_' + arrItem[2]).attr("alt","Map Tree ID: " + arrItem[3]);
+						$('#trpsicon_' + arrItem[1] + '_' + arrItem[2]).attr("title","Map TreeID: " + arrItem[3]);
+						$('#trpslink_' + arrItem[1] + '_' + arrItem[2]).attr("onclick","geocodeTree(" + arrItem[1] + "," + arrItem[2] + "," + arrItem[3] + ");return false;");
+				
+				}
+				
+				<!--- ---------- End -- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+				
+				
+				
 				
 			});
 
@@ -5406,17 +5745,41 @@ function showMsg5(txt,cnt) {
 	$('#msg5').show();
 }
 
+
+
+
 function addTree(typ,scnt) {
+	
+	
+	console.log(typ,scnt);
+	
 	var cnt = parseInt($('#tr_' + typ + '_cnt_' + scnt).val());
+	
 	$('#tr_' + typ + '_div_' + scnt + '_' + (cnt+1)).show();
+	
+	
+	console.log('#tr_' + typ + '_div_' + scnt + '_' + (cnt+1));
+	
 	
 	var pfx = "tr";
 	if (typ == "add") { pfx = "tp"; }
+	if (typ == "root") { pfx = "trps"; }
+	
+	console.log('add tree: ', typ);
+	
+	
 	$("#" + pfx + "dia_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "pidt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "trdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "swdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "ewdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	
+	
+	<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+	$("#" + pfx + "rpdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	$("#" + pfx + "furpdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	<!--- -------  End ----- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+	
 	$("#" + pfx + "addr_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "species_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "type_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
@@ -5426,10 +5789,13 @@ function addTree(typ,scnt) {
 	$("#" + pfx + "subpos_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "postinspect_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "offsite_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	
 	if ( cnt < lgth2) { 
 		$('#' + pfx + '_tot_' + scnt).html(cnt+1); 
 		$('#tr_' + typ + '_cnt_' + scnt).val(cnt+1); 
 		if (typ == "add") { calcTrees(); } 
+		if (typ == "root") { calcTrees_root(); } 
+		
 	}
 }
 
@@ -5440,6 +5806,8 @@ function delTree(typ,scnt) {
 		$('#tr_' + typ + '_cnt_' + scnt).val(cnt-1); 
 		var pfx = "tr";
 		if (typ == "add") { pfx = "tp"; }
+		if (typ == "root") { pfx = "trps"; }
+		
 		$("#" + pfx + "dia_" + scnt + "_" + (cnt)).attr('disabled', true);
 		$("#" + pfx + "pidt_" + scnt + "_" + (cnt)).attr('disabled', true);
 		$("#" + pfx + "trdt_" + scnt + "_" + (cnt)).attr('disabled', true);
@@ -5452,9 +5820,14 @@ function delTree(typ,scnt) {
 		$("#" + pfx + "overhead_" + scnt + "_" + (cnt)).attr('disabled', true);
 		$("#" + pfx + "subpos_" + scnt + "_" + (cnt)).attr('disabled', true);
 		$('#' + pfx + '_tot_' + scnt).html(cnt-1);
+		
 		if (typ == "add") { calcTrees(); }
+		if (typ == "root") { calcTrees_root(); }
+		
 	}
 }
+
+
 
 function calcTrees() {
 	var cnt = parseInt($('#trees_sir_cnt').val());
@@ -5477,6 +5850,37 @@ function calcTrees() {
 		$('#tree_INSTALL_ROOT_CONTROL_BARRIER_QUANTITY').val(tot2*14);
 	}
 }
+
+
+
+
+function calcTrees_root() {
+	var cnt = parseInt($('#trees_sir_cnt').val());
+	var tot = 0; 
+	var tot2 = 0;
+	for (var i = 1; i < cnt+1; i++) {
+		var cnt2 = parseInt($('#tr_root_cnt_' + i).val());
+		
+		for (var j = 1; j < cnt2+1; j++) {
+			var v = parseInt($("#trpsdia_" + i + "_" + j).val());
+			if (v == 24) {
+				tot++;
+				//console.log("tot=" + tot);
+			}
+		}
+		tot2 = tot2 + cnt2;
+	}
+	$('#tree_TREE_ROOT_PRUNING_L_SHAVING__PER_TREE___QUANTITY').val(tot);
+	
+	/*
+	if ($('#tree_lock').is(':checked') == false) {	
+		$('#tree_INSTALL_ROOT_CONTROL_BARRIER_QUANTITY').val(tot2*14);
+	}
+	*/
+}
+
+
+
 
 function autoLock() {
 	if ($('#tree_lock').is(':checked') == false) {	
@@ -6003,6 +6407,15 @@ $(function() {
 		$( "#chr(35)#tptrdt_#i#_#j#" ).datepicker();
 		$( "#chr(35)#tpswdt_#i#_#j#" ).datepicker();
 		$( "#chr(35)#tpewdt_#i#_#j#" ).datepicker();
+		
+		<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+		$( "#chr(35)#trpsspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
+		$( "#chr(35)#trpspidt_#i#_#j#" ).datepicker();
+		$( "#chr(35)#trpstrdt_#i#_#j#" ).datepicker();
+		$( "#chr(35)#trpsrpdt_#i#_#j#" ).datepicker();
+		$( "#chr(35)#trpsfurpdt_#i#_#j#" ).datepicker();
+		<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+		
 	</cfloop>
 		$( "#chr(35)#sirdt_#i#" ).datepicker();
 </cfloop>
@@ -6039,7 +6452,40 @@ var n = this,
    return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
  };
 
+
+
+
+
+
 </script>
+
+
+
+
+<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+
+        <!--- fix bug ---- avoid user accidently click tree form button before it is fully loaded --->
+        <!--- without style="display: block;", get form 'undefine' error ------ --->
+        
+  <script>
+  
+ 
+	<!---	$(".overlay").show();   --->
+	<!--- if default div style="display:none;" ( as in css)  $(".overlay").show(); must immediately next to div tag. --->
+		
+		$(window).load(function () {
+			
+			  $(".overlay").hide();	
+			
+			
+		});
+
+   </script>   
+
+<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+
+
+
 
 </html>
 

@@ -307,6 +307,7 @@
 					package_no = #sw_pno#,
 					package_group = '#sw_pgroup#',
 					modified_date = #CreateODBCDateTime(Now())#,
+					Packaged_Date = #CreateODBCDateTime(Now())#,
 					User_ID = #session.user_num#
 					WHERE id = #arrIDs[i]#
 					</cfquery>
@@ -650,7 +651,8 @@
 						package_no = NULL,
 						package_group = NULL,
 						modified_date = #CreateODBCDateTime(Now())#,
-						User_ID = #session.user_num#
+						User_ID = #session.user_num#,
+						Packaged_Date = NULL
 						WHERE id = #arrIDs[i]#
 						</cfquery>
 						<cfset data.removed = "true">
@@ -775,7 +777,8 @@
 		<cfargument name="sw_loc" required="true">
 		<cfargument name="sw_damage" required="true">
 		<cfargument name="sw_cityowned" required="true">
-		<cfargument name="sw_priority" required="true">
+		<cfargument name="sw_priority_t1" required="true">
+		<cfargument name="sw_priority_t2" required="true">
 		<cfargument name="sw_logdate" required="true">
 		<cfargument name="sw_zip" required="true">
 		<!--- <cfargument name="sw_tree_desc" required="true">
@@ -787,14 +790,18 @@
 		<cfargument name="sw_designreq" required="true">
 		<cfargument name="sw_dsgnstart" required="true">
 		<cfargument name="sw_dsgnfinish" required="true">
-		<cfargument name="sw_ait_type" required="true">
+		<!--- <cfargument name="sw_ait_type" required="true">
 		<cfargument name="sw_costeffect" required="true">
 		<cfargument name="sw_injury" required="true">
 		<cfargument name="sw_disabled" required="true">
 		<cfargument name="sw_complaints" required="true">
+		<cfargument name="sw_pedestrian" required="true"> --->	
+		<cfargument name="sw_phase" required="true">
+		<cfargument name="sw_bic" required="true">	
+		<cfargument name="sw_class" required="true">	
 		<cfargument name="sw_excptn" required="true">	
 		<cfargument name="sw_excptn_notes" required="true">
-		<cfargument name="sw_pedestrian" required="true">	
+		
 		<cfargument name="do_priority" required="false" default="0">		
 
 		<cfset tbl = "tblSites">
@@ -830,7 +837,7 @@
 		<cfif trim(sw_loc) is ""><cfset sw_loc = "NULL"></cfif>
 		<cfif trim(sw_damage) is ""><cfset sw_damage = "NULL"></cfif>
 		<cfif trim(sw_cityowned) is ""><cfset sw_cityowned = "NULL"></cfif>
-		<cfif trim(sw_priority) is ""><cfset sw_priority = "NULL"></cfif>
+		<!--- <cfif trim(sw_priority) is ""><cfset sw_priority = "NULL"></cfif> --->
 		<cfif trim(sw_logdate) is ""><cfset sw_logdate = "NULL"></cfif>
 		<cfif trim(sw_zip) is ""><cfset sw_zip = "NULL"></cfif>
 		<!--- <cfif trim(sw_tree_rmv) is ""><cfset sw_tree_rmv = "NULL"></cfif>
@@ -842,14 +849,17 @@
 		<cfif trim(sw_designreq) is ""><cfset sw_designreq = "NULL"></cfif>
 		<cfif trim(sw_dsgnstart) is ""><cfset sw_dsgnstart = "NULL"></cfif>
 		<cfif trim(sw_dsgnfinish) is ""><cfset sw_dsgnfinish = "NULL"></cfif>
-		<cfif trim(sw_ait_type) is ""><cfset sw_ait_type = "NULL"></cfif>
+		<!--- <cfif trim(sw_ait_type) is ""><cfset sw_ait_type = "NULL"></cfif>
 		<cfif trim(sw_costeffect) is ""><cfset sw_costeffect = "NULL"></cfif>
 		<cfif trim(sw_injury) is ""><cfset sw_injury = "NULL"></cfif>
 		<cfif trim(sw_disabled) is ""><cfset sw_disabled = "NULL"></cfif>
 		<cfif trim(sw_complaints) is ""><cfset sw_complaints = "NULL"></cfif>
-		<cfif trim(sw_pedestrian) is ""><cfset sw_pedestrian = "NULL"></cfif>	
+		<cfif trim(sw_pedestrian) is ""><cfset sw_pedestrian = "NULL"></cfif> --->	
 		<cfif trim(sw_excptn) is ""><cfset sw_excptn = "NULL"></cfif>
 		<cfif trim(sw_excptn_notes) is ""><cfset sw_excptn_notes = "NULL"></cfif>	
+		<cfif trim(sw_phase) is ""><cfset sw_phase = "NULL"></cfif>
+		<cfif trim(sw_bic) is ""><cfset sw_bic = "NULL"></cfif>	
+		<cfif trim(sw_class) is ""><cfset sw_class = "NULL"></cfif>	
 		
 		<cfif sw_assdate is not "NULL">
 			<cfset arrDT = listtoarray(sw_assdate,"/")>
@@ -916,6 +926,15 @@
 		<cfset sw_tree_notes = replace(sw_tree_notes,"'","''","ALL")>
 		<cfset sw_excptn_notes = replace(sw_excptn_notes,"'","''","ALL")>
 		
+		<!--- s: get the original phase (for potentially sending a sr ticket update --->
+		<cfquery name="getPhase" datasource="#request.sqlconn#">		
+		SELECT phase,location_no,sr_number FROM #tbl# WHERE id = #sw_id#
+		</cfquery>
+		<cfset phase = getPhase.phase>
+		<cfset locno = getPhase.location_no>
+		<cfset sr_num = getPhase.sr_number>
+		<!--- e: get the original phase (for potentially sending a sr ticket update --->
+		
 		<cfquery name="addFeature" datasource="#request.sqlconn#">		
 		UPDATE #tbl# SET
 		Name = '#PreserveSingleQuotes(sw_name)#',
@@ -941,29 +960,28 @@
 		ADA_Exception = #sw_excptn#,
 		ADA_Exception_Notes = <cfif sw_excptn_notes is "NULL">#sw_excptn_notes#<cfelse>'#PreserveSingleQuotes(sw_excptn_notes)#'</cfif>,
 		City_Owned_Property = #sw_cityowned#,
-		Priority_No = #sw_priority#,
+		<!--- Priority_No = #sw_priority#, --->
 		Date_Logged = #sw_logdate#,
 		Zip_Code = #sw_zip#,
 		Curb_Ramp_Only = #sw_curbramp#,
 		Design_Required = #sw_designreq#,
 		Design_Start_Date = #sw_dsgnstart#,
 		Design_Finish_Date = #sw_dsgnfinish#,
-		Access_Improvement = #sw_ait_type#,
+		Phase = #sw_phase#,
+		StatusBIC = #sw_bic#,
+		Classification = #sw_class#,
+		<!--- Access_Improvement = #sw_ait_type#,
 		Cost_Effective = #sw_costeffect#,
 		Within_High_Injury = #sw_injury#,
 		Traveled_By_Disabled = #sw_disabled#,
 		Complaints_No = #sw_complaints#,
-		High_Pedestrian_Traffic = #sw_pedestrian#,
+		High_Pedestrian_Traffic = #sw_pedestrian#, --->
 		modified_date = #CreateODBCDateTime(Now())#,
 		User_ID = #session.user_num#
 		WHERE id = #sw_id#
 		</cfquery>
 
-		
-		<cfquery name="getLocNo" datasource="#request.sqlconn#">		
-		SELECT location_no FROM #tbl# WHERE id = #sw_id#
-		</cfquery>
-		
+
 		<!--- <cfquery name="chkTrees" datasource="#request.sqlconn#">		
 		SELECT id FROM #tbl2# WHERE location_no = #getLocNo.location_no#
 		</cfquery>
@@ -1002,11 +1020,22 @@
 		
 		</cfif> --->
 		
-		<cfset data.result = "Success">
+		<cfquery name="getLocNo" datasource="#request.sqlconn#">		
+		SELECT location_no FROM #tbl# WHERE id = #sw_id#
+		</cfquery>
 		
-		<cfif do_priority is 1>
+		<!--- s: Send a sr ticket update if phase changed --->
+		<cfif phase is not sw_phase AND sw_phase lt 5 AND sr_num is not "">
+			<cfset ticket = updateSRTicket(sw_phase,locno,sr_num)>
+			<cfset data.ticket = ticket>
+		</cfif>
+		<!--- e: Send a sr ticket update if phase changed --->
+		
+		<cfif do_priority is 1> <!--- This was set in the javascript to updat the Tier 2 priority --->
 			<cfset data.priority = updatePriority(getLocNo.location_no,tbl)>
 		</cfif>
+		
+		<cfset data.result = "Success">
 		
 		<cfset data = serializeJSON(data)>
 		
@@ -1021,8 +1050,38 @@
 		
 	</cffunction>
 	
-	
 	<cffunction name="updatePriority" access="remote" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="loc_no" type="numeric" required="no" default="0"> 
+		<cfargument name="tbl" type="string" required="yes"> 
+		
+		<cfset vw = "vwPriorityTier2">
+		<cfset rv = ''>
+		
+		<cfquery name="getPriority" datasource="#request.sqlconn#">		
+		SELECT score FROM #vw# WHERE location_no = #loc_no#
+		</cfquery>
+		
+		<cfif getPriority.recordcount gt 0>
+		
+			<cfquery name="chkTypeStatus" datasource="#request.sqlconn#">		
+			SELECT * FROM #tbl# WHERE location_no = #loc_no# AND sr_number is NULL AND construction_completed_date is NULL
+			</cfquery>
+			
+			<cfset sc = "NULL">
+			<cfif chkTypeStatus.recordcount gt 0><cfset sc = getPriority.score><cfset rv = sc></cfif>
+			
+			<cfquery name="setPriority" datasource="#request.sqlconn#">		
+			UPDATE #tbl# SET priority_tier2 = #sc# WHERE location_no = #loc_no#
+			</cfquery>
+			
+		</cfif>
+		
+		<cfreturn rv>  
+	
+	</cffunction>
+	
+	<!--- s: retired priority sytem --->
+	<cffunction name="updatePriorityOLD" access="remote" returnType="any" returnFormat="plain" output="false"> 
 		<cfargument name="loc_no" type="numeric" required="no" default="0">  
 		<cfargument name="tbl" type="string" required="yes">  
 		
@@ -1061,9 +1120,9 @@
 		</cfloop>
 		
 		<cfreturn rv>  
-	
-	
+		
 	</cffunction>
+	<!--- e: retired priority sytem --->
 	
 	
 	
@@ -1082,7 +1141,63 @@
 		<cfset ps_where = "">
 		<cfif trim(ps_name) is not "">
 			<cfquery name="getSites" datasource="#request.sqlconn#">
-			SELECT DISTINCT package_no,package_group FROM tblSites WHERE name LIKE '%#ps_name#%' AND package_no is not null
+            
+            <!--- joe hu ------ 2/26/2018     -----------  requestID 107 ---- 2) ----------  ---> 
+
+				<!--- SELECT DISTINCT package_no,package_group FROM tblSites WHERE name LIKE '%#ps_name#%' AND package_no is not null --->
+            
+				SELECT DISTINCT package_no,package_group FROM tblSites WHERE  package_no is not null
+				
+				<cfset target_string = '' >
+				<cfset quoted_string_array = []>
+				
+				<cfif trim(ps_name) is not "">
+				
+					<cfset target_string = ps_name >
+					
+					<cfset regular_expression_double_quote = '"([^"]*)"'  />
+					<cfset regular_expression_single_quote = "'([^']*)'"  />
+					
+					<cfset quoted_string_array_double_quote = REMatch(regular_expression_double_quote, target_string) >
+					<cfset quoted_string_array_single_quote = REMatch(regular_expression_single_quote, target_string) >
+					
+					<cfset ArrayAppend(quoted_string_array, quoted_string_array_double_quote, true) >
+					<cfset ArrayAppend(quoted_string_array, quoted_string_array_single_quote, true) >
+					
+					<cfloop array="#quoted_string_array#" index="quoted_string_item">
+						<cfset quoted_string_item_fake = replace(quoted_string_item, " ","~","all") >
+						<cfset target_string = replace(target_string, quoted_string_item, quoted_string_item_fake, "all") >	
+					</cfloop>
+
+					<cfset target_string_array = ListToArray(target_string, " " ) />
+					
+					<cfloop array="#target_string_array#" index="item">
+						<cfset first_char=Left(item,1) />
+						
+						<cfif first_char is "-">
+						
+							<cfset item = RemoveChars(item, 1, 1) />
+							
+							<!--- remove all single quote, double quote ,  replace ~ with space --->
+							<cfset item = trim(replace(item,'"','',"ALL"))>
+							<cfset item = trim(replace(item,"'",'',"ALL"))>
+							<cfset item = trim(replace(item,"~",' ',"ALL"))>
+							AND name Not LIKE '%#preservesinglequotes(item)#%'
+							
+						<cfelse>
+
+							<!--- remove all single quote, double quote ,  replace ~ with space --->
+							<cfset item = trim(replace(item,'"','',"ALL"))>
+							<cfset item = trim(replace(item,"'",'',"ALL"))>
+							<cfset item = trim(replace(item,"~",' ',"ALL"))>
+							AND name LIKE '%#preservesinglequotes(item)#%'
+						
+						</cfif>
+					</cfloop>
+				</cfif> 
+
+            <!---  --------- END ------------ joe hu ------ 2/26/2018     -----------  requestID 107 ---- 2) ----------  ---> 
+            
 			</cfquery>
 			<cfif getSites.recordcount gt 0>
 				<cfset ps_where = "AND (">
@@ -1094,13 +1209,70 @@
 				<cfset data.ps_where = ps_where>
 			</cfif>
 		</cfif>
-		
+        
 		<cfquery name="getPackages" datasource="#request.sqlconn#">
 		SELECT * FROM tblPackages WHERE removed is null
 		<cfif ps_group is not "">AND package_group = '#ps_group#'</cfif> 
 		<cfif ps_no is not "">AND package_no = #ps_no#</cfif> 
 		<cfif trim(ps_wo) is not "">AND work_order LIKE '%#trim(ps_wo)#%'</cfif> 
-		<cfif trim(ps_con) is not "">AND contractor LIKE '%#trim(ps_con)#%'</cfif> 
+
+        <!--- joe hu ------ 2/22/2018     -----------  requestID 107 ---- 2) ----------  ---> 
+        
+			<!--- ---- original ------   
+			<cfif trim(ps_con) is not "">AND contractor LIKE '%#trim(ps_con)#%'</cfif> 
+			--->
+			<!---  =========== contractor  ================    ---> 
+
+			<cfset target_string = '' >
+			<cfset quoted_string_array = []>
+			
+			<cfif trim(ps_con) is not "">
+				<cfset target_string = ps_con >
+				
+				<!---    https://stackoverflow.com/questions/12947242/coldfusion-how-to-extract-a-substring-using-regex    --->
+				<cfset regular_expression_double_quote = '"([^"]*)"'  />
+				<cfset regular_expression_single_quote = "'([^']*)'"  />
+				
+				<cfset quoted_string_array_double_quote = REMatch(regular_expression_double_quote, target_string) >
+				<cfset quoted_string_array_single_quote = REMatch(regular_expression_single_quote, target_string) >
+				
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_double_quote, true) >
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_single_quote, true) >
+				
+				<cfloop array="#quoted_string_array#" index="quoted_string_item">
+					<cfset quoted_string_item_fake = replace(quoted_string_item, " ","~","all") >
+					<cfset target_string = replace(target_string, quoted_string_item, quoted_string_item_fake, "all") >
+				</cfloop>
+				
+				<cfset target_string_array = ListToArray(target_string, " " ) />
+				
+				<cfloop array="#target_string_array#" index="item">
+					<cfset first_char=Left(item,1) />
+					
+					<cfif first_char is "-">
+					
+						<cfset item = RemoveChars(item, 1, 1) />
+						
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND contractor Not LIKE '%#preservesinglequotes(item)#%'
+	
+					<cfelse>
+	
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND contractor LIKE '%#preservesinglequotes(item)#%'
+						
+					</cfif>
+				</cfloop>
+			</cfif> 
+
+        <!--- ------ End ------------ joe hu ------ 2/22/2018     -----------  requestID 107 ---- 2) ----------  --->   
+        
 		<cfif trim(ps_fy) is not "">AND fiscal_year = '#trim(ps_fy)#'</cfif> 
 		#preservesinglequotes(ps_where)#
 		ORDER BY #ps_order#
@@ -1108,16 +1280,20 @@
 	
 		<cfset data.query = serializeJSON(getPackages)>
 	
-		<cfset data.result = "Success">
-		
+		<cfset data.result = "Success" >
+        
+        <!--- debug  --->
+        <!--- <cfset data.target_string = target_string >
+		<cfset data.quoted_string_array = quoted_string_array > --->
+
 		<cfset data = serializeJSON(data)>
 		
 	    <!--- wrap --->
 	    <cfif structKeyExists(arguments, "callback")>
 	        <cfset data = arguments.callback & "" & data & "">
 	    </cfif>
-	    
-	    <cfreturn data>
+        
+	    <cfreturn data >
 		
 	</cffunction>
 	
@@ -1127,6 +1303,7 @@
 		<!--- <cfargument name="ss_sfx" required="true"> --->
 		<cfargument name="ss_pgroup" required="true">
 		<cfargument name="ss_pno" required="true">
+		<cfargument name="ss_category" required="true">
 		<cfargument name="ss_type" required="true">
 		<cfargument name="ss_name" required="true">
 		<cfargument name="ss_address" required="true">
@@ -1148,10 +1325,11 @@
 		<cfargument name="ss_removed" required="true">
 		<cfargument name="ss_zip" required="true">
 		<cfargument name="ss_curbramp" required="true">
-		<cfargument name="ss_pn" required="true">
+		<!--- <cfargument name="ss_pn" required="true"> --->
 		<cfargument name="ss_keyword" required="true">
 		<cfargument name="ss_hasA" required="true">
 		<cfargument name="ss_hasB" required="true">
+		<cfargument name="ss_hascert" required="true">
 		<cfargument name="ss_assnull" required="false">
 		<cfargument name="ss_qcnull" required="false">
 		<cfargument name="ss_consnull" required="false">
@@ -1163,8 +1341,7 @@
 		<cfif isdefined("ss_consnull")><cfset session.ss_consnull = 1><cfelse><cfset StructDelete(Session, "ss_consnull")></cfif>
 		<cfif isdefined("ss_concnull")><cfset session.ss_concnull = 1><cfelse><cfset StructDelete(Session, "ss_concnull")></cfif>
 		
-		
-		
+
 		<cfset var data = {}>
 		
 		<cfset ss_name = trim(replace(ss_name,"'","''","ALL"))>
@@ -1173,11 +1350,13 @@
 		<cfset ss_zip = trim(ss_zip)>
 		<cfset ss_keyword = trim(replace(ss_keyword,"'","''","ALL"))>
 		
+        <!---  joe 2/14/2018 ---- remove  
 		<cfset nt = "">
 		<cfif left(ss_keyword,1) is "-">
 			<cfset nt = "NOT">
 			<cfset ss_keyword = right(ss_keyword,len(ss_keyword)-1)>
 		</cfif>
+		--->
 		
 		<!--- <cfset ss_assessor = trim(ss_assessor)> --->
 		<!--- <cfset ss_qc = trim(ss_qc)> --->
@@ -1243,22 +1422,51 @@
 		<cfif trim(ss_qcfrm) is not "" AND trim(ss_qcto) is not "">
 			<cfset qcbtwn = "AND (qc_date >= " & ss_qcfrm & " AND qc_date <= " & ss_qcto & ")"> 
 		</cfif>
-		
-		<cfif trim(ss_consfrm) is not "" AND trim(ss_consto) is ""><cfset ss_constart = ss_consfrm></cfif>
-		<cfif trim(ss_consto) is not "" AND trim(ss_consfrm) is ""><cfset ss_constart = ss_consto></cfif>
-		<cfset consbtwn = "">
-		<cfif trim(ss_consfrm) is not "" AND trim(ss_consto) is not "">
-			<cfset consbtwn = "AND (construction_start_date >= " & ss_consfrm & " AND construction_start_date <= " & ss_consto & ")"> 
-		</cfif>
-		
-		<cfif trim(ss_concfrm) is not "" AND trim(ss_concto) is ""><cfset ss_concomplete = ss_concfrm></cfif>
-		<cfif trim(ss_concto) is not "" AND trim(ss_concfrm) is ""><cfset ss_concomplete = ss_concto></cfif>
-		<cfset concbtwn = "">
-		<cfif trim(ss_concfrm) is not "" AND trim(ss_concto) is not "">
-			<cfset concbtwn = "AND (construction_completed_date >= " & ss_concfrm & " AND construction_completed_date <= " & ss_concto & ")"> 
-		</cfif>
-		
-		
+        
+		<!--- joe -----   2/12/2018 -----------  requestID 107 ---- 3)--->
+         
+			<!--- construction start date --->
+                            
+            <!---
+            <cfif trim(ss_consfrm) is not "" AND trim(ss_consto) is ""><cfset ss_constart = ss_consfrm></cfif>
+            <cfif trim(ss_consto) is not "" AND trim(ss_consfrm) is ""><cfset ss_constart = ss_consto></cfif>
+            --->
+                            
+            <cfset consbtwn = "">
+            <cfif trim(ss_consfrm) is not "" AND trim(ss_consto) is "">
+            	<cfset consbtwn = "AND (construction_start_date >= " & ss_consfrm  & ")">
+            	<cfset ss_constart = "">
+            </cfif>
+            <cfif trim(ss_consto) is not "" AND trim(ss_consfrm) is "">
+                <cfset consbtwn = " AND (construction_start_date <= " & ss_consto & ")"> 
+                <cfset ss_constart = "">
+            </cfif>
+            <cfif trim(ss_consfrm) is not "" AND trim(ss_consto) is not "">
+                <cfset consbtwn = "AND (construction_start_date >= " & ss_consfrm & " AND construction_start_date <= " & ss_consto & ")"> 
+            </cfif>
+            
+            <!--- construction complete date --->
+             
+            <!---
+            <cfif trim(ss_concfrm) is not "" AND trim(ss_concto) is ""><cfset ss_concomplete = ss_concfrm></cfif>
+            <cfif trim(ss_concto) is not "" AND trim(ss_concfrm) is ""><cfset ss_concomplete = ss_concto></cfif>
+            --->
+            
+            <cfset concbtwn = "">
+            <cfif trim(ss_concfrm) is not "" AND trim(ss_concto) is "">
+            	<cfset concbtwn = "AND (construction_completed_date >= " & ss_concfrm  & ")">
+                <cfset ss_concomplete = "">
+            </cfif>
+            <cfif trim(ss_concto) is not "" AND trim(ss_concfrm) is "">
+                <cfset concbtwn = " AND (construction_completed_date <= " & ss_concto & ")"> 
+                <cfset ss_concomplete = "">
+            </cfif>
+            <cfif trim(ss_concfrm) is not "" AND trim(ss_concto) is not "">
+                <cfset concbtwn = "AND (construction_completed_date >= " & ss_concfrm & " AND construction_completed_date <= " & ss_concto & ")"> 
+            </cfif>
+
+        <!--- End ---  joe -----   2/12/2018 -----------  requestID 107 ---- 3)         --->
+        
 		<cfquery name="getPackages" datasource="#request.sqlconn#">
 		SELECT * FROM vwSites WHERE 1=1
 		<cfif ss_no is not "">AND location_no = #ss_no#</cfif> 
@@ -1273,9 +1481,189 @@
 			</cfif>
 		</cfif> 
 		<cfif ss_pno is not "">AND package_no = '#ss_pno#'</cfif> 
-		<cfif ss_type is not "">AND type = '#ss_type#'</cfif> 
-		<cfif trim(ss_name) is not "">AND name LIKE '%#preservesinglequotes(ss_name)#%'</cfif> 
-		<cfif trim(ss_address) is not "">AND address LIKE '%#preservesinglequotes(ss_address)#%'</cfif> 
+		<cfif ss_type is not "">AND type = '#ss_type#'</cfif>
+		<cfif ss_category is not "">AND type_desc = '#ss_category#'</cfif>
+        
+        
+        <!--- joe hu ------ 2/14/2018     -----------  requestID 107 ---- 2) ----------  ---> 
+        
+        	<!---  =========== Facility Name  ================    ---> 
+                
+			<!--- ---- original ------    
+	        <cfif trim(ss_name) is not "">AND name LIKE '%#preservesinglequotes(ss_name)#%'</cfif> 
+	        --->
+        
+            <cfset target_string = '' >
+            <cfset quoted_string_array = []>
+            <cfif trim(ss_name) is not "">
+	            <cfset target_string = ss_name >
+	                   
+	            <cfset regular_expression_double_quote = '"([^"]*)"'  />
+				<cfset regular_expression_single_quote = "'([^']*)'"  />
+	            
+	            <cfset quoted_string_array_double_quote = REMatch(regular_expression_double_quote, target_string) >
+	            <cfset quoted_string_array_single_quote = REMatch(regular_expression_single_quote, target_string) >
+	 
+	            <cfset ArrayAppend(quoted_string_array, quoted_string_array_double_quote, true) >
+	            <cfset ArrayAppend(quoted_string_array, quoted_string_array_single_quote, true) >
+	                                           							
+	            <cfloop array="#quoted_string_array#" index="quoted_string_item">
+	            	<cfset quoted_string_item_fake = replace(quoted_string_item, " ","~","all") >
+	                <cfset target_string = replace(target_string, quoted_string_item, quoted_string_item_fake, "all") >
+	            </cfloop>
+									   
+				<cfset target_string_array = ListToArray(target_string, " " ) />
+	                           
+	            <cfloop array="#target_string_array#" index="item">
+	 				<cfset first_char=Left(item,1) />
+	                <cfif first_char is "-">
+						<cfset item = RemoveChars(item, 1, 1) />
+	                                                           
+	                    <!--- remove all single quote, double quote ,  replace ~ with space --->
+	                    <cfset item = trim(replace(item,'"','',"ALL"))>
+	                    <cfset item = trim(replace(item,"'",'',"ALL"))>
+	                    <cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND name Not LIKE '%#preservesinglequotes(item)#%'
+						
+					<cfelse>
+        
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+                        <cfset item = trim(replace(item,'"','',"ALL"))>
+                        <cfset item = trim(replace(item,"'",'',"ALL"))>
+                        <cfset item = trim(replace(item,"~",' ',"ALL"))>
+                        AND name LIKE '%#preservesinglequotes(item)#%'
+						
+                    </cfif> 
+				</cfloop>     
+			</cfif> 
+                         
+			<!---  =========== Address  ================    ---> 
+                    
+            <!--- ---- original ------
+            <cfif trim(ss_address) is not "">AND address LIKE '%#preservesinglequotes(ss_address)#%'</cfif> 
+            --->
+        
+			<cfset target_string = '' >
+			<cfset quoted_string_array = []>
+			
+			<cfif trim(ss_address) is not "">
+				<cfset target_string = ss_address >
+
+				<cfset regular_expression_double_quote = '"([^"]*)"'  />
+				<cfset regular_expression_single_quote = "'([^']*)'"  />
+				
+				<cfset quoted_string_array_double_quote = REMatch(regular_expression_double_quote, target_string) >
+				<cfset quoted_string_array_single_quote = REMatch(regular_expression_single_quote, target_string) >
+
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_double_quote, true) >
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_single_quote, true) >
+				
+				<cfloop array="#quoted_string_array#" index="quoted_string_item">
+					<cfset quoted_string_item_fake = replace(quoted_string_item, " ","~","all") >
+					<cfset target_string = replace(target_string, quoted_string_item, quoted_string_item_fake, "all") >
+				</cfloop>
+				
+				<cfset target_string_array = ListToArray(target_string, " " ) />
+				
+				<cfloop array="#target_string_array#" index="item">
+					<cfset first_char=Left(item,1) />
+					<cfif first_char is "-">		
+						<cfset item = RemoveChars(item, 1, 1) />
+						
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND address Not LIKE '%#preservesinglequotes(item)#%'
+					
+					<cfelse>
+
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND address LIKE '%#preservesinglequotes(item)#%'
+						
+					</cfif>
+				</cfloop>
+			</cfif> 
+     
+			<!---  =========== Keyword  ================    ---> 
+			
+			<!--- ---- original ------
+			<cfif ss_keyword is not "">AND (
+			notes #nt# LIKE '%#preservesinglequotes(ss_keyword)#%' OR 
+			name #nt# LIKE '%#preservesinglequotes(ss_keyword)#%' OR
+			address #nt# LIKE '%#preservesinglequotes(ss_keyword)#%' OR
+			location_description #nt# LIKE '%#preservesinglequotes(ss_keyword)#%' OR
+			damage_description #nt# LIKE '%#preservesinglequotes(ss_keyword)#%' OR
+			tree_removal_notes #nt# LIKE '%#preservesinglequotes(ss_keyword)#%')	
+			</cfif> --->
+
+			<cfset target_string = '' >
+			<cfset quoted_string_array = []>
+			
+			<cfif trim(ss_keyword) is not "">
+				<cfset target_string = ss_keyword >
+				
+				<cfset regular_expression_double_quote = '"([^"]*)"'  />
+				<cfset regular_expression_single_quote = "'([^']*)'"  />
+				
+				<cfset quoted_string_array_double_quote = REMatch(regular_expression_double_quote, target_string) >
+				<cfset quoted_string_array_single_quote = REMatch(regular_expression_single_quote, target_string) >
+				
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_double_quote, true) >
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_single_quote, true) >
+				
+				<cfloop array="#quoted_string_array#" index="quoted_string_item">
+					<cfset quoted_string_item_fake = replace(quoted_string_item, " ","~","all") >
+					<cfset target_string = replace(target_string, quoted_string_item, quoted_string_item_fake, "all") >
+				</cfloop>
+				
+				<cfset target_string_array = ListToArray(target_string, " " ) />
+				
+				<cfloop array="#target_string_array#" index="item">
+	
+					<cfset first_char=Left(item,1) />
+					
+					<cfif first_char is "-">
+						<cfset item = RemoveChars(item, 1, 1) />
+						
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND name NOT LIKE '%#preservesinglequotes(item)#%'
+						AND address NOT LIKE '%#preservesinglequotes(item)#%'
+						
+						<!---   
+						AND location_description NOT LIKE '%#preservesinglequotes(item)#%'
+						AND notes NOT LIKE '%#preservesinglequotes(item)#%'
+						AND damage_description NOT LIKE '%#preservesinglequotes(item)#%'       
+						AND tree_removal_notes NOT LIKE '%#preservesinglequotes(item)#%'
+						--->
+						
+					<cfelse>
+					
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND (
+						name LIKE '%#preservesinglequotes(item)#%'
+						OR address LIKE '%#preservesinglequotes(item)#%'
+						OR notes LIKE '%#preservesinglequotes(item)#%'
+						OR location_description LIKE '%#preservesinglequotes(item)#%'
+						OR damage_description LIKE '%#preservesinglequotes(item)#%'
+						OR tree_removal_notes LIKE '%#preservesinglequotes(item)#%'
+						)
+					
+					</cfif>
+				</cfloop>
+			</cfif> 
+
+        <!--- ------ End ------------ joe hu ------ 2/14/2018     -----------  requestID 107 ---- 2) ----------  ---> 
+          
 		<cfif trim(ss_wo) is not "">AND work_order LIKE '%#preservesinglequotes(ss_wo)#%'</cfif> 
 		<cfif ss_assessed is not "">
 			<cfif ss_assessed is 1>
@@ -1297,7 +1685,10 @@
 		<cfif ss_cd is not "">AND council_district = #ss_cd#</cfif> 
 		<cfif ss_zip is not "">AND zip_code = #ss_zip#</cfif>
 		<cfif ss_curbramp is not "">AND curb_ramp_only = #ss_curbramp#</cfif>
-		<cfif ss_pn is not "">AND priority_no = #ss_pn#</cfif> 
+		<!--- <cfif ss_pn is not "">AND priority_no = #ss_pn#</cfif>  --->
+        
+		<!---  joe remove 2/14/2018 -------
+		
 		<cfif ss_keyword is not "">AND (
 		notes #nt# LIKE '%#preservesinglequotes(ss_keyword)#%' OR 
 		name #nt# LIKE '%#preservesinglequotes(ss_keyword)#%' OR
@@ -1306,25 +1697,34 @@
 		damage_description #nt# LIKE '%#preservesinglequotes(ss_keyword)#%' OR
 		tree_removal_notes #nt# LIKE '%#preservesinglequotes(ss_keyword)#%')	
 		</cfif> 
+		
+		--->
+
 		<cfif ss_hasA is not "">
 			<cfif ss_hasA is 1>AND has_after = 1<cfelse>AND (has_after <> 1 OR has_after is NULL)</cfif>
 		</cfif>
 		<cfif ss_hasB is not "">
 			<cfif ss_hasB is 1>AND has_before = 1<cfelse>AND (has_before <> 1 OR has_before is NULL)</cfif>
 		</cfif> 
+		<cfif ss_hascert is not "">AND has_certificate = '#ss_hascert#'</cfif> 
 		<cfif ss_removed is not "">AND removed = #ss_removed#<cfelse>AND removed is NULL</cfif> 
 		<cfif isdefined("ss_assnull")>AND assessed_date IS NULL</cfif>
 		<cfif isdefined("ss_qcnull")>AND qc_date IS NULL</cfif>
 		<cfif isdefined("ss_consnull")>AND construction_start_date IS NULL</cfif>
 		<cfif isdefined("ss_concnull")>AND construction_completed_date IS NULL</cfif>
 		ORDER BY #ss_order#
-		</cfquery>
+	</cfquery>
 	
 		<cfset data.query = serializeJSON(getPackages)>
 		
 		<cfset session.siteQuery = getPackages>
 	
 		<cfset data.result = "Success">
+        
+        <!---
+         <cfset data.target_string = target_string >
+		 <cfset data.quoted_string_array = quoted_string_array >
+        --->
 		
 		<cfset data = serializeJSON(data)>
 		
@@ -1855,6 +2255,138 @@
 	    <cfreturn data>
 	
 	</cffunction>
+	
+	
+	
+	<!--- ------------ joe hu 6/14/2018 delete curbRamp  --------------  ----------- --->
+	
+	<cffunction name="deleteCurbRamp" access="remote" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="crid" required="true">
+		
+		<cfset var data = {}>
+		
+		<cfif isdefined("session.userid") is false>
+			<cfset data.result = "- CurbRamp Deletion Failed: You are no longer logged in.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>
+		
+		<cfif session.user_level lt 2>
+			<cfset data.result = "- CurbRamp Deletion Failed: You are not authorized to make edits.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>		
+		
+		<cfset data.crid = crid>
+	
+			<cfquery name="getRecord" datasource="#request.sqlconn#">
+			SELECT * FROM tblCurbRamps WHERE Ramp_No = #crid#
+			</cfquery>
+			
+			<cfif getRecord.recordcount gt 0>
+				
+				<cfquery name="updateRecord" datasource="#request.sqlconn#">
+				UPDATE tblCurbRamps SET
+				removed = 1,
+				
+				user_id = #session.user_num#,
+				modified_date = #CreateODBCDateTime(Now())#
+				WHERE Ramp_No = #crid#
+				</cfquery>
+				
+				<cfquery name="updateRecord" datasource="#request.sqlconn#">
+				UPDATE tblGeocodingCurbRamps SET
+				deleted = 1,
+				userid = #session.user_num#,
+				lastmodifieddate = #CreateODBCDateTime(Now())#
+				WHERE Ramp_No = #crid#
+				</cfquery>
+				
+			</cfif>
+		
+			<cfset data.result = "Success">
+		
+		<cfset data = serializeJSON(data)>
+		
+	    <!--- wrap --->
+	    <cfif structKeyExists(arguments, "callback")>
+	        <cfset data = arguments.callback & "" & data & "">
+	    </cfif>
+	    
+	    <cfreturn data>
+	
+	</cffunction>
+    
+	
+    <cffunction name="restoreCurbRamp" access="remote" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="crid" required="true">
+		
+		<cfset var data = {}>
+		
+		<cfif isdefined("session.userid") is false>
+			<cfset data.result = "- CurbRamp Restoration Failed: You are no longer logged in.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>
+		
+		<cfif session.user_level lt 2>
+			<cfset data.result = "- CurbRamp Restoration Failed: You are not authorized to make edits.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>		
+		
+		<cfset data.crid = crid>
+	
+		<cftry>
+		
+			<cfquery name="updateRecord" datasource="#request.sqlconn#">
+			UPDATE tblCurbRamps SET
+			removed = NULL,
+			user_id = #session.user_num#,
+			modified_date = #CreateODBCDateTime(Now())#
+			WHERE Ramp_No = #crid#
+			</cfquery>
+				
+			<cfset data.result = "Success">
+		<cfcatch>
+			<cfset data.result = "- Update Failed: Database Error.">
+		</cfcatch>
+		
+		</cftry>
+		
+		<cfset data = serializeJSON(data)>
+		
+	    <!--- wrap --->
+	    <cfif structKeyExists(arguments, "callback")>
+	        <cfset data = arguments.callback & "" & data & "">
+	    </cfif>
+	    
+	    <cfreturn data>
+	
+	</cffunction>
+    
+
+    <!--- ---------    End  -------------- joe hu 6/14/2018 delete curbRamp  --------------   --->
 	
 	
 	
@@ -2943,11 +3475,11 @@
 		
 			<cfset sfx = timeformat(now(),"HHmmss")>
 
-			<cfset columns = "Site,Council District,Package,Facility Name,Address,Construction Start Date,Construction Completed Date,Priority No,Engineer's Estimate,Total Cost,Total Concrete,Type,Work Order,Has Certificate,Certificate Total">
+			<cfset columns = "Site,Council District,Package,Facility Name,Address,Construction Start Date,Construction Completed Date,Classification,Priority Score,Engineer's Estimate,Total Cost,Total Concrete,Type,Subtype,Work Order,Number of Curb Ramps,Has Certificate,Certificate Total">
 			
 			<cfquery name="setSearch" dbtype="query">
 			SELECT location_no as site,council_district as cd, package,name as facility_name,address,construction_start_date,
-			construction_completed_date,priority_no,engineers_estimate,total_cost,total_concrete,type_desc,work_order,has_certificate,certificate_total FROM session.siteQuery
+			construction_completed_date,classification,priority_score,engineers_estimate,total_cost,total_concrete,type_desc,subtype_desc,work_order,number_curbramps,has_certificate,certificate_total FROM session.siteQuery
 			</cfquery>
 			
 			<cfset filename = expandPath("../downloads/SidewalkRepairSiteSearch_#sfx#.xls")>
@@ -3140,7 +3672,18 @@
 			<cfset session.user_power = login_chk.user_power>
 			<cfset session.user_num = login_chk.user_id>
 			<cfset session.user_cert = login_chk.user_cert>
+			<cfset session.user_ufd = login_chk.user_ufd>
+            
+             <!--- joe hu 7/31/18 report access --->
+            <cfset session.user_report = login_chk.user_report>
+             
 			<cfset data.response = "Success">
+			
+			<cfset session.token = CreateUUID()>
+			<cfquery name="login_update" datasource="#request.sqlconn#" dbtype="ODBC">
+			UPDATE dbo.tblUsers SET user_token = '#session.token#' WHERE user_id = #session.user_num#
+			</cfquery>
+			
 		<cfelse>
 			<cfquery name="login_chk" datasource="#request.sqlconn#" dbtype="ODBC">
 			SELECT * FROM dbo.tblUsers WHERE user_name = '#user#' AND user_level >= 0
@@ -3168,12 +3711,18 @@
 		<cfset var data = {}>
 	
 		<cflock timeout=20 scope="Session" type="Exclusive">
+		
+			<cfquery name="login_update" datasource="#request.sqlconn#" dbtype="ODBC">
+			UPDATE dbo.tblUsers SET user_token = NULL WHERE user_id = #session.user_num#
+			</cfquery>
+		
 	  		<cfset StructDelete(Session, "userid")>
 			<cfset StructDelete(Session, "password")>
 			<cfset StructDelete(Session, "agency")>
 			<cfset StructDelete(Session, "user_level")>
 			<cfset StructDelete(Session, "user_power")>
 			<cfset StructDelete(Session, "user_cert")>
+			<cfset StructDelete(Session, "user_ufd")>
 			<cfset StructDelete(Session, "user_num")>
 			<cfset StructDelete(Session, "arrSUMAll")>
 			<cfset StructDelete(Session, "arrWWUsers")>
@@ -3257,6 +3806,8 @@
 			    <cfif trim(tree_trc) is not "">Tree_Removal_Contractor,</cfif>
 			    <cfif trim(tree_tpc) is not "">Tree_Planting_Contractor,</cfif>
 			    <!--- <cfif trim(tree_twc) is not "">Tree_Watering_Contractor,</cfif> --->
+                
+                
 			    <cfif trim(tree_trn) is not "">Tree_Removal_Notes,</cfif>
 				<cfif trim(tree_arbname) is not "">Arborist_Name,</cfif>
 				<cfif trim(tree_lock) is not "">Root_Barrier_Lock,</cfif>
@@ -3274,6 +3825,8 @@
 			    <cfif trim(tree_trc) is not "">'#PreserveSingleQuotes(tree_trc)#',</cfif>
 			    <cfif trim(tree_tpc) is not "">'#PreserveSingleQuotes(tree_tpc)#',</cfif>
 			    <!--- <cfif trim(tree_twc) is not "">'#PreserveSingleQuotes(tree_twc)#',</cfif> --->
+                
+                
 			    <cfif trim(tree_trn) is not "">'#PreserveSingleQuotes(tree_trn)#',</cfif>
 				<cfif trim(tree_arbname) is not "">'#PreserveSingleQuotes(tree_arbname)#',</cfif>
 				<cfif trim(tree_lock) is not "">#tree_lock#,</cfif>
@@ -3294,6 +3847,8 @@
 			Tree_Removal_Contractor = <cfif tree_trc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_trc)#'</cfif>,
 			Tree_Planting_Contractor = <cfif tree_tpc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_tpc)#'</cfif>,
 			<!--- Tree_Watering_Contractor = <cfif tree_twc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_twc)#'</cfif>, --->
+            
+            
 			Tree_Removal_Notes = <cfif tree_trn is "">NULL<cfelse>'#PreserveSingleQuotes(tree_trn)#'</cfif>,
 			Arborist_Name = <cfif tree_arbname is "">NULL<cfelse>'#PreserveSingleQuotes(tree_arbname)#'</cfif>,
 			Root_Barrier_Lock = <cfif tree_lock is "">NULL<cfelse>#tree_lock#</cfif>,
@@ -3317,6 +3872,8 @@
 		<cfset cnt = trees_sir_cnt>
 		<cfset lt_total = 0>
 		<cfset gt_total = 0>
+		
+		<cfset data.adds = arrayNew(1)>
 		
 		<cfloop index="i" from="1" to="#cnt#">
 		
@@ -3355,15 +3912,18 @@
 					<cfset traddr = evaluate("traddr_" & i & "_" & j)>
 					<cfset trspecies = evaluate("trspecies_" & i & "_" & j)>
 					<cfset trtype = evaluate("trtype_" & i & "_" & j)>
+					<cfset trnote = evaluate("trnote_" & i & "_" & j)>
 					
 					<cfif trim(trpidt) is ""><cfset trpidt = "NULL"></cfif>
 					<cfif trim(trtrdt) is ""><cfset trtrdt = "NULL"></cfif>
 					<cfif trim(traddr) is ""><cfset traddr = "NULL"></cfif>
 					<cfif trim(trspecies) is ""><cfset trspecies = "NULL"></cfif>
 					<cfif trim(trtype) is ""><cfset trtype = "NULL"></cfif>
+					<cfif trim(trnote) is ""><cfset trnote = "NULL"></cfif>
 					
 					<cfset traddr = replace(traddr,"'","''","ALL")>
 					<cfset trspecies = ucase(replace(trspecies,"'","''","ALL"))>
+					<cfset trnote = replace(trnote,"'","''","ALL")>
 					
 					<cfif trpidt is not "NULL">
 						<cfset arrDT = listtoarray(trpidt,"/")>
@@ -3392,6 +3952,7 @@
 						    <cfif trim(traddr) is not "NULL">Address,</cfif>
 						    <cfif trim(trspecies) is not "NULL">Species,</cfif>
 							<cfif trim(trtype) is not "NULL">Type,</cfif>
+							<cfif trim(trnote) is not "NULL">Note,</cfif>
 							Action_Type,
 							Deleted,
 							User_ID,
@@ -3410,6 +3971,7 @@
 						    <cfif trim(traddr) is not "NULL">'#PreserveSingleQuotes(traddr)#',</cfif>
 						    <cfif trim(trspecies) is not "NULL">'#PreserveSingleQuotes(trspecies)#',</cfif>
 							<cfif trim(trtype) is not "NULL">#trtype#,</cfif>
+							<cfif trim(trnote) is not "NULL">'#PreserveSingleQuotes(trnote)#',</cfif>
 							0,
 							0,
 							#session.user_num#,
@@ -3429,6 +3991,7 @@
 						Address = <cfif traddr is "NULL">NULL<cfelse>'#PreserveSingleQuotes(traddr)#'</cfif>,
 						Species = <cfif trspecies is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trspecies)#'</cfif>,
 						Type = <cfif trtype is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trtype)#'</cfif>,
+						Note = <cfif trnote is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trnote)#'</cfif>,
 						User_ID = #session.user_num#,
 						Modified_Date = #CreateODBCDateTime(Now())#
 						WHERE Location_No = #sw_id#	AND Group_No = #grp# AND Tree_No = #tree# AND Action_Type = 0 AND Deleted <> 1
@@ -3439,7 +4002,6 @@
 				</cfloop>
 				
 			</cfif>
-			
 			
 			<cfif add_cnt gt 0>
 				
@@ -3459,6 +4021,11 @@
 					<cfset tpspecies = evaluate("tpspecies_" & i & "_" & j)>
 					<cfset tpoffsite = evaluate("tpoffsite_" & i & "_" & j)>
 					<cfset tptype = evaluate("tptype_" & i & "_" & j)>
+					<cfset tpparkway = evaluate("tpparkway_" & i & "_" & j)>
+					<cfset tpoverhead = evaluate("tpoverhead_" & i & "_" & j)>
+					<cfset tpsubpos = evaluate("tpsubpos_" & i & "_" & j)>
+					<cfset tppostinspect = evaluate("tppostinspect_" & i & "_" & j)>
+					<cfset tpnote = evaluate("tpnote_" & i & "_" & j)>
 					
 					<cfif trim(tppidt) is ""><cfset tppidt = "NULL"></cfif>
 					<cfif trim(tptrdt) is ""><cfset tptrdt = "NULL"></cfif>
@@ -3469,8 +4036,17 @@
 					<cfif trim(tpoffsite) is "on"><cfset tpoffsite = 1><cfelse><cfset tpoffsite = 0></cfif>
 					<cfif trim(tptype) is ""><cfset tptype = "NULL"></cfif>
 					
+					<cfif trim(tpparkway) is ""><cfset tpparkway = "NULL"></cfif>
+					<cfif trim(tpoverhead) is "on"><cfset tpoverhead = 1><cfelse><cfset tpoverhead = 0></cfif>
+					<cfif trim(tpsubpos) is ""><cfset tpsubpos = "NULL"></cfif>
+					<cfif trim(tppostinspect) is "on"><cfset tppostinspect = 1><cfelse><cfset tppostinspect = 0></cfif>
+					<cfif trim(tpnote) is ""><cfset tpnote = "NULL"></cfif>
+					
 					<cfset tpaddr = replace(tpaddr,"'","''","ALL")>
 					<cfset tpspecies = ucase(replace(tpspecies,"'","''","ALL"))>
+					<cfset tpparkway = replace(tpparkway,"'","''","ALL")>
+					<cfset tpsubpos = ucase(replace(tpsubpos,"'","''","ALL"))>
+					<cfset tpnote = replace(tpnote,"'","''","ALL")>
 					
 					<cfif tppidt is not "NULL">
 						<cfset arrDT = listtoarray(tppidt,"/")>
@@ -3512,6 +4088,11 @@
 						    <cfif trim(tpspecies) is not "NULL">Species,</cfif>
 							<cfif trim(tpoffsite) is not "NULL">Offsite,</cfif>
 							<cfif trim(tptype) is not "NULL">Type,</cfif>
+							<cfif trim(tpparkway) is not "NULL">Parkway_Treewell_Size,</cfif>
+							<cfif trim(tpoverhead) is not "NULL">Overhead_Wires,</cfif>
+							<cfif trim(tpsubpos) is not "NULL">Sub_Position,</cfif>
+							<cfif trim(tppostinspect) is not "NULL">Post_Inspected,</cfif>
+							<cfif trim(tpnote) is not "NULL">Note,</cfif>
 							Action_Type,
 							Deleted,
 							User_ID,
@@ -3533,6 +4114,11 @@
 						    <cfif trim(tpspecies) is not "NULL">'#PreserveSingleQuotes(tpspecies)#',</cfif>
 							<cfif trim(tpoffsite) is not "NULL">#tpoffsite#,</cfif>
 							<cfif trim(tptype) is not "NULL">#tptype#,</cfif>
+							<cfif trim(tpparkway) is not "NULL">'#PreserveSingleQuotes(tpparkway)#',</cfif>
+							<cfif trim(tpoverhead) is not "NULL">#tpoverhead#,</cfif>
+							<cfif trim(tpsubpos) is not "NULL">'#PreserveSingleQuotes(tpsubpos)#',</cfif>
+							<cfif trim(tppostinspect) is not "NULL">#tppostinspect#,</cfif>
+							<cfif trim(tpnote) is not "NULL">'#PreserveSingleQuotes(tpnote)#',</cfif>
 							1,
 							0,
 							#session.user_num#,
@@ -3555,12 +4141,28 @@
 						Species = <cfif tpspecies is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpspecies)#'</cfif>,
 						Offsite = <cfif tpoffsite is "NULL">NULL<cfelse>#tpoffsite#</cfif>,
 						Type = <cfif tptype is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tptype)#'</cfif>,
+						Parkway_Treewell_Size = <cfif tpparkway is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpparkway)#'</cfif>,
+						Overhead_Wires = <cfif tpoverhead is "NULL">NULL<cfelse>#tpoverhead#</cfif>,
+						Sub_Position = <cfif tpsubpos is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpsubpos)#'</cfif>,
+						Post_Inspected = <cfif tppostinspect is "NULL">NULL<cfelse>#tppostinspect#</cfif>,
+						Note = <cfif tpnote is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpnote)#'</cfif>,
 						User_ID = #session.user_num#,
 						Modified_Date = #CreateODBCDateTime(Now())#
 						WHERE Location_No = #sw_id#	AND Group_No = #grp# AND Tree_No = #tree# AND Action_Type = 1 AND Deleted <> 1
 						</cfquery>
 					
 					</cfif>
+					
+					<!--- retrieve treeid for planting icon in app --->
+					<cfquery name="getTreeID" datasource="#request.sqlconn#">
+					SELECT id FROM dbo.#tbl# WHERE Location_No = #sw_id# AND Group_No = #grp# AND Tree_No = #tree# AND action_type = 1 AND Deleted <> 1
+					</cfquery>
+					<cfquery name="getCount" datasource="ufd_inventory_spatial">
+					SELECT objectid FROM #request.tree_tbl# WHERE srp_tree_id = #getTreeID.id#
+					</cfquery>
+					<cfset t = 0><cfif getCount.recordcount gt 0><cfset t = 1></cfif>
+					
+					<cfset go = arrayAppend(data.adds, sw_id & "|" & grp & "|" & tree & "|" & getTreeID.id & "|" & t)>
 
 				</cfloop>
 				
@@ -3711,6 +4313,8 @@
 		</cfquery>
 		
 		<cfset data.result = "Success">
+		
+		<cfset data.id = session.token>
 		
 		<!--- <cfcatch>
 			<cfset data.result = "- Site Update Failed: Database Error.">
@@ -4187,6 +4791,10 @@
 		<cfargument name="scr_assessed" required="true">
 		<cfargument name="scr_repairs" required="true">
 		<cfargument name="scr_design" required="true">
+		
+		<!--- joe hu ------ 6/14/2018     ------- added (2) ----------  ---> 
+        <cfargument name="scr_removed" required="true">
+		
 		<cfargument name="scr_applicable" required="true">
 		<cfargument name="scr_utility" required="true">
 		<cfargument name="scr_minor" required="true">
@@ -4329,8 +4937,119 @@
 		</cfif> 
 		<cfif scr_pno is not "">AND package_no = '#scr_pno#'</cfif> 
 		<cfif scr_type is not "">AND type = '#scr_type#'</cfif> 
-		<cfif trim(scr_primary) is not "">AND primary_street LIKE '%#preservesinglequotes(scr_primary)#%'</cfif> 
-		<cfif trim(scr_secondary) is not "">AND secondary_street LIKE '%#preservesinglequotes(scr_secondary)#%'</cfif> 
+        
+        <!--- joe -----   2/15/2018 -----------  requestID 107 ---- 2) ------------------      --->
+        
+			<!--- ---- original ------  
+			<cfif trim(scr_primary) is not "">AND primary_street LIKE '%#preservesinglequotes(scr_primary)#%'</cfif> 
+			<cfif trim(scr_secondary) is not "">AND secondary_street LIKE '%#preservesinglequotes(scr_secondary)#%'</cfif> 
+			--->
+
+			<!---  =========== primary street  ================    ---> 
+
+			<cfset target_string = '' >
+			<cfset quoted_string_array = []>
+			
+			<cfif trim(scr_primary) is not "">
+			
+				<cfset target_string = scr_primary >
+				
+				<cfset regular_expression_double_quote = '"([^"]*)"'  />
+				<cfset regular_expression_single_quote = "'([^']*)'"  />
+				
+				<cfset quoted_string_array_double_quote = REMatch(regular_expression_double_quote, target_string) >
+				<cfset quoted_string_array_single_quote = REMatch(regular_expression_single_quote, target_string) >
+				
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_double_quote, true) >
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_single_quote, true) >
+	
+				<cfloop array="#quoted_string_array#" index="quoted_string_item">
+					<cfset quoted_string_item_fake = replace(quoted_string_item, " ","~","all") >
+					<cfset target_string = replace(target_string, quoted_string_item, quoted_string_item_fake, "all") >
+				</cfloop>
+
+				<cfset target_string_array = ListToArray(target_string, " " ) />
+				
+				<cfloop array="#target_string_array#" index="item">
+
+					<cfset first_char=Left(item,1) />
+					
+					<cfif first_char is "-">
+					
+						<cfset item = RemoveChars(item, 1, 1) />
+						
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND primary_street Not LIKE '%#preservesinglequotes(item)#%'
+						
+					<cfelse>
+
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND primary_street LIKE '%#preservesinglequotes(item)#%'
+						
+					</cfif>
+				</cfloop>
+			</cfif> 
+
+			<!---  =========== secondary street  ================    ---> 
+			
+			<cfset target_string = '' >
+			<cfset quoted_string_array = []>
+			
+			<cfif trim(scr_secondary) is not "">
+			
+				<cfset target_string = scr_secondary >
+				
+				<cfset regular_expression_double_quote = '"([^"]*)"'  />
+				<cfset regular_expression_single_quote = "'([^']*)'"  />
+				
+				<cfset quoted_string_array_double_quote = REMatch(regular_expression_double_quote, target_string) >
+				<cfset quoted_string_array_single_quote = REMatch(regular_expression_single_quote, target_string) >
+				
+				
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_double_quote, true) >
+				<cfset ArrayAppend(quoted_string_array, quoted_string_array_single_quote, true) >
+				
+				<cfloop array="#quoted_string_array#" index="quoted_string_item">
+					<cfset quoted_string_item_fake = replace(quoted_string_item, " ","~","all") >
+					<cfset target_string = replace(target_string, quoted_string_item, quoted_string_item_fake, "all") >
+				</cfloop>
+				
+				<cfset target_string_array = ListToArray(target_string, " " ) />
+				
+				<cfloop array="#target_string_array#" index="item">
+				
+					<cfset first_char=Left(item,1) />
+					
+					<cfif first_char is "-">
+					
+						<cfset item = RemoveChars(item, 1, 1) />
+						
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND secondary_street Not LIKE '%#preservesinglequotes(item)#%'
+							
+					<cfelse>
+		
+						<!--- remove all single quote, double quote ,  replace ~ with space --->
+						<cfset item = trim(replace(item,'"','',"ALL"))>
+						<cfset item = trim(replace(item,"'",'',"ALL"))>
+						<cfset item = trim(replace(item,"~",' ',"ALL"))>
+						AND secondary_street LIKE '%#preservesinglequotes(item)#%'
+					
+					</cfif>
+				</cfloop>
+			</cfif>
+
+        <!---  ------- End --------------- joe -----   2/15/2018 -----------  requestID 107 ---- 2)--->
+        
 		<cfif scr_zip is not "">AND zip_code = #scr_zip#</cfif>
 		<cfif scr_assessed is not "">
 			<cfif scr_assessed is 1>
@@ -4341,6 +5060,10 @@
 		</cfif> 
 		<cfif scr_repairs is not "">AND repairs_required = #scr_repairs#</cfif> 
 		<cfif scr_design is not "">AND design_required = #scr_design#</cfif> 
+		
+		<!--- joe hu ------ 6/14/2018     ------- added (3) ----------  ---> 
+        <cfif scr_removed is not "">AND removed = #scr_removed#<cfelse>AND removed is NULL</cfif>
+		
 		<cfif scr_applicable is not "">AND standard_plan_applicable = #scr_applicable#</cfif> 
 		<cfif scr_utility is not "">AND utility_conflict = #scr_utility#</cfif> 
 		<cfif scr_minor is not "">AND minor_repair_only = #scr_minor#</cfif> 
@@ -4449,6 +5172,437 @@
 	    <cfreturn data>
 	
 	
+	</cffunction>
+	
+	
+	<cffunction name="AddSRID" access="remote" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="sw_id" required="true">
+		<cfargument name="sw_add_srid" required="true">
+		
+		<cfif isdefined("session.userid") is false>
+			<cfset data.result = "- Site Update Failed: You are no longer logged in.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>
+
+		<cfset var data = {}>
+		
+		<cfquery name="insertSRID" datasource="#request.sqlconn#">
+		INSERT INTO tblSRNumbers (
+		[Location_No],
+		[SR_Number],
+		[User_ID],
+		[Creation_Date]
+		)
+		VALUES ( 
+		#sw_id#,
+		'#sw_add_srid#',
+		#session.user_num#,
+		#CreateODBCDateTime(Now())#
+		)
+		</cfquery>
+		
+		<cfquery name="getIDs" datasource="#request.sqlconn#">
+		SELECT * FROM tblSRNumbers WHERE location_no = #sw_id# AND removed IS NULL ORDER BY sr_number
+		</cfquery>
+		
+		<cfset str = "">
+		<cfloop query="getIDs">
+			<cfset str = str & "," & SR_Number>
+		</cfloop>
+		<cfset data.sr_numbers = right(str,(len(str)-1))>
+		<cfset data.id = sw_add_srid>
+		<cfset data.result = "Success">
+		<cfset data = serializeJSON(data)>
+		
+	    <!--- wrap --->
+	    <cfif structKeyExists(arguments, "callback")>
+	        <cfset data = arguments.callback & "" & data & "">
+	    </cfif>
+	    <cfreturn data>
+		
+	</cffunction>
+	
+	<cffunction name="RemoveSRID" access="remote" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="sw_id" required="true">
+		<cfargument name="sridStr" required="true">
+		
+		<cfif isdefined("session.userid") is false>
+			<cfset data.result = "- Site Update Failed: You are no longer logged in.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>
+
+		<cfset var data = {}>
+		
+		<cfset arrSRIDs = listToArray(sridStr,",")>
+		
+		<cfloop index="i" from="1" to="#arrayLen(arrSRIDs)#">
+			
+			<cfquery name="updateSRID" datasource="#request.sqlconn#">
+			UPDATE tblSRNumbers SET
+			[User_ID] = #session.user_num#,
+			[Modified_Date] = #CreateODBCDateTime(Now())#,
+			[Removed] = 1
+			WHERE location_no = #sw_id# AND SR_Number = '#arrSRIDs[i]#'
+			</cfquery>
+		
+		</cfloop>
+		
+		<cfquery name="getIDs" datasource="#request.sqlconn#">
+		SELECT * FROM tblSRNumbers WHERE location_no = #sw_id# AND removed IS NULL ORDER BY sr_number
+		</cfquery>
+		
+		<cfset str = "">
+		<cfloop query="getIDs">
+			<cfset str = str & "," & SR_Number>
+		</cfloop>
+		<cfif str is not "">
+			<cfset str = right(str,(len(str)-1))>
+		</cfif>
+		<cfset data.sr_numbers = str>
+		<cfset data.sw_id = sw_id>		
+		<cfset data.result = "Success">
+		<cfset data = serializeJSON(data)>
+		
+	    <!--- wrap --->
+	    <cfif structKeyExists(arguments, "callback")>
+	        <cfset data = arguments.callback & "" & data & "">
+	    </cfif>
+	    <cfreturn data>
+		
+	</cffunction>
+	
+	<cffunction name="updateSRTicket" access="private" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="phase" required="true">
+		<cfargument name="locno" required="true">
+		<cfargument name="sr_num" required="true">
+		
+		<cfquery name="getPhase" datasource="#request.sqlconn#">
+		SELECT value FROM tblPhaseType WHERE id = #phase#
+		</cfquery>
+		<cfset phz = getPhase.value>
+		<cfset msg = "Thank you for submitting your Access Request. Due to the high volume of Access Requests, there could be a significant wait before work is completed. Currently your Access Request is in the '#phz#' phase. You can check the status of your request by logging into MyLA311 and selecting ""Manage Service Requests"". Thank you for your patience as we strive to implement this new program.">
+		
+		
+		<!--- s: get other srids associated with the site --->
+		<cfquery name="getSRIDs" datasource="#request.sqlconn#">
+		SELECT sr_number FROM tblSRNumbers WHERE location_no = #locno# AND removed is NULL
+		</cfquery>
+		<cfset srids = sr_num>
+		<cfif getSRIDs.recordcount gt 0><cfset srids = sr_num & "," & ValueList(getSRIDs.sr_number)></cfif>
+		<cfset arrSRIDs = listtoarray(srids)>
+		<!--- e: get other srids associated with the site --->
+		
+		<!--- s: loop through srids to update sr ticket --->
+		<cfloop index="i" from="1" to="#arrayLen(arrSRIDs)#">
+			<cfset answer = sendSRTicket(arrSRIDs[i],msg,(phase+28))>
+		</cfloop>
+		
+		<!--- e: loop through srids to update sr ticket --->
+		
+	
+		<cfset response = answer>
+	
+		<cfreturn response>
+	
+	</cffunction>
+	
+	<cffunction name="sendSRTicket" access="private" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="sr_num" required="true">
+		<cfargument name="sr_comment" required="true">
+		<cfargument name="sr_reasoncode" required="true" type="string">
+		
+		
+		<!--- Setup script variables --->
+		<cfset request.srupdate_err_message = "">
+		<cfset request.myLA311Root = "https://lacity-test.apigee.net"><cfset sfx = "_qa">
+		<cfif request.production is 2><cfset request.myLA311Root = "https://lacity-prod.apigee.net"><cfset sfx = ""></cfif>
+		<cfset apiKey = "8lN5QbdIeZGNu1P7orjIIemsDwrA7WAR">
+		
+		<cfset queryMethodAPI = "#request.myLA311Root#/myla311#sfx#/QuerySRs?apikey=#apiKey#">
+		<cfset upsertMethodAPI = "#request.myLA311Root#/myla311#sfx#/UpsertSR?apikey=#apiKey#">
+		<cfset updateUserID = "BOEINTEGRATION">
+		
+		<!--- Query the existing SR to get the IntegrationID --->
+		<cfset queryJSON = {
+		    "MetaData": {},
+		    "QueryRequest": {
+		        "SRNumber": "#sr_num#",
+						"srType": [
+							"Sidewalk Repair"
+		        ],
+		        "NewQuery":"new",
+		        "PageSize":"10",
+		        "StartRowNum":"1"
+		    }
+		}>
+		
+		<!---  Call the query method. --->
+		<cfif request.production is not 2>
+			<cfhttp url = "#queryMethodAPI#" method = "post" timeout = "60" result = "httpQueryResp" proxyServer="bcproxy.ci.la.ca.us" proxyPort="8080">
+			  <cfhttpparam type = "header" name = "Content-Type" value = "application/json">
+			  <cfhttpparam type = "body" value = "#serializeJSON(queryJSON)#">
+			</cfhttp>
+		<cfelse>
+			<cfhttp url = "#queryMethodAPI#" method = "post" timeout = "60" result = "httpQueryResp">
+			  <cfhttpparam type = "header" name = "Content-Type" value = "application/json">
+			  <cfhttpparam type = "body" value = "#serializeJSON(queryJSON)#">
+			</cfhttp>
+		</cfif>
+		
+		<!--- Validate the returned JSON data --->
+		<cfif !IsJSON(httpQueryResp.Filecontent)><cfset request.srupdate_err_message = "Something went wrong with the httpMyLA311Resp variable and cfhttp call.">
+		<!--- Data is valid so keep going --->
+		<cfelse>
+		  <cfset myla311Data = DeserializeJSON(httpQueryResp.Filecontent)>
+		  <!--- Process the response codes and summarize the data --->
+		  <cfif myla311Data.status.code neq "311">
+		        <cfset request.srupdate_err_message="The max number of retries was exceeded">
+		  </cfif>
+		  <!--- Get the integrationID number --->
+		  <cfif myla311Data.Response.NumOutputObjects neq 0>
+		    <cfset the311Records = myla311Data.Response.ListOfServiceRequest.ServiceRequest>
+		    <cfset integrationID = the311Records[1].IntegrationId>
+		  <cfelse>
+		  	<cfset request.srupdate_err_message="No records to process">
+		  </cfif>
+		</cfif>
+		
+		<cfif request.srupdate_err_message is ""> <!--- Continue if no Error message --->
+		
+			<cfset upsertData = {
+			  "MetaData": {},
+			  "SRData": {
+			    "SRNumber": "#sr_num#",
+			    "SRType": "Sidewalk Repair",
+			    "IntegrationId": "#integrationID#",
+			    "UpdatedByUserLogin": "#updateUserID#",
+			    "ListOfLa311ServiceRequestNotes": {
+			      "La311ServiceRequestNotes": [
+			        {
+			          "Comment": "#sr_comment#",
+			          "CreatedByUser": "#updateUserID#",
+			          "CommentType": "External",
+			          "Notification": "N"
+			        }
+			      ]
+			    },
+				"ReasonCode": "#sr_reasoncode# "
+			  }
+			}>
+		
+			<!--- s: Only Add if data was actual sent --->
+			<cfif sr_comment is not "">
+				<!---  Call the upsert method. --->
+				<cfhttp url = "#upsertMethodAPI#" method = "post" timeout = "60" result = "httpResp">
+				  <cfhttpparam type = "header" name = "Content-Type" value = "application/json">
+				  <cfhttpparam type = "body" value = "#serializeJSON(upsertData)#">
+				</cfhttp>
+				<!--- <cfdump var = "#httpResp#"> --->
+				<cfset my311FContent = deserializeJSON(httpResp.filecontent)>
+				<cfset my311Status = my311FContent.status>
+				<!--- <cfdump var = "#my311FContent.status#"> --->
+				<cfif my311Status.code neq "311">
+					<cfset request.srupdate_err_message=my311Status.message>
+				</cfif>
+			<cfelse>
+				<cfset request.srupdate_err_message = "No parameters were sent">
+			</cfif>
+			<!--- e: Only Add if data was actual sent --->
+		
+		</cfif>
+	
+		<cfset response = upsertData>
+	
+		<cfreturn response>
+	
+	</cffunction>
+	
+	<cffunction name="updateSiteNo" access="remote" returnType="any" returnFormat="plain" output="false">
+		<cfargument name="idx" required="true">
+		<cfargument name="sno" required="true">
+		<cfargument name="typ" required="true">
+		
+		<cfset var data = {}>
+		<cfset data.idx = idx>
+		<cfset data.sno = sno>
+		
+		<cfif isdefined("session.userid") is false>
+			<cfset data.result = "- Site Update Failed: You are no longer logged in.">
+			<cfset data = serializeJSON(data)>
+		    <!--- wrap --->
+		    <cfif structKeyExists(arguments, "callback")>
+		        <cfset data = arguments.callback & "" & data & "">
+		    </cfif>
+		    <cfreturn data>
+			<cfabort>
+		</cfif>
+		
+		<cfif typ is "add">
+			<!--- First check if the location_no has been assigned already --->
+			<cfquery name="chkPriority" datasource="#request.sqlconn#">
+			SELECT location_no FROM tblCityPropertyPriority WHERE location_no = #sno#
+			</cfquery>
+			
+			<cfif chkPriority.recordcount gt 0>
+				<cfset data.result = "- Site Update Failed: The Site No. has already been assigned!">
+				<cfset data = serializeJSON(data)>
+			    <!--- wrap --->
+			    <cfif structKeyExists(arguments, "callback")>
+			        <cfset data = arguments.callback & "" & data & "">
+			    </cfif>
+			    <cfreturn data>
+				<cfabort>
+			</cfif>
+			
+			
+			<!--- Next check if the location_no is an Access Request or a Rebate Request --->
+			<cfquery name="chkPriority" datasource="#request.sqlconn#">
+			SELECT location_no FROM tblSites WHERE location_no = #sno# AND type IN (11,27,28)
+			</cfquery>
+			
+			<cfif chkPriority.recordcount gt 0>
+				<cfset data.result = "- Site Update Failed: This myLA311 request can't be assigned!">
+				<cfset data = serializeJSON(data)>
+			    <!--- wrap --->
+			    <cfif structKeyExists(arguments, "callback")>
+			        <cfset data = arguments.callback & "" & data & "">
+			    </cfif>
+			    <cfreturn data>
+				<cfabort>
+			</cfif>
+			
+			<!--- Next check if the location_no exists at all --->
+			<cfquery name="chkPriority" datasource="#request.sqlconn#">
+			SELECT location_no FROM tblSites WHERE location_no = #sno#
+			</cfquery>
+			
+			<cfif chkPriority.recordcount is 0>
+				<cfset data.result = "- Site Update Failed: This Site No. doesn't exist!">
+				<cfset data = serializeJSON(data)>
+			    <!--- wrap --->
+			    <cfif structKeyExists(arguments, "callback")>
+			        <cfset data = arguments.callback & "" & data & "">
+			    </cfif>
+			    <cfreturn data>
+				<cfabort>
+			</cfif>
+			
+		</cfif>
+		
+		<cfset sn = sno>
+		<cfif typ is "remove"><cfset sn = "NULL"></cfif>
+
+		<cfset data.stk = 0>
+				
+		<!--- s: get Score to update table --->
+		<cfif typ is "add">
+			<!--- s: Get the calculated Tier 1 values and updates the table --->
+			<cfquery name="getScore" datasource="#request.sqlconn#" dbtype="ODBC">
+			SELECT scoretier1 FROM tblCityPropertyPriority WHERE id = #idx#
+			</cfquery>
+			
+			<!--- s: Get the calculated Tier 2 values and updates the table --->
+			<cfquery name="getScore2" datasource="#request.sqlconn#" dbtype="ODBC">
+			SELECT score FROM vwPriorityTier2 WHERE location_no = #sno#
+			</cfquery>
+			<cfset score = getScore2.score>
+			<cfif score is ""><cfset score = 0></cfif>
+			
+			<cfset data.tier1 = getScore.scoretier1>
+			<cfset data.tier2 = score>
+			<cfset data.score = getScore.scoretier1 + score>
+			
+			<!--- s: update tblSites table with new value --->
+			<cfquery name="updateSitePriority" datasource="#request.sqlconn#">
+			UPDATE tblSites SET
+			[Priority_Tier1] = #data.tier1#,
+			[User_ID] = #session.user_num#,
+			[Modified_Date] = #CreateODBCDateTime(Now())#
+			WHERE location_no = #sn#
+			</cfquery>
+			
+			<!--- s: update tblCityPropertyPriority table with new value --->
+			<cfquery name="updateSitePriority" datasource="#request.sqlconn#">
+			UPDATE tblCityPropertyPriority SET
+			[ScoreTier2] = #data.tier2#
+			WHERE id = #idx#
+			</cfquery>
+			
+			<cfquery name="getCompleted" datasource="#request.sqlconn#">
+			SELECT construction_completed_date as dt FROM tblSites WHERE location_no = #sn#
+			</cfquery>
+			<cfif getCompleted.dt is not ""><cfset data.stk = 1></cfif>
+			
+		<cfelse>
+			<!--- s: Get current score --->
+			<cfquery name="getScore" datasource="#request.sqlconn#" dbtype="ODBC">
+			SELECT location_no,scoretier1 FROM tblCityPropertyPriority WHERE id = #idx#
+			</cfquery>
+			<cfset locno = getScore.location_no>
+
+			<!--- s: Get the calculated Tier 2 values and updates the table --->
+			<!--- <cfquery name="getScore2" datasource="#request.sqlconn#" dbtype="ODBC">
+			SELECT score FROM vwPriorityTier2 WHERE location_no = #locno#
+			</cfquery>
+			<cfset score = getScore2.score>
+			<cfif score is ""><cfset score = "NULL"></cfif> --->
+			
+			<!--- these values are for resetting tblCityPropertyPriority and the array on the page with original scores --->
+			<cfset data.tier1 = getScore.scoretier1>
+			<cfset data.tier2 = "NULL">
+			<cfset data.score = getScore.scoretier1>
+			
+			<!--- s: update tblSites table with new value --->
+			<cfquery name="updateSitePriority" datasource="#request.sqlconn#">
+			UPDATE tblSites SET
+			[Priority_Tier1] = [Priority_Backup],
+			[User_ID] = #session.user_num#,
+			[Modified_Date] = #CreateODBCDateTime(Now())#
+			WHERE location_no = #locno#
+			</cfquery>
+			
+		</cfif>
+		<!--- e: get Score to update table --->
+		
+		
+		<cfquery name="updatePriority" datasource="#request.sqlconn#">
+		UPDATE tblCityPropertyPriority SET
+		[Location_No] = #sn#,
+		[ScoreTier1] = #data.tier1#,
+		[ScoreTier2] = #data.tier2#,
+		[User_ID] = #session.user_num#,
+		[Modified_Date] = #CreateODBCDateTime(Now())#
+		WHERE id = #idx#
+		</cfquery>
+		<cfif typ is "remove"><cfset data.tier2 = ""></cfif>
+		
+		<!--- s: Set all completed Sites to null since they are no longer active --->
+		<cfquery name="setCompleted" datasource="#request.sqlconn#">
+		UPDATE tblSites SET priority_tier1 = null, priority_tier2 = null WHERE construction_completed_date IS NOT null
+		</cfquery>
+		<!--- e: Set all completed Sites to null since they are no longer active --->
+		
+		<cfset data.result = "Success">
+		<cfset data = serializeJSON(data)>
+		
+	    <!--- wrap --->
+	    <cfif structKeyExists(arguments, "callback")>
+	        <cfset data = arguments.callback & "" & data & "">
+	    </cfif>
+	    <cfreturn data>
+		
 	</cffunction>
 	
 	

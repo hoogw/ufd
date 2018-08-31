@@ -3673,10 +3673,6 @@
 			<cfset session.user_num = login_chk.user_id>
 			<cfset session.user_cert = login_chk.user_cert>
 			<cfset session.user_ufd = login_chk.user_ufd>
-            
-             <!--- joe hu 7/31/18 report access --->
-            <cfset session.user_report = login_chk.user_report>
-             
 			<cfset data.response = "Success">
 			
 			<cfset session.token = CreateUUID()>
@@ -3742,6 +3738,24 @@
 	</cffunction>
 	
 	
+    
+    
+    
+    
+    
+    
+    
+    <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+    
+    
+      <!--- joe hu update below section --------   --->
+    
+    
+    
+    
+    
+    
+    
 	
 	
 	<cffunction name="updateTrees2" access="remote" returnType="any" returnFormat="plain" output="false">
@@ -3767,12 +3781,20 @@
 		
 		
 		<!--- UPDATE the first table --->
+        
+        
 		<cfset tbl = "tblTreeSiteInfo">
 		<cfquery name="chkTree" datasource="#request.sqlconn#">
 		SELECT * FROM dbo.#tbl# WHERE location_no = #sw_id#
 		</cfquery>
 		<cfset tree_trc = replace(tree_trc,"'","''","ALL")>
 		<cfset tree_tpc = replace(tree_tpc,"'","''","ALL")>
+        
+        <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+        <!--- cfset tree_trpsc = replace(tree_trpsc,"'","''","ALL")   --->
+        <!--- ----- End ------- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+        
+        
 		<!--- <cfset tree_twc = replace(tree_twc,"'","''","ALL")> --->
 		<cfset tree_trn = replace(tree_trn,"'","''","ALL")>
 		<cfset tree_arbname = replace(tree_arbname,"'","''","ALL")>
@@ -3805,6 +3827,13 @@
 				Location_No,
 			    <cfif trim(tree_trc) is not "">Tree_Removal_Contractor,</cfif>
 			    <cfif trim(tree_tpc) is not "">Tree_Planting_Contractor,</cfif>
+                
+                
+                <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+                <!--- <cfif trim(tree_trpsc) is not "">Root_Pruning_Contractor,</cfif>    --->
+                <!--- ------ end ------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+                
+                
 			    <!--- <cfif trim(tree_twc) is not "">Tree_Watering_Contractor,</cfif> --->
 			    <cfif trim(tree_trn) is not "">Tree_Removal_Notes,</cfif>
 				<cfif trim(tree_arbname) is not "">Arborist_Name,</cfif>
@@ -3822,6 +3851,11 @@
 				#sw_id#,
 			    <cfif trim(tree_trc) is not "">'#PreserveSingleQuotes(tree_trc)#',</cfif>
 			    <cfif trim(tree_tpc) is not "">'#PreserveSingleQuotes(tree_tpc)#',</cfif>
+                
+                <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+                <!--- <cfif trim(tree_trpsc) is not "">'#PreserveSingleQuotes(tree_trpsc)#',</cfif> --->
+                <!--- ------- End ----- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+                
 			    <!--- <cfif trim(tree_twc) is not "">'#PreserveSingleQuotes(tree_twc)#',</cfif> --->
 			    <cfif trim(tree_trn) is not "">'#PreserveSingleQuotes(tree_trn)#',</cfif>
 				<cfif trim(tree_arbname) is not "">'#PreserveSingleQuotes(tree_arbname)#',</cfif>
@@ -3842,6 +3876,11 @@
 			UPDATE dbo.#tbl# SET
 			Tree_Removal_Contractor = <cfif tree_trc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_trc)#'</cfif>,
 			Tree_Planting_Contractor = <cfif tree_tpc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_tpc)#'</cfif>,
+            
+            <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+         <!---    Root_Pruning_Contractor = <cfif tree_trpsc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_trpsc)#'</cfif>,   --->
+            <!--- ------- End ----- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+            
 			<!--- Tree_Watering_Contractor = <cfif tree_twc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_twc)#'</cfif>, --->
 			Tree_Removal_Notes = <cfif tree_trn is "">NULL<cfelse>'#PreserveSingleQuotes(tree_trn)#'</cfif>,
 			Arborist_Name = <cfif tree_arbname is "">NULL<cfelse>'#PreserveSingleQuotes(tree_arbname)#'</cfif>,
@@ -3857,6 +3896,12 @@
 			</cfquery>
 			
 		</cfif>
+        
+        
+        
+        
+        
+        
 		
 		<!--- UPDATE the second table --->
 		
@@ -3877,6 +3922,10 @@
 			
 			<cfset add_cnt = evaluate("tr_add_cnt_" & i)>
 			<cfset rmv_cnt = evaluate("tr_rmv_cnt_" & i)>
+            
+            <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+            <cfset root_cnt = evaluate("tr_root_cnt_" & i)>
+            <!--- ------- End ----- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
 			
 			<cfif trim(sir) is ""><cfset sir = "NULL"></cfif>
 			<cfif trim(sirdt) is ""><cfset sirdt = "NULL"></cfif>
@@ -3992,6 +4041,7 @@
 						</cfquery>
 					
 					</cfif>
+                    
 
 				</cfloop>
 				
@@ -4156,17 +4206,225 @@
 					</cfquery>
 					<cfset t = 0><cfif getCount.recordcount gt 0><cfset t = 1></cfif>
 					
-					<cfset go = arrayAppend(data.adds, sw_id & "|" & grp & "|" & tree & "|" & getTreeID.id & "|" & t)>
+                    <!--- ---------------- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+					<cfset go = arrayAppend(data.adds, sw_id & "|" & grp & "|" & tree & "|" & getTreeID.id & "|" & t & "|planting")>
+                    <!--- --------  End    --------- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
 
 				</cfloop>
 				
 			</cfif>
+            
+            
+            
+            
+            
+            
+            
+            
+             <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+            
+            
+            <cfif root_cnt gt 0>
+				
+				<cfloop index="j" from="1" to="#root_cnt#">
+				
+					<cfquery name="chkTree" datasource="#request.sqlconn#">
+					SELECT * FROM dbo.#tbl# WHERE location_no = #sw_id# AND group_no = #i# AND tree_no = #j# AND action_type = 2 AND deleted <> 1
+					</cfquery>
+					
+					<cfset tree = j>
+					<cfset trpsdia = evaluate("trpsdia_" & i & "_" & j)>
+					<cfset trpspidt = evaluate("trpspidt_" & i & "_" & j)>
+					<cfset trpstrdt = evaluate("trpstrdt_" & i & "_" & j)>
+					<cfset trpsrpdt = evaluate("trpsrpdt_" & i & "_" & j)>
+					<cfset trpsfurpdt = evaluate("trpsfurpdt_" & i & "_" & j)>
+					<cfset trpsaddr = evaluate("trpsaddr_" & i & "_" & j)>
+					<cfset trpsspecies = evaluate("trpsspecies_" & i & "_" & j)>
+					
+				 <!---	<cfset trpsoffsite = evaluate("trpsoffsite_" & i & "_" & j)>   --->
+					
+					<cfset trpstype = evaluate("trpstype_" & i & "_" & j)>
+					<cfset trpsparkway = evaluate("trpsparkway_" & i & "_" & j)>
+					
+				 <!---	<cfset trpsoverhead = evaluate("trpsoverhead_" & i & "_" & j)>   --->
+					
+					
+					<cfset trpssubpos = evaluate("trpssubpos_" & i & "_" & j)>
+					
+					
+				 <!---	<cfset trpspostinspect = evaluate("trpspostinspect_" & i & "_" & j)>   --->
+					
+					<cfset trpsnote = evaluate("trpsnote_" & i & "_" & j)>
+					
+					<cfif trim(trpspidt) is ""><cfset trpspidt = "NULL"></cfif>
+					<cfif trim(trpstrdt) is ""><cfset trpstrdt = "NULL"></cfif>
+					<cfif trim(trpsrpdt) is ""><cfset trpsrpdt = "NULL"></cfif>
+					<cfif trim(trpsfurpdt) is ""><cfset trpsfurpdt = "NULL"></cfif>
+					<cfif trim(trpsaddr) is ""><cfset trpsaddr = "NULL"></cfif>
+					<cfif trim(trpsspecies) is ""><cfset trpsspecies = "NULL"></cfif>
+				<!---	<cfif trim(trpsoffsite) is "on"><cfset trpsoffsite = 1><cfelse><cfset trpsoffsite = 0></cfif>                       --->
+					<cfif trim(trpstype) is ""><cfset trpstype = "NULL"></cfif>
+					
+					<cfif trim(trpsparkway) is ""><cfset trpsparkway = "NULL"></cfif>
+				<!---	<cfif trim(trpsoverhead) is "on"><cfset trpsoverhead = 1><cfelse><cfset trpsoverhead = 0></cfif>                       --->
+					<cfif trim(trpssubpos) is ""><cfset trpssubpos = "NULL"></cfif>
+				<!---	<cfif trim(trpspostinspect) is "on"><cfset trpspostinspect = 1><cfelse><cfset trpspostinspect = 0></cfif>                  --->
+					<cfif trim(trpsnote) is ""><cfset trpsnote = "NULL"></cfif>
+					
+					<cfset trpsaddr = replace(trpsaddr,"'","''","ALL")>
+					<cfset trpsspecies = ucase(replace(trpsspecies,"'","''","ALL"))>
+					<cfset trpsparkway = replace(trpsparkway,"'","''","ALL")>
+					<cfset trpssubpos = ucase(replace(trpssubpos,"'","''","ALL"))>
+					<cfset trpsnote = replace(trpsnote,"'","''","ALL")>
+					
+					<cfif trpspidt is not "NULL">
+						<cfset arrDT = listtoarray(trpspidt,"/")>
+						<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
+						<cfset trpspidt = createODBCDate(dt)>
+					</cfif>
+					<cfif trpstrdt is not "NULL">
+						<cfset arrDT = listtoarray(trpstrdt,"/")>
+						<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
+						<cfset trpstrdt = createODBCDate(dt)>
+					</cfif>
+					<cfif trpsrpdt is not "NULL">
+						<cfset arrDT = listtoarray(trpsrpdt,"/")>
+						<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
+						<cfset trpsrpdt = createODBCDate(dt)>
+					</cfif>
+					<cfif trpsfurpdt is not "NULL">
+						<cfset arrDT = listtoarray(trpsfurpdt,"/")>
+						<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
+						<cfset trpsfurpdt = createODBCDate(dt)>
+					</cfif>
+					
+					<cfif chkTree.recordcount is 0>
+					
+						<cfquery name="addTreeList" datasource="#request.sqlconn#">
+						INSERT INTO dbo.#tbl#
+						( 
+							Location_No,
+							Group_No,
+							Tree_No,
+						    <cfif trim(sir) is not "NULL">SIR_No,</cfif>
+						    <cfif trim(sirdt) is not "NULL">SIR_Date,</cfif>
+						    <cfif trim(trpsdia) is not "NULL">Tree_Box_Size,</cfif>
+						    <cfif trim(trpspidt) is not "NULL">Permit_Issuance_Date,</cfif>
+							<cfif trim(trpstrdt) is not "NULL">Tree_Planting_Date,</cfif>
+							<cfif trim(trpsrpdt) is not "NULL">Root_Pruning_Date,</cfif>
+							<cfif trim(trpsfurpdt) is not "NULL">Follow_Up_Root_Pruning_Date,</cfif>
+						    <cfif trim(trpsaddr) is not "NULL">Address,</cfif>
+						    <cfif trim(trpsspecies) is not "NULL">Species,</cfif>
+						<!---	<cfif trim(trpsoffsite) is not "NULL">Offsite,</cfif>   --->
+							<cfif trim(trpstype) is not "NULL">Type,</cfif>
+							<cfif trim(trpsparkway) is not "NULL">Parkway_Treewell_Size,</cfif>
+						<!---	<cfif trim(trpsoverhead) is not "NULL">Overhead_Wires,</cfif>     --->
+							<cfif trim(trpssubpos) is not "NULL">Sub_Position,</cfif>
+						<!---	<cfif trim(trpspostinspect) is not "NULL">Post_Inspected,</cfif>    --->
+							<cfif trim(trpsnote) is not "NULL">Note,</cfif>
+							Action_Type,
+							Deleted,
+							User_ID,
+							Creation_Date
+						) 
+						Values 
+						(
+							#sw_id#,
+							#grp#,
+							#tree#,
+						    <cfif trim(sir) is not "NULL">'#PreserveSingleQuotes(sir)#',</cfif>
+						    <cfif trim(sirdt) is not "NULL">#sirdt#,</cfif>
+						    <cfif trim(trpsdia) is not "NULL">#trpsdia#,</cfif>
+						    <cfif trim(trpspidt) is not "NULL">#trpspidt#,</cfif>
+							<cfif trim(trpstrdt) is not "NULL">#trpstrdt#,</cfif>
+							<cfif trim(trpsrpdt) is not "NULL">#trpsrpdt#,</cfif>
+							<cfif trim(trpsfurpdt) is not "NULL">#trpsfurpdt#,</cfif>
+						    <cfif trim(trpsaddr) is not "NULL">'#PreserveSingleQuotes(trpsaddr)#',</cfif>
+						    <cfif trim(trpsspecies) is not "NULL">'#PreserveSingleQuotes(trpsspecies)#',</cfif>
+						<!---	<cfif trim(trpsoffsite) is not "NULL">#trpsoffsite#,</cfif>                               --->
+							<cfif trim(trpstype) is not "NULL">#trpstype#,</cfif>
+							<cfif trim(trpsparkway) is not "NULL">'#PreserveSingleQuotes(trpsparkway)#',</cfif>
+						<!---	<cfif trim(trpsoverhead) is not "NULL">#trpsoverhead#,</cfif>                              --->
+							<cfif trim(trpssubpos) is not "NULL">'#PreserveSingleQuotes(trpssubpos)#',</cfif>
+						<!---	<cfif trim(trpspostinspect) is not "NULL">#trpspostinspect#,</cfif>                         --->
+							<cfif trim(trpsnote) is not "NULL">'#PreserveSingleQuotes(trpsnote)#',</cfif>
+							2,
+							0,
+							#session.user_num#,
+							#CreateODBCDateTime(Now())#
+						)
+						</cfquery>
+
+					<cfelse>
+					
+						<cfquery name="updateTreeInfo" datasource="#request.sqlconn#">
+						UPDATE dbo.#tbl# SET
+						SIR_No = <cfif sir is "NULL">NULL<cfelse>'#PreserveSingleQuotes(sir)#'</cfif>,
+						SIR_Date = <cfif sirdt is "NULL">NULL<cfelse>#sirdt#</cfif>,
+						Tree_Box_Size = <cfif trpsdia is "NULL">NULL<cfelse>#trpsdia#</cfif>,
+						Permit_Issuance_Date = <cfif trpspidt is "NULL">NULL<cfelse>#trpspidt#</cfif>,
+						Tree_Planting_Date = <cfif trpstrdt is "NULL">NULL<cfelse>#trpstrdt#</cfif>,
+						Root_Pruning_Date = <cfif trpsrpdt is "NULL">NULL<cfelse>#trpsrpdt#</cfif>,
+						Follow_Up_Root_Pruning_Date = <cfif trpsfurpdt is "NULL">NULL<cfelse>#trpsfurpdt#</cfif>,
+						Address = <cfif trpsaddr is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsaddr)#'</cfif>,
+						Species = <cfif trpsspecies is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsspecies)#'</cfif>,
+					<!---	Offsite = <cfif trpsoffsite is "NULL">NULL<cfelse>#trpsoffsite#</cfif>,                                                --->
+						Type = <cfif trpstype is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpstype)#'</cfif>,
+						Parkway_Treewell_Size = <cfif trpsparkway is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsparkway)#'</cfif>,
+					<!---	Overhead_Wires = <cfif trpsoverhead is "NULL">NULL<cfelse>#trpsoverhead#</cfif>,                                       --->
+						Sub_Position = <cfif trpssubpos is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpssubpos)#'</cfif>,
+					<!---	Post_Inspected = <cfif trpspostinspect is "NULL">NULL<cfelse>#trpspostinspect#</cfif>,                                 --->
+						Note = <cfif trpsnote is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsnote)#'</cfif>,
+						User_ID = #session.user_num#,
+						Modified_Date = #CreateODBCDateTime(Now())#
+						WHERE Location_No = #sw_id#	AND Group_No = #grp# AND Tree_No = #tree# AND Action_Type = 2 AND Deleted <> 1
+						</cfquery>
+					
+					</cfif>
+					
+					<!--- retrieve treeid for root pruning icon in app --->
+					<cfquery name="getTreeID" datasource="#request.sqlconn#">
+					SELECT id FROM dbo.#tbl# WHERE Location_No = #sw_id# AND Group_No = #grp# AND Tree_No = #tree# AND action_type = 2 AND Deleted <> 1
+					</cfquery>
+					<cfquery name="getCount" datasource="ufd_inventory_spatial">
+					SELECT objectid FROM #request.tree_tbl# WHERE srp_tree_id = #getTreeID.id#
+					</cfquery>
+					<cfset t = 0><cfif getCount.recordcount gt 0><cfset t = 1></cfif>
+					
+					<cfset go = arrayAppend(data.adds, sw_id & "|" & grp & "|" & tree & "|" & getTreeID.id & "|" & t & "|root_pruning")>
+
+				</cfloop>
+				
+			</cfif>
+            
+            
+            
+             <!--- --------  End    --------- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+            
+            
+            
+            
+            
+            
 			
 			<!--- Delete From treeList table --->
-			<cfquery name="delTree" datasource="#request.sqlconn#">
+			
+            <cfquery name="delTree" datasource="#request.sqlconn#">
 			UPDATE dbo.#tbl# SET deleted = 1
 			WHERE location_no = #sw_id# AND group_no = #i# AND tree_no > #add_cnt# AND action_type = 1 AND Deleted <> 1
 			</cfquery>
+            
+            
+            <!--- -------- --------- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+            <cfquery name="delTree" datasource="#request.sqlconn#">
+			UPDATE dbo.#tbl# SET deleted = 1
+			WHERE location_no = #sw_id# AND group_no = #i# AND tree_no > #root_cnt# AND action_type = 2 AND Deleted <> 1
+			</cfquery>
+            <!--- --------  End    --------- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+            
+            
+            
+            
 			<cfquery name="delTree" datasource="#request.sqlconn#">
 			UPDATE dbo.#tbl# SET deleted = 1
 			WHERE location_no = #sw_id# AND group_no = #i# AND tree_no > #rmv_cnt# AND action_type = 0 AND Deleted <> 1
@@ -4219,6 +4477,8 @@
 			
 			
 		</cfloop>
+        
+        
 		
 		<!--- Delete From SIR and treeList tables --->
 		<cfquery name="delTree" datasource="#request.sqlconn#">
@@ -4268,6 +4528,7 @@
 				<cfset qstr = qstr & "#fld#_UNITS,#fld#_QUANTITY,#fld#_UNIT_PRICE,">
 				
 				<cfset u=evaluate("getDefault.UNITS")>
+                
 				<cfset p=evaluate("getDefault.PRICE")>
 				<cfif p is ""><cfset p = 0></cfif>	
 				
@@ -4289,23 +4550,32 @@
 		</cfif>
 		
 		<cfquery name="updateTreeInfo" datasource="#request.sqlconn#">
-		UPDATE dbo.#tbl# SET
-		TREE_AND_STUMP_REMOVAL__6_INCH_TO_24_INCH_DIAMETER___QUANTITY = #lt_total#,
-		<cfset data.TREE_REMOVAL__6_INCH_TO_24_INCH_DIAMETER___QUANTITY = lt_total>
-		TREE_AND_STUMP_REMOVAL__OVER_24_INCH_DIAMETER___QUANTITY = #gt_total#,
-		<cfset data.TREE_REMOVAL__OVER_24_INCH_DIAMETER___QUANTITY = gt_total>
-		<cfloop index="i" from="1" to="#arrayLen(arrTrees)#">
-			<cfset v = evaluate("tree_#arrTrees[i]#UNITS")>
-			#arrTrees[i]#UNITS = '#v#',
-			<cfset v = trim(evaluate("tree_#arrTrees[i]#QUANTITY"))>
-			<cfset data[arrTrees[i] & "QUANTITY"] = v>
-			#arrTrees[i]#QUANTITY = <cfif v is "">0<cfelse>#v#</cfif>,
-		</cfloop>
-		User_ID = #session.user_num#,
-		Modified_Date = #CreateODBCDateTime(Now())#
-		WHERE Location_No = #sw_id#
+                    UPDATE dbo.#tbl# 
+                    SET
+                                TREE_AND_STUMP_REMOVAL__6_INCH_TO_24_INCH_DIAMETER___QUANTITY = #lt_total#,
+                                
+                                <cfset data.TREE_REMOVAL__6_INCH_TO_24_INCH_DIAMETER___QUANTITY = lt_total>
+                                
+                                TREE_AND_STUMP_REMOVAL__OVER_24_INCH_DIAMETER___QUANTITY = #gt_total#,
+                                
+                                <cfset data.TREE_REMOVAL__OVER_24_INCH_DIAMETER___QUANTITY = gt_total>
+                                
+                                <cfloop index="i" from="1" to="#arrayLen(arrTrees)#">
+                                    <cfset v = evaluate("tree_#arrTrees[i]#UNITS")>
+                                    #arrTrees[i]#UNITS = '#v#',
+                                    <cfset v = trim(evaluate("tree_#arrTrees[i]#QUANTITY"))>
+                                    <cfset data[arrTrees[i] & "QUANTITY"] = v>
+                                    #arrTrees[i]#QUANTITY = <cfif v is "">0<cfelse>#v#</cfif>,
+                                </cfloop>
+                                
+                                User_ID = #session.user_num#,
+                                Modified_Date = #CreateODBCDateTime(Now())#
+                                
+                    WHERE Location_No = #sw_id#
+        
 		</cfquery>
 		
+        
 		<cfset data.result = "Success">
 		
 		<cfset data.id = session.token>
