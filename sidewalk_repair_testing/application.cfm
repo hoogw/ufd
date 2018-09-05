@@ -1,4 +1,4 @@
-<cfapplication name="sidewalk_repair" clientmanagement="Yes" sessionmanagement="Yes" sessiontimeout="#Createtimespan(9990,8,0,0)#" applicationtimeout="#Createtimespan(99999,0,0,0)#">
+<cfapplication name="sidewalk_repair" clientmanagement="Yes" sessionmanagement="Yes" sessiontimeout="#Createtimespan(99999990,8,0,0)#" applicationtimeout="#Createtimespan(999999999,0,0,0)#">
 
 <cfif 
 	FindNoCase(";DECLARE",cgi.query_string) 

@@ -110,7 +110,7 @@ body{background-color: transparent}
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
 						<th class="center middle" style="height:30px;width:294px;">
-						<a href="" onclick="javascript:changePage('../forms/swUpdateDefaults.cfm');return false;" style="color:#request.color#">Update Engineering Estimate Default Table</a>
+						<a href="" onClick="javascript:changePage('../forms/swUpdateDefaults.cfm');return false;" style="color:#request.color#">Update Engineering Estimate Default Table</a>
 						</th>
 						</tr>
 					</table>
@@ -122,7 +122,7 @@ body{background-color: transparent}
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
 						<th class="center middle" style="height:30px;width:294px;">
-						<a href="" onclick="javascript:changePage('../forms/swUpdatePriority.cfm');return false;" style="color:#request.color#">Update Site Priority Point System Table</a>
+						<a href="" onClick="javascript:changePage('../forms/swUpdatePriority.cfm');return false;" style="color:#request.color#">Update Site Priority Point System Table</a>
 						</th>
 						</tr>
 					</table>
@@ -135,6 +135,13 @@ body{background-color: transparent}
 </table>	
 </cfif>
 
+
+
+
+
+
+
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td style="height:30px;"></td></tr></table>
 <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:300px;">
 	<tr>
@@ -145,7 +152,7 @@ body{background-color: transparent}
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
 						<th class="center middle" style="height:30px;width:294px;">
-						<a href="" onclick="javascript:changePage('swUserRights.cfm');return false;" style="color:#request.color#">User Rights</a>
+						<a href="" onClick="javascript:changePage('swUserRights.cfm');return false;" style="color:#request.color#">User Rights</a>
 						</th>
 						</tr>
 					</table>
@@ -155,9 +162,41 @@ body{background-color: transparent}
 	</td>
 	</tr>
 </table>	
+
+
+
+
+<cfif session.user_power gt 2>
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td style="height:30px;"></td></tr></table>
+<table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:300px;">
+	<tr>
+	<td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
+		<table align=center bgcolor=white cellspacing="2" cellpadding="2" border="0">
+			<tr>	
+				<td colspan="4" style="padding:0px 0px 0px 0px;">
+					<table cellpadding="0" cellspacing="0" border="0">
+						<tr>
+						<th class="center middle" style="height:30px;width:294px;">
+						<a href="" onClick="javascript:changePage('swSuperAdmin.cfm');return false;" style="color:#request.color#">Super Admin</a>
+						</th>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>	
+	</td>
+	</tr>
+</table>	
+</cfif>
+
+
+
+
+
+
 	
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
