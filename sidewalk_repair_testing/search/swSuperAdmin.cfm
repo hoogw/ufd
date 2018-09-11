@@ -24,6 +24,9 @@
 		<head>
 			<title>Sidewalk Repair Program - Super Admin</title>
 
+
+
+
 			<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
   			<link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
             
@@ -35,6 +38,7 @@
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
             
            
+            
             
             
             
@@ -94,7 +98,7 @@ SELECT * FROM dbo.tblUsers WHERE user_id NOT IN (1,50)
             <v-dialog v-model="dialog" max-width="500px">
         
         
-          		<v-btn slot="activator" color="primary" dark class="mb-2">New User</v-btn>
+          		<v-btn slot="activator" color="primary" dark class="mb-2">Add New User</v-btn>
           
           		<v-card>
                         <v-card-title>

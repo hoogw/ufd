@@ -5872,6 +5872,52 @@
 	
 	
 	
+    
+    
+    
+    
+    <!--- ---------- joe hu ---------- super admin ---------  9/6/2018 ---------------  --->
+    
+    
+    
+    
+    					 			  <cffunction name="getUser" access="remote" returnType="any" returnFormat="json" output="false">
+                                    
+                                                   
+                                                     
+                                                      <cfquery name="select_all_user" datasource="#request.sqlconn#">
+                                                                                         
+                                                                  SELECT 
+                                                                            User_FullName    as full_name,  
+                                                                            User_Name    as  name,  
+                                                                            User_Password    as  password,  
+                                                                            User_Agency    as  agency,  
+                                                                            User_Level    as  level,  
+                                                                            User_Power    as  power,  
+                                                                            User_Cert    as  cert,  
+                                                                            User_UFD    as  ufd,  
+                                                                            User_Report    as  report 
+                                                                            
+                                                                            
+                                                                  FROM tblUsers
+                                                                                         
+                                                       </cfquery>
+                                                       
+                                                    <cfreturn select_all_user>
+                                            
+                                        </cffunction>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+    
+    
+    <!--- ---------- joe hu ---------- super admin ---------  9/6/2018 ---------------  --->
 	
 	
 </cfcomponent>
