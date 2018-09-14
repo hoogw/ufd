@@ -164,7 +164,7 @@ body{background-color: transparent}
 </table>	
 
 
-
+<!--- ---------- joe hu ---------- super admin ---------  9/6/2018 ---------------  --->
 
 <cfif session.user_power gt 2>
 <table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td style="height:30px;"></td></tr></table>
@@ -190,7 +190,7 @@ body{background-color: transparent}
 </cfif>
 
 
-
+<!--- ---- end ------ joe hu ---------- super admin ---------  9/6/2018 ---------------  --->
 
 
 

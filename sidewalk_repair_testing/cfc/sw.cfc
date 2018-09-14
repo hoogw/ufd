@@ -5888,6 +5888,7 @@
                                                       <cfquery name="select_all_user" datasource="#request.sqlconn#">
                                                                                          
                                                                   SELECT 
+                                                                            User_ID        as id,
                                                                             User_FullName    as full_name,  
                                                                             User_Name    as  name,  
                                                                             User_Password    as  password,  
@@ -5913,11 +5914,457 @@
                                         
                                         
                                         
+                      <cffunction name="updateUser" access="remote" returnType="any" returnFormat="json" output="false">
+                                    
+                                                   
+                                                   
+                             <!---
+                                Get the HTTP request body content.
+                                NOTE: We have to use toString() as an intermediary method
+                                call since the JSON packet comes across as a byte array
+                                (binary data) which needs to be turned back into a string before
+                                ColdFusion can parse it as a JSON value.
+                                        --->
+                                
+                                <cfset requestBody = toString( getHttpRequestData().content ) />
+                    
+                                    <!--- Double-check to make sure it's a JSON value. --->
+                                   
+                                   
+                                    <cfif isJSON( requestBody )>
+                                    
+                                    
+                                        <cfset json_post = deserializeJson( requestBody ) >
+                                        
+                                        
+                                        <!--- Echo back POST data.
+                                        <cfdump
+                                            var="#deserializeJSON( requestBody )#"
+                                            label="HTTP Body"
+                                            />
+                                         --->
+                                         
+                                         
+                                            <cfset _id            = json_post.id>
+                                            
+                                            
+                                            <cfset _full_name     = json_post.full_name>
+											<cfset _name          = json_post.name>
+                                            <cfset _password      = json_post.password>
+                                            <cfset _agency        = json_post.agency>
+                                            <cfset _level         = json_post.level>
+                                            <cfset _power         = json_post.power>
+                                            <cfset _cert          = json_post.cert>
+                                            <cfset _ufd           = json_post.ufd>
+                                            
+                                          
+                                            
+                                            <!--- if you not sure whether 'some_key' exist or not use below code to check  --->
+                                             <cfif StructKeyExists( json_post, "report")>
+                                                                                 <cfset _report			= json_post.report >
+                                                                             <cfelse>
+                                                                                  <cfset _report 			= '' >  
+                                                                            </cfif>
+                                            <!--- End ---- if you not sure whether the 'some_key' exist or not use below code to check  --->
+                                            
+                                            
+                                            
+                                            
+                                                   
+                                     </cfif>	 
+                                     
+                                                    
+                                                   
+                                                   
+                               <!---     ******   start update database     ******  --->     
+								
+										
+                                 <cftransaction action="begin">
+									<cftry>
+                                                 
+                                                 
+                                         
+                                         			<!---  -------------    update user  -----------  --->
+										 
+                                         
+                                                                                          
+                                                                                          
+                                                                                          <cfquery name="update_user" datasource="#request.sqlconn#">
+                                                                                         
+                                                                                               UPDATE tblUsers
+                                                                                               SET 
+                                                                                                
+                                                                                                      <!--- db column is varchar(), MUST use single quote, avoid sql error --->
+                                                                                                      <!--- if db column is int or number type, then no need single quote --->
+                                                                                                      
+                                                                                                        User_FullName = '#_full_name#' ,
+                                                                                                        User_Name    = '#_name#', 
+                                                                                                        User_Password    = '#_password#', 
+                                                                                                        User_Agency    = '#_agency#', 
+                                                                                                        User_Level    = #_level#, 
+                                                                                                        User_Power    = #_power#, 
+                                                                                                        User_Cert    = #_cert#, 
+                                                                                                        User_UFD    = #_ufd#, 
+                                                                                                        User_Report    = '#_report#'
+                                                                                                
+                                                                                               WHERE 
+                                                                                                      User_ID = #_id#
+                                                                                         
+                                                                                         </cfquery>
+                                                                                          
+                                                                                          
+                                                                                         
+                                                                               
+                                                         
+                                                              			
+                                                        
+                                                        
+                                                        
+                                                          <!--------- end ------ update user tables   ------------    --->  
+                                                          
+                                                          
+                                                          
+                                                          
+                                                                         
+                                                         
+                                                          <cftransaction action="commit" />
+                      
+                                                          <!--- something happened, roll everyting back ---> 
+                                                          <cfcatch type="any">
+                                                         
+                                                                                        <cftransaction action="rollback" />
+                                                                                        
+                                                                                         
+																						<!--- <cfset _error = #cfcatch#>    ---> <!--- full error details in json --->
+                                                                                        
+																						 <cfset _error = #cfcatch.Message#>  <!--- only error message in string--->
+                                                                                         
+                                                                                         
+                                                                                        <cfreturn _error>
+                                                                                        <cfabort>
+                                                                                        
+                                                          </cfcatch>
+                                                        
+                                                        
+                                                        
+                                                        
+                                               </cftry>
+                                            </cftransaction>
+                                            
+                                            
+                                            
+                                               <!--- success  --->
+                                              <cfset _result = "success"/>              
+                                              <cfreturn _result>             
+                                                          
+                                                                
+                                                   
+                                                     
+                                            
+                                        </cffunction>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                                             
+                      <cffunction name="insertUser" access="remote" returnType="any" returnFormat="json" output="false">
+                                    
+                                                   
+                                                   
+                             <!---
+                                Get the HTTP request body content.
+                                NOTE: We have to use toString() as an intermediary method
+                                call since the JSON packet comes across as a byte array
+                                (binary data) which needs to be turned back into a string before
+                                ColdFusion can parse it as a JSON value.
+                                        --->
+                                
+                                <cfset requestBody = toString( getHttpRequestData().content ) />
+                    
+                                    <!--- Double-check to make sure it's a JSON value. --->
+                                   
+                                   
+                                    <cfif isJSON( requestBody )>
+                                    
+                                    
+                                        <cfset json_post = deserializeJson( requestBody ) >
+                                        
+                                        
+                                        <!--- Echo back POST data.
+                                        <cfdump
+                                            var="#deserializeJSON( requestBody )#"
+                                            label="HTTP Body"
+                                            />
+                                         --->
+                                         
+                                         
+                                            
+                                            
+                                            <cfset _full_name     = json_post.full_name>
+											<cfset _name          = json_post.name>
+                                            <cfset _password      = json_post.password>
+                                            <cfset _agency        = json_post.agency>
+                                            <cfset _level         = json_post.level>
+                                            <cfset _power         = json_post.power>
+                                            <cfset _cert          = json_post.cert>
+                                            <cfset _ufd           = json_post.ufd>
+                                            
+                                          
+                                            
+                                            <!--- if you not sure whether 'some_key' exist or not use below code to check  --->
+                                             <cfif StructKeyExists( json_post, "report")>
+                                                                                 <cfset _report			= json_post.report >
+                                                                             <cfelse>
+                                                                                  <cfset _report 			= '' >  
+                                                                            </cfif>
+                                            <!--- End ---- if you not sure whether the 'some_key' exist or not use below code to check  --->
+                                            
+                                            
+                                            
+                                            
+                                                   
+                                     </cfif>	 
+                                     
+                                                    
+                                                   
+                                                   
+                               <!---     ******   start insert database     ******  --->     
+								
+										
+                                 <cftransaction action="begin">
+									<cftry>
+                                                 
+                                                 
+                                         
+                                         			<!---  -------------    insert user -----------  --->
+										 
+                                         
+                                                                                          
+                                                                                          
+                                                                                          <cfquery name="insert_user" datasource="#request.sqlconn#">
+                                                                                         
+                                                                                               insert into tblUsers 
+                                                                                               (
+                                                                                                
+                                                                                                      
+                                                                                                        User_FullName, 
+                                                                                                        User_Name,  
+                                                                                                        User_Password, 
+                                                                                                        User_Agency, 
+                                                                                                        User_Level, 
+                                                                                                        User_Power, 
+                                                                                                        User_Cert, 
+                                                                                                        User_UFD, 
+                                                                                                        User_Report
+                                                                                                 )
+                                                                                                 
+                                                                                                 values (
+                                                                                                 
+                                                                                                 
+                                                                                                      <!--- db column is varchar(), MUST use single quote, avoid sql error --->
+                                                                                                      <!--- if db column is int or number type, then no need single quote --->
+                                                                                                      
+                                                                                                        '#_full_name#',
+                                                                                                        '#_name#', 
+                                                                                                        '#_password#', 
+                                                                                                        '#_agency#', 
+                                                                                                         #_level#, 
+                                                                                                         #_power#, 
+                                                                                                         #_cert#, 
+                                                                                                         #_ufd#, 
+                                                                                                        '#_report#'
+                                                                                                 
+                                                                                                 
+                                                                                                 
+                                                                                                 
+                                                                                                 )       
+                                                                                                
+                                                                                              
+                                                                                         
+                                                                                         </cfquery>
+                                                                                          
+                                                                                          
+                                                                                         
+                                                                               
+                                                         
+                                                              			
+                                                        
+                                                        
+                                                        
+                                                          <!--------- end ------ update user tables   ------------    --->  
+                                                          
+                                                          
+                                                          
+                                                          
+                                                                         
+                                                         
+                                                          <cftransaction action="commit" />
+                      
+                                                          <!--- something happened, roll everyting back ---> 
+                                                          <cfcatch type="any">
+                                                         
+                                                                                        <cftransaction action="rollback" />
+                                                                                        
+                                                                                         
+																						<!--- <cfset _error = #cfcatch#>    ---> <!--- full error details in json --->
+                                                                                        
+																						 <cfset _error = #cfcatch.Message#>  <!--- only error message in string--->
+                                                                                         
+                                                                                         
+                                                                                        <cfreturn _error>
+                                                                                        <cfabort>
+                                                                                        
+                                                          </cfcatch>
+                                                        
+                                                        
+                                                        
+                                                        
+                                               </cftry>
+                                            </cftransaction>
+                                            
+                                            
+                                            
+                                               <!--- success  --->
+                                              <cfset _result = "success"/>              
+                                              <cfreturn _result>             
+                                                          
+                                                                
+                                                   
+                                                     
+                                            
+                                        </cffunction>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                        <cffunction name="deleteUser" access="remote" returnType="any" returnFormat="json" output="false">
+                                    
+                                                   
+                                                   
+                             <!---
+                                Get the HTTP request body content.
+                                NOTE: We have to use toString() as an intermediary method
+                                call since the JSON packet comes across as a byte array
+                                (binary data) which needs to be turned back into a string before
+                                ColdFusion can parse it as a JSON value.
+                                        --->
+                                
+                                <cfset requestBody = toString( getHttpRequestData().content ) />
+                    
+                                    <!--- Double-check to make sure it's a JSON value. --->
+                                   
+                                   
+                                    <cfif isJSON( requestBody )>
+                                    
+                                    
+                                        <cfset json_post = deserializeJson( requestBody ) >
+                                        
+                                        
+                                        <!--- Echo back POST data.
+                                        <cfdump
+                                            var="#deserializeJSON( requestBody )#"
+                                            label="HTTP Body"
+                                            />
+                                         --->
+                                         
+                                         
+                                            <cfset _id            = json_post.id>
+                                            
+                                            
+                                     </cfif>	 
+                                     
+                                                    
+                                                   
+                                                   
+                               <!---     ******   start delete      ******  --->     
+								
+										
+                                 <cftransaction action="begin">
+									<cftry>
+                                                 
+                                                 
+                                         
+                                         			<!---  -------------    delete user  -----------  --->
+										 
+                                         
+                                                                                          
+                                                                                          
+                                                                                          <cfquery name="delete_user" datasource="#request.sqlconn#">
+                                                                                         
+                                                                                               delete from tblUsers 
+                                                                                               where  User_ID = #_id#
+                                                                                                      <!--- db column is varchar(), MUST use single quote, avoid sql error --->
+                                                                                                      <!--- if db column is int or number type, then no need single quote --->
+                                                                                                
+                                                                                              
+                                                                                         </cfquery>
+                                                                                          
+                                                                                          
+                                                                                         
+                                                                               
+                                                         
+                                                              			
+                                                        
+                                                        
+                                                        
+                                                          <!--------- end ------ delete user   ------------    --->  
+                                                          
+                                                          
+                                                          
+                                                          
+                                                                         
+                                                         
+                                                          <cftransaction action="commit" />
+                      
+                                                          <!--- something happened, roll everyting back ---> 
+                                                          <cfcatch type="any">
+                                                         
+                                                                                        <cftransaction action="rollback" />
+                                                                                        
+                                                                                         
+																						<!--- <cfset _error = #cfcatch#>    ---> <!--- full error details in json --->
+                                                                                        
+																						 <cfset _error = #cfcatch.Message#>  <!--- only error message in string--->
+                                                                                         
+                                                                                         
+                                                                                        <cfreturn _error>
+                                                                                        <cfabort>
+                                                                                        
+                                                          </cfcatch>
+                                                        
+                                                        
+                                                        
+                                                        
+                                               </cftry>
+                                            </cftransaction>
+                                            
+                                            
+                                            
+                                               <!--- success  --->
+                                              <cfset _result = "success"/>              
+                                              <cfreturn _result>             
+                                                          
+                                                                
+                                                   
+                                                     
+                                            
+                                        </cffunction>
+                                        
                                         
                                         
     
     
-    <!--- ---------- joe hu ---------- super admin ---------  9/6/2018 ---------------  --->
+    <!--- ---- end ------ joe hu ---------- super admin ---------  9/6/2018 ---------------  --->
 	
 	
 </cfcomponent>

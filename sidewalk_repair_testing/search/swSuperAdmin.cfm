@@ -45,6 +45,19 @@
             
             <script  src="../js/superAdmin.js" type="text/javascript" defer></script>    <!---  must use 'defer' to make it run last, after babel-polyfill completed  --->
             
+            
+            
+            
+            <style>
+				  [v-cloak] {
+					display: none;
+				  }
+			</style>
+            
+            
+            
+            
+            
             </head>
             
             
@@ -65,12 +78,32 @@ SELECT * FROM dbo.tblUsers WHERE user_id NOT IN (1,50)
         
        
    
+         <!--- bug fix, you must Hiding template before it is rendered  by add v-cloak 
          
+         <div id="app">
+              <div v-cloak>
+                Hello {{ name }}
+              </div>
+            </div>
+            
+            <style>
+              [v-cloak] {
+                display: none;
+              }
+            </style>
          
+		 --->
+		 
          
-    <div>
+    <div v-cloak>
     
+    
+     
       <v-toolbar flat color="white">
+     
+      <!---
+      <v-toolbar flat color="rgb(231,242,252)">
+       --->
       
       
       <!---
@@ -97,8 +130,20 @@ SELECT * FROM dbo.tblUsers WHERE user_id NOT IN (1,50)
             
             <v-dialog v-model="dialog" max-width="500px">
         
-        
-          		<v-btn slot="activator" color="primary" dark class="mb-2">Add New User</v-btn>
+               <!---
+						<v-btn  slot="activator" color="primary" dark class="mb-2">Add New User</v-btn>
+						
+						rgb(59,106,151)
+						#3b6a97  //  hex color code must conver to rgb, because # will cause cold fusion failure !!!!
+						
+						here is how to convert 
+						https://www.rapidtables.com/convert/color/hex-to-rgb.html
+				
+				
+				--->
+                
+                
+                <v-btn  slot="activator" color="rgb(59,106,151)" dark class="mb-2">Add New User</v-btn>
           
           		<v-card>
                         <v-card-title>
@@ -174,14 +219,22 @@ SELECT * FROM dbo.tblUsers WHERE user_id NOT IN (1,50)
               <v-data-table
                 :headers="headers"
                 :items="user"
+              
+                :loading="progress_bar_loading"    <!--- ----- progressing bar indicator --------- true: show ---------- false: hide  --->
+                
+                
                 :search="search"
                <!---  hide-actions  --->      <!--- ----- hide/show  pagination -------------  --->
                 class="elevation-1"
+                
+                
               >
+            
+					
+                    
+                    <v-progress-linear slot="progress"  indeterminate></v-progress-linear>
               
-              
-              
-                                    <template slot="items" slot-scope="props">
+                                    <template slot="items" slot-scope="props" >
                                       <td>{{ props.item.full_name }}</td>
                                       <td class="text-xs-left">{{ props.item.name }}</td>
                                       <td class="text-xs-left">{{ props.item.password }}</td>
@@ -258,28 +311,11 @@ SELECT * FROM dbo.tblUsers WHERE user_id NOT IN (1,50)
 		<cfoutput>
 		var url = "#request.url#";
 		</cfoutput>
-		var sort = {};
 		
 		
 		
 		
 		
-		function showMsg(txt,cnt) {
-			$('#msg_text').html(txt);
-			$('#msg').height(35+cnt*14+30);
-			$('#msg').css({top:'50%',left:'50%',margin:'-'+($('#msg').height() / 2)+'px 0 0 -'+($('#msg').width() / 2)+'px'});
-			$('#msg').show();
-		}
-		
-		function trim(stringToTrim) {
-			return stringToTrim.replace(/^\s+|\s+$/g,"");
-		}
-		
-		function changePage(source,param){
-		var rand = Math.random();
-		url = source + "?r=" + rand;
-		location.replace(url);
-		}
 
 </script>
 
