@@ -895,28 +895,62 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 							<cfif getCOs.change_order_cost is not ""><cfset v = v + getCOs.change_order_cost></cfif>
 						</cfif>
 						<cfset v = trim(numberformat(v,"999,999.00"))>
-						<td class="frm" style="width:120px;">&nbsp;$&nbsp;
+						
+                        
+                        
+                        
+                        <td class="frm" style="width:120px;">&nbsp;$&nbsp;
 						<input type="Text" name="sw_tc" id="sw_tc" value="#v#" style="width:100px;text-align:center;" class="rounded" disabled></td>
 						<td style="width:2px;"></td>
 						
-						<th class="left middle" style="width:120px;">Contractor's Price:</th>
+                        
+                        
+                        
+						<th class="left middle" style="width:95px;">Contractor's Price:</th>
 						<td style="width:2px;"></td>
 						<cfset v = 0.00>
 						<cfif getContract.recordcount gt 0>
 							<cfif getContract.contractors_cost is not ""><cfset v = trim(numberformat(getContract.contractors_cost,"999,999.00"))></cfif>
 						</cfif>
-						<td class="frm" style="width:121px;">&nbsp;$&nbsp;
-						<input type="Text" name="sw_con_price" id="sw_con_price" value="#v#" style="width:100px;text-align:center;" class="rounded" disabled></td>
+						<td class="frm" style="width:100px;">&nbsp;$&nbsp;
+						<input type="Text" name="sw_con_price" id="sw_con_price" value="#v#" style="width:80px;text-align:center;" class="rounded" disabled></td>
 						<td style="width:2px;"></td>
-						<th class="left middle" style="height:30px;width:112px;">Change Orders:</th>
+						
+                        
+                        
+                        <th class="left middle" style="height:30px;width:82px;">Change Orders:</th>
 						<td style="width:2px;"></td>
 						<cfset v = 0.00>
 						<cfif getCOs.recordcount gt 0>
 							<cfif getCOs.change_order_cost is not ""><cfset v = trim(numberformat(getCOs.change_order_cost,"999,999.00"))></cfif>
 						</cfif>
-						<td class="frm" style="width:121px;">&nbsp;$&nbsp;
-						<input type="Text" name="sw_changeorder" id="sw_changeorder" value="#v#" style="width:100px;text-align:center;" class="rounded" disabled></td>
-						</tr>
+						
+                        <td class="frm" style="width:100px;">&nbsp;$&nbsp;
+						<input type="Text" name="sw_changeorder" id="sw_changeorder" value="#v#" style="width:80px;text-align:center;" class="rounded" disabled>
+                        </td>
+                        
+                        
+                        <!--- joe hu ------- 9/19/2018 --------- add scheduled check box -----------  --->
+                        
+                        <td style="width:2px;"></td>
+						<th class="left middle" style="width:89px;">   <!--- style="width:165px;"   --->
+							<table cellpadding="0" cellspacing="0" border="0" style="height:100%;">
+								<tr>
+								<th style="width:0px;"></th>
+								<th class="middle" style="">Scheduled:</th>
+							    <cfset v = ""><cfif getSite.scheduled eq 1><cfset v = "checked"></cfif> 
+								<th class="middle">
+								<div style="position:relative;top:1px;"><input id="sw_scheduled" name="sw_scheduled" type="checkbox" #v#></div></th>
+								</tr>
+							</table>
+						
+						</th>
+                        
+                        <!--- joe hu ------- 9/19/2018 --------- add scheduled check box -----------  --->
+						
+                        
+                        
+                        </tr>
 					</table>
 				</td>
 			</tr>

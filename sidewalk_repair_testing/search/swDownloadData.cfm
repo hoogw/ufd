@@ -164,33 +164,34 @@ body{background-color: transparent}
 </table>	
 
 
-<!--- ---------- joe hu ---------- super admin ---------  9/6/2018 ---------------  --->
+<!--- ---------- joe hu ---------- nanage users ---------  9/25/2018 ---------------  --->
 
 <cfif session.user_power gt 2>
-<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td style="height:30px;"></td></tr></table>
-<table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:300px;">
-	<tr>
-	<td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
-		<table align=center bgcolor=white cellspacing="2" cellpadding="2" border="0">
-			<tr>	
-				<td colspan="4" style="padding:0px 0px 0px 0px;">
-					<table cellpadding="0" cellspacing="0" border="0">
-						<tr>
-						<th class="center middle" style="height:30px;width:294px;">
-						<a href="" onClick="javascript:changePage('swSuperAdmin.cfm');return false;" style="color:#request.color#">Super Admin</a>
-						</th>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>	
-	</td>
-	</tr>
-</table>	
+        <table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td style="height:30px;"></td></tr></table>
+        <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:300px;">
+            <tr>
+            <td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
+                <table align=center bgcolor=white cellspacing="2" cellpadding="2" border="0">
+                    <tr>	
+                        <td colspan="4" style="padding:0px 0px 0px 0px;">
+                            <table cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                <th class="center middle" style="height:30px;width:294px;">
+                                <!--- <a href="" onClick="javascript:changePage('swSuperAdmin.cfm');return false;" style="color:#request.color#">Super Admin</a>   --->
+                                <a href="" onClick="javascript:changePage('swUserSearch.cfm');return false;" style="color:#request.color#">Manage User</a>
+                                </th>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>	
+            </td>
+            </tr>
+        </table>	
 </cfif>
 
 
-<!--- ---- end ------ joe hu ---------- super admin ---------  9/6/2018 ---------------  --->
+<!--- ----  end ------ joe hu ---------- nanage users ---------  9/25/2018 ---------------  --->
 
 
 
