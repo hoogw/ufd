@@ -6462,20 +6462,28 @@
                                            
                                             
                                             <cfset _full_name     = json_post.full_name>
-											
-										 <!---	
+											<cfset _agency        = json_post.agency>
+                                            <cfset _role          = json_post.role>
+                                            
+										    <cfset _order_by          = json_post.order_by>
+                                            <cfset _asc_desc          = json_post.asc_desc>
+                                        
+                                     <!---   
+                                        
+                                     <cfreturn _asc_desc> 
+                                    --->
+                                    
+                                    
+                                        
+                                        <!---
 											<cfset _name          = json_post.name>
                                             <cfset _password      = json_post.password>
-                                            <cfset _agency        = json_post.agency>
+                                            
                                             <cfset _level         = json_post.level>
                                             <cfset _power         = json_post.power>
                                             <cfset _cert          = json_post.cert>
                                             <cfset _ufd           = json_post.ufd>
 											
-                                             
-                                          
-                                             
-                                              <cfset _full_name     = 'joe'>
                                           --->
                                           
                                             
@@ -6549,7 +6557,50 @@
                                                                   where  User_Power > -1   
                                                                   
                                                                  and   User_FullName like <cfqueryparam cfsqltype="cf_sql_varchar" value="%#_full_name#%">
-                                                                                         
+                                                                 
+                                                                 
+                                                                 
+                                                                 <cfif len(_agency)>
+                                                                 
+                                                                     and User_Agency = '#_agency#'
+                                                                    
+                                                                 </cfif>
+                                                                 
+                                                                 
+                                                                 <cfif len(_role)>
+                                                                 
+                                                                     and Role_Name = '#_role#'
+                                                                    
+                                                                 </cfif>
+                                                                 
+                                                                  <cfif len(_order_by)>
+                                                                 
+                                                                     order by '#_order_by#'  
+                                                                    
+                                                                 </cfif>     
+                                                                     
+                                                                  <!---    failed, not sure why  
+                                                                  <cfif len(_asc_desc)>
+                                                                 
+                                                                      '#_asc_desc#'  
+                                                                    
+                                                                 </cfif>     
+                                                                   --->
+                                                                   
+                                                                   
+                                                                   <cfif _asc_desc eq 'asc'>
+                                                                 
+                                                                       asc
+                                                                    
+                                                                    </cfif>  
+                                                                   
+                                                                    <cfif _asc_desc eq 'desc'>
+                                                                 
+                                                                       desc
+                                                                    
+                                                                    </cfif>  
+                                                                      
+                                                                                        
                                                        </cfquery>
                                                        
                                                        

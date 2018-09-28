@@ -4,11 +4,6 @@
 
 function ajax_get_data(___url, ___query_param) {
 	
-	
-
-	
-	
-	
 	//$(".overlay").show();
 	
 	
@@ -29,8 +24,8 @@ function ajax_get_data(___url, ___query_param) {
 									  
 				           .then(function (result) {
 		                                    
-											console.log(result)
-											console.log(result.length)
+											//console.log(result)
+											//console.log(result.length)
 											
 											// success
 											
@@ -52,7 +47,7 @@ function ajax_get_data(___url, ___query_param) {
 											{
 												  for (var i = 0; i < arrayLength; i++) 
 												  {
-													   console.log(result[i]);
+													  // console.log(result[i]);
 													
 													
 											
@@ -104,131 +99,48 @@ function ajax_get_data(___url, ___query_param) {
 				   
 	
 	
-	
-/*	
+} // function  ajax  
 
-   // for some reason, & ajax call failed due to [data: ___query_param,]
-	  
-	$.ajax({
-	  type: "POST",
-	  url: ___url,
-	  data: ___query_param,
-	  success: function(data) { 
-	  
-	  
-	  	data = jQuery.parseJSON(trim(data));
-	  	
-		console.log('data-:- ', data);
-		
-		var query = jQuery.parseJSON(data.QUERY);
-		
-		console.log('query- : - ', query);
-		
-		
-		if(data.RESULT != "Success") {
-			showMsg(data.RESULT,1);
-			return false;	
-		}
-		
-		
-		
-	*/	
-		
-		
-		
-	    
-	    //$(".overlay").hide();	
-				
-	   
-	/*
-		
-		var pg; var pn; var pcon; var pwo; var pid; var pfy;
-		$.each(query.COLUMNS, function(i, item) {
-			switch (item) {
-			case "ID": pid = i; break;
-			case "PACKAGE_NO": pn = i; break;
-			case "PACKAGE_GROUP": pg = i; break;
-			case "WORK_ORDER": pwo = i; break;
-			case "CONTRACTOR": pcon = i; break;
-			case "FISCAL_YEAR": pfy = i; break;
-			}
-		});
-		
-		//console.log(pn);
-		//console.log(pg);
-		//console.log(pwo);
-		//console.log(pcon);
-		
-		data = data.DATA;
-		
-		var items = [];
-		items.push("<table id='tbl_results' border='0' cellpadding='0' cellspacing='0' style='height:25px;width:100%;border:0px red solid;'>");
-		items.push("<tr><td cellspacing='0' cellpadding='0' border='0' bgcolor='white' bordercolor='white'>");
-		items.push("<table align='center' bgcolor='white' cellspacing='2' cellpadding='2' border='0' style='width:100%;'>");
-		
-		if (query.DATA.length > 0) {
-			$.each(query.DATA, function(i, item) {
-			
-				if (item[pg] == null) {item[pg] = "";}
-				if (item[pn] == null) {item[pn] = "";}
-				if (item[pwo] == null) {item[pwo] = "";}
-				if (item[pcon] == null) {item[pcon] = "";}
-				if (item[pfy] == null) {item[pfy] = "";} 
-				if (item[pfy] != "") {item[pfy] = "20"+item[pfy];}
+
+
+
+
+
+				function set_orderBy_para(___orderByColumnName){
 	
-				items.push("<tr>");
-				items.push("<td style='width:39px;height:20px;' class='small center frm'><a href='' onclick='goToPackage(" + item[pid] + ");return false;'><img src='../Images/rep.gif' width='13' height='16' alt='Edit Package' title='Edit Package' style='position:relative;top:-1px;'></a></td>");
-				items.push("<td style='width:79px;' class='small center frm'>" + item[pg] + "</td>");
-				items.push("<td style='width:79px;' class='small center frm'>" + item[pn] + "</td>");
-				items.push("<td style='width:159px;' class='small center frm'>" + item[pwo] + "</td>");
-				items.push("<td style='padding:2px 0px 0px 5px;' class='small frm'>" + item[pcon] + "</td>");
-				items.push("<td style='width:64px;' class='small center frm'>" + item[pfy] + "</td>");
-				items.push("</tr>");
-			
-			});
-		}
-		else {
-			items.push("<td style='height:20px;' class='small center frm'>No Records Found</td>");
-		}
-		
-		items.push("</table>");
-		items.push("</td></tr>");
-		items.push("</table>");
-		
-		$("#ps_results").html(items.join(""));
-		
-		$("#ps_header").show();
-		$("#ps_results").show();
-		$("#ss_arrow").show();
-		changeHeight();
-		
-		
-		
-		
-		
-		
-		
-		
-	  } // success 
-	  
-	  
-	  
-	  
-	  
-	  
-	}); // ajax
+											if (search_para.order_by == ___orderByColumnName){
+												
+												
+													 if (search_para.asc_desc == 'asc'){
+														 
+														   search_para.asc_desc = 'desc'
+														 
+													 } else {
+														 
+														   search_para.asc_desc = 'asc'
+													 }
+												
+												
+												
+											} else {
+											
+												search_para.order_by = ___orderByColumnName
+												search_para.asc_desc = 'asc'
+											}
 	
 	
-	*/
-	
-	
-} // function 
+					} //function set_order_by
 
 
 
 
 
 
+
+
+var search_para =  {"full_name" : "", "agency":"", "role":"", "order_by":"", "asc_desc":""};
+
+var getUser_url 
 
 
 
@@ -236,69 +148,112 @@ function ajax_get_data(___url, ___query_param) {
 $(function() {
 		   
 	
-		// init get all users
-		
-		var getUser_url = url + 'cfc/sw.cfc?method=get_user&returnformat=json&queryformat=struct';
-
-        var getUser_by_fullname_para = {"full_name" : ""}
 				
-		
-						
-		ajax_get_data(getUser_url, getUser_by_fullname_para)
-		
-		
-		
-		
+				getUser_url = url + 'cfc/sw.cfc?method=get_user&returnformat=json&queryformat=struct';
+				
+				
+				// init get all users
+				ajax_get_data(getUser_url, search_para);
 		
 		
 		
 		
 		
-                // full name text input keyup event
-				$("#user_full_name").keyup(function(){
-													
-					    var _user_full_name_val = $("#user_full_name").val()							
-					    //console.log(_user_full_name_val)
+		
+		
+		
+		
+		
+		       	// ---------- search filter rule change event --------------------
+			
+		
+		
+								// full name text input keyup event
+								$("#user_full_name").keyup(function(){
+											
+										search_para.full_name = this.value;
+										
+										search_para.order_by = ''
+										search_para.asc_desc = ''
+										 
+										ajax_get_data(getUser_url, search_para);
+									
+								});// keyup
 					
-						getUser_by_fullname_para = {"full_name" : _user_full_name_val}
-						
-						ajax_get_data(getUser_url, getUser_by_fullname_para)
 					
 					
 					
-				});// keyup
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-            // agency select change event
-			$('#user_agency').on('change', 'select' ,function(){
-											   
-					console.log( 'user_agency ----- changed  ---:  ', this.value );					   
 					
-				   
-				});
+							// agency select change event
+							$('#user_agency').on('change', 'select' ,function(){
+															   
+								  //console.log( 'user_agency ----- changed  ---:  ', this.value );	
+								   
+								   search_para.agency = this.value;
+								   
+								   search_para.order_by = ''
+								   search_para.asc_desc = ''
+								   
+								  ajax_get_data(getUser_url, search_para);
+								   
+								});
+							
+							
+							
+							
+							
+							
+							
+							// role select change event
+							$('#user_role').on('change', 'select' ,function(){
+															   
+								   //console.log( 'user_role ----- changed  ---:  ', this.value );						   
+									
+									search_para.role = this.value;
+									
+									search_para.order_by = ''
+									search_para.asc_desc = ''
+									
+								   ajax_get_data(getUser_url, search_para);
+									
+									
+								   
+								});
+							
+							
+							
+							
+							
+							
+							$("#clear_search_parameter").click(function() {
+										
+								//console.log('clear_search_parameter clicked')
+										
+								$("#user_full_name").val('');	
+								
+								
+								// remove selected attr
+								$('#user_agency option:selected').removeAttr('selected');
+								
+								$('#user_role option:selected').removeAttr('selected');
+								
+								
+								
+								
+								search_para.full_name = ''
+								search_para.agency = ''
+								search_para.role = ''
+								search_para.order_by = ''
+								search_para.asc_desc = ''
+								ajax_get_data(getUser_url, search_para);
+										 
+							});
+							
 			
 			
+			// --------- end ---------- search filter rule change event --------------------
 			
-			// role select change event
-			$('#user_role').on('change', 'select' ,function(){
-											   
-					console.log( 'user_role ----- changed  ---:  ', this.value );						   
-					
-				   
-				});
+			
 			
 			
 			
@@ -312,7 +267,81 @@ $(function() {
 						console.log('add new user clicked')
 						
 						 
-						});
+			});
+			
+			
+			
+			
+			
+			
+			// ---------- data table header -------  click event ----------- sort asc desc --------------------
+			
+			
+								$("#header_full_name").click(function() {
+															 
+											set_orderBy_para('full_name')
+											
+											ajax_get_data(getUser_url, search_para);
+											
+								});
+			
+			
+			
+			
+			
+			
+			
+			                    $("#header_name").click(function() {
+																 
+										set_orderBy_para('name')
+										
+										ajax_get_data(getUser_url, search_para);
+										
+							    });
+			
+			
+			
+			
+			
+			
+			
+                                 $("#header_password").click(function() {
+																	  
+										set_orderBy_para('password')
+										
+										ajax_get_data(getUser_url, search_para);
+										
+							    });			
+			
+			
+			
+			                     $("#header_agency").click(function() {
+																	  
+										set_orderBy_para('agency')
+										
+										ajax_get_data(getUser_url, search_para);
+										
+							    });		
+								 
+								 
+								 
+								 
+								  $("#header_role").click(function() {
+																	  
+										set_orderBy_para('role')
+										
+										ajax_get_data(getUser_url, search_para);
+										
+							    });		
+			
+			
+			                   
+			
+			
+			
+			
+				// ---------- End   ---- data table header -------  click event ----------- sort asc desc --------------------
+			
 			
 			
 			
@@ -321,6 +350,7 @@ $(function() {
 			
 			
 	});		// document ready 
+
 
 
 

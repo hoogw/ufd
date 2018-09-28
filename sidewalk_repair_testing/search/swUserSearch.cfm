@@ -145,7 +145,7 @@ SELECT * FROM tblRole  order by Role_Id
                                     
                                     <cfloop query="getAgency">
                                         <cfset sel = ""><!--- <cfif cnt is 1><cfset sel = "selected"><cfset cnt = cnt+1></cfif> --->
-                                        <option value="#id#" #sel#>#name#</option>
+                                        <option value="#name#" #sel#>#name#</option>
                                     </cfloop>
                             </select>
 						</td>
@@ -169,7 +169,7 @@ SELECT * FROM tblRole  order by Role_Id
                                 <cfset cnt = 1>
                                 <cfloop query="getRole">
                                     <cfset sel = ""><!--- <cfif cnt is 1><cfset sel = "selected"><cfset cnt = cnt+1></cfif> --->
-                                    <option value="#Role_Id#" #sel#>#Role_Name#</option>
+                                    <option value="#Role_Name#" #sel#>#Role_Name#</option>
                                 </cfloop>
                                 
                             </select>
@@ -194,17 +194,17 @@ SELECT * FROM tblRole  order by Role_Id
 	<tr><td height=15></td></tr>
 	<tr>
 		<td align="center">
-			<a id="add_new" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+			<a  id="add_new" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;  cursor:pointer;" 
 			>Add New User</a>
 		</td>
         
-        <!---
+        
 		<td style="width:15px;"></td>
 		<td align="center">
-			<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-			onclick=" $('#chr(35)#form1')[0].reset();return false;">Clear</a>
+			<a  id="clear_search_parameter" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;  cursor: pointer;" 
+			>Clear</a>
 		</td>
-		--->
+		
 		
 		
 		
@@ -236,11 +236,11 @@ style="position:relative;top:10px;left:5px;height:25px;width:100%;border:2px #re
 		<tr>
 			<th class="drk center middle" style="height:21px;width:60px;">Edit</th>
             <th class="drk center middle" style="height:21px;width:60px;">Remove</th>
-			<th class="drk center middle" style="width:120px;" onClick="sortTable(1);return false;" onMouseOver="this.style.cursor='pointer';">Full Name</th>
-			<th class="drk center middle" style="width:120px;" onClick="sortTable(2);return false;" onMouseOver="this.style.cursor='pointer';">Login Name</th>
-			<th class="drk center middle" style="width:120px;" onClick="sortTable(3);return false;" onMouseOver="this.style.cursor='pointer';">Password</th>
-			<th class="drk center middle" style="width:120px;" onClick="sortTable(4);return false;" onMouseOver="this.style.cursor='pointer';">Agency</th>
-			<th class="drk center middle"                      onClick="sortTable(5);return false;" onMouseOver="this.style.cursor='pointer';">Role</th>
+			<th class="drk center middle" style="width:120px;" id="header_full_name" onMouseOver="this.style.cursor='pointer';">Full Name</th>
+			<th class="drk center middle" style="width:120px;" id="header_name" onMouseOver="this.style.cursor='pointer';">Login Name</th>
+			<th class="drk center middle" style="width:120px;" id="header_password" onMouseOver="this.style.cursor='pointer';">Password</th>
+			<th class="drk center middle" style="width:120px;" id="header_agency" onMouseOver="this.style.cursor='pointer';">Agency</th>
+			<th class="drk center middle"                      id="header_role" onMouseOver="this.style.cursor='pointer';">Role</th>
 		</tr>
 		</table>
 	</td></tr>
