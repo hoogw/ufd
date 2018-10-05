@@ -79,102 +79,364 @@ SELECT * FROM tblRole  order by Role_Id
 <cfset flw = ""><cfif shellName is "Handheld"><cfset flw="style='overflow:auto;'"></cfif>
 <body alink="darkgreen" vlink="darkgreen" bottommargin="0" marginheight="0" topmargin="2" rightmargin="0" #flw#>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td height="8"></td></tr></table>
 
-<div id="searchbox" style="display:block;">
+<!---  ------------ Search and Listing -------------------    --->
+
+<div id="search_listing">
+
+
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td height="8"></td></tr></table>
+                        
+                        <div id="searchbox" style="display:block;">
+                        
+                        <table width="100%" border="0" cellspacing="0" cellpadding="3">
+                          <tr>
+                            <td>
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                  <tr><td height="7"></td></tr>
+                                  <tr><td align="center" class="pagetitle">Manage User</td></tr>
+                                  <tr><td height="15"></td></tr>
+                                </table>
+                            </td>
+                          </tr>
+                        </table>
+                        
+                        <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:704px;">
+                            <form name="form1" id="form1" method="post" action="" enctype="multipart/form-data">
+                            <tr>
+                            <td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
+                                <table align=center bgcolor=white cellspacing="2" cellpadding="2" border="0">
+                                <tr>
+                                    <th class="drk left middle" colspan="4" style="height:30px;padding:0px 0px 0px 0px;">
+                                    
+                                        
+                                            <table cellpadding="0" cellspacing="0" border="0">
+                                                <tr>
+                                                <th class="drk left middle" style="width:420px;">Search User:</th>
+                                                </tr>
+                                            </table>
+                                    
+                                    
+                                    </td>
+                                </tr>
+                                    
+                                    <tr>	
+                                        <td colspan="4" style="padding:0px 0px 0px 0px;">
+                                            <table cellpadding="0" cellspacing="0" border="0">
+                                            
+                                            
+                                                <tr>
+                                                
+                                                
+                                                <th class="left middle" style="width:65px;">Full Name:</th>
+                                                
+                                                <td style="width:2px;"></td>
+                                                
+                                                <td class="frm" style="width:215px;">
+                                                    <input type="Text"  name="user_full_name" id="user_full_name" value="" style="width:210px;" class="rounded">
+                                                </td>
+                                                
+                                                <td style="width:2px;"></td>
+                                                
+                                                
+                                                
+                                                <th class="left middle" style="height:30px;width:55px;">Agency:</th>
+                                                
+                                                <td style="width:2px;"></td>
+                                                
+                                                <td id="user_agency" class="frm"  style="width:115px;">
+                                                    <select class="rounded" style="width:110px;">
+                                                        <option value=""> </option>
+                                                            <cfset cnt = 1>
+                                                            
+                                                            <cfloop query="getAgency">
+                                                                <cfset sel = ""><!--- <cfif cnt is 1><cfset sel = "selected"><cfset cnt = cnt+1></cfif> --->
+                                                                <option value="#name#" #sel#>#name#</option>
+                                                            </cfloop>
+                                                    </select>
+                                                </td>
+                                                
+                                                
+                                                
+                                                <td style="width:2px;"></td>
+                                                
+                                                
+                                                
+                                                
+                                                <th class="left middle" style="height:30px;width:45px;">Role:</th>
+                                                
+                                                <td style="width:2px;"></td>
+                                                
+                                                <td id="user_role" class="frm"  style="width:165px;">
+                                                
+                                                    <select class="rounded" style="width:160px;">
+                                                        <option value=""></option>
+                                                        
+                                                        <cfset cnt = 1>
+                                                        <cfloop query="getRole">
+                                                            <cfset sel = ""><!--- <cfif cnt is 1><cfset sel = "selected"><cfset cnt = cnt+1></cfif> --->
+                                                            <option value="#Role_Name#" #sel#>#Role_Name#</option>
+                                                        </cfloop>
+                                                        
+                                                    </select>
+                                                </td>
+                                              
+                                                
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                    
+                        
+                                </table>
+                            </td>
+                            </tr>
+                            </form>
+                        </table>
+                        
+                        <table align=center border="0" cellpadding="0" cellspacing="0">
+                            <tr><td height=15></td></tr>
+                            <tr>
+                                <td align="center">
+                                    <a id="add_new_user" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;  cursor:pointer;" 
+                                    >Add New User</a>
+                                </td>
+                                
+                                
+                                <td style="width:15px;"></td>
+                                <td align="center">
+                                    <a  id="clear_search_parameter" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;  cursor: pointer;" 
+                                    >Clear</a>
+                                </td>
+                                
+                                
+                                
+                                
+                            </tr>
+                        </table>
+                        
+                        </div>
+                        
+                        
+                        <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
+                        <div class="overlay">
+                            <div id="loading-img"></div>
+                        </div>
+                        
+                        
+                        
+                        
+                        <div name="ss_arrow" id="ss_arrow" onClick="toggleSearchBox();"
+                        style="position:absolute;top:192px;left:0px;height:15px;width:50px;border:0px red solid;overflow:hidden;display:none;">
+                        <img id="ss_arrow_img" style="position:absolute;top:0px;left:20px;visibility:visible;" src="../images/arrow_up.png" width="19" height="12" title="Hide Search Filter Box"  onmouseover="this.style.cursor='pointer';">
+                        </div>
+                        
+                        
+                        <div name="ps_header" id="ps_header" 
+                        style="position:relative;top:10px;left:5px;height:25px;width:100%;border:2px #request.color# solid;overflow:hidden;">
+                        <table border="0" cellpadding="0" cellspacing="0" style="height:25px;width:100%;border:0px red solid;">
+                            <tr><td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
+                                <table align="center" bgcolor="white" cellspacing="2" cellpadding="2" border="0" style="width:100%;">
+                                <tr>
+                                    <th class="drk center middle" style="height:21px;width:60px;">Edit</th>
+                                    <th class="drk center middle" style="height:21px;width:60px;">Remove</th>
+                                    <th class="drk center middle" style="width:120px;" id="header_full_name" onMouseOver="this.style.cursor='pointer';">Full Name</th>
+                                    <th class="drk center middle" style="width:120px;" id="header_name" onMouseOver="this.style.cursor='pointer';">Login Name</th>
+                                <!---	<th class="drk center middle" style="width:120px;" id="header_password" onMouseOver="this.style.cursor='pointer';">Password</th>  --->
+                                    <th class="drk center middle" style="width:120px;" id="header_agency" onMouseOver="this.style.cursor='pointer';">Agency</th>
+                                    <th class="drk center middle"                      id="header_role" onMouseOver="this.style.cursor='pointer';">Role</th>
+                                </tr>
+                                </table>
+                            </td></tr>
+                        </table>
+                        
+                        </div>
+                        
+                        <div name="ps_results" id="ps_results" 
+                        style="position:relative;top:8px;left:5px;height:100%;width:100%;border:2px #request.color# solid;overflow-y:auto;overflow-x:hidden;">
+                        <table id="tbl_results" border="0" cellpadding="0" cellspacing="0" ><tr><td></td></tr></table>
+                        </div>
+
+
+
+</div>
+
+<!---  ---------------- end ------------ Search and Listing -------------------    --->
+
+
+
+
+
+
+
+
+<!--- ------------------------------ add/edit User  --------------------------------------------->
+
+
+
+<div id="add_user" style="display:none">
+
 
 <table width="100%" border="0" cellspacing="0" cellpadding="3">
   <tr>
     <td>
 	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-		  <tr><td height="7"></td></tr>
-          <tr><td align="center" class="pagetitle">Manage User</td></tr>
-		  <tr><td height="15"></td></tr>
+		  <tr><td colspan="3" height="15"></td></tr>
+          <tr><td style="width:25%;text-align:right;">
+		 
+		  </td>
+		  <td  id="add_edit_user" align="center" class="pagetitle">Add/Edit User</td>
+		  <td style="width:25%;">
+		  
+		  </tr>
+		 
 		</table>
   	</td>
   </tr>
 </table>
 
-<table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:704px;">
-	<form name="form1" id="form1" method="post" action="" enctype="multipart/form-data">
+
+
+
+
+<table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:800px;">
+	
 	<tr>
 	<td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
 		<table align=center bgcolor=white cellspacing="2" cellpadding="2" border="0">
 		<tr>
-			<th class="drk left middle" colspan="4" style="height:30px;padding:0px 0px 0px 0px;">
+			<th class="drk left middle" colspan="4" style="height:30px;padding:0px 0px 0px 0px;width:800px;">
 			
 				
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
-						<th class="drk left middle" style="width:420px;">Search User:</th>
+						<th class="drk left middle" style="width:55px;"></th>
+						
+						<td class="left middle pagetitle" style="width:295px;padding:2px 3px 0px 0px;">
+						</td>
+						
+						
+						<td align="left" style="width:332px;">
+							
+							<a id="save_new_user_btn" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;   cursor: pointer;">Save</a>
+							<a id="update_user_btn" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;   cursor: pointer;">Update</a>
+						</td>
+						
+						<td align="right" style="width:90px;">
+							
+                            <!---
+							<a id="delete_user" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;  cursor: pointer;">Delete</a>
+							--->
+                            
+                            
+						</td>
+						
 						</tr>
 					</table>
+			
+			
+			</th>
 			
 			
 			</td>
 		</tr>
 			
+            
+            
+            
 			<tr>	
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
-                    
-                    
+						<tr>
+                                    
+                                     <input type="hidden" id="add_user_id" name="add_user_id" value="" >
+                                    
+                                    
+                                    <th class="left middle" style="height:30px;width:80px;">Full Name:</th>
+                                    <td style="width:2px;"></td>
+                                    
+                                    <td class="frm"  style="width:180px;">
+                                        <input type="Text" name="add_user_full_name" id="add_user_full_name" value="" style="width:178px;" class="rounded" >
+                                    </td>
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    <td style="width:2px;"></td>
+                                    <th class="left middle" style="width:80px;">Login Name:</th>
+                                    <td style="width:2px;"></td>
+                                    
+                                    <td class="frm" style="width:180px;">
+                                        <input type="Text" name="add_user_name" id="add_user_name" value="" style="width:178px;" class="rounded">
+                                    </td>
+                                    
+                                    
+                                   
+                                    
+						</tr>
+					</table>
+				</td>
+			</tr>
+            
+            
+            
+            
+            
+            
+			
+			<tr>	
+				<td colspan="4" style="padding:0px 0px 0px 0px;">
+					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
                         
-                        
-                        <th class="left middle" style="width:65px;">Full Name:</th>
-                        
-						<td style="width:2px;"></td>
-                        
-                        <td class="frm" style="width:215px;">
-						    <input type="Text"  name="user_full_name" id="user_full_name" value="" style="width:210px;" class="rounded">
-                        </td>
-						
-                        <td style="width:2px;"></td>
-                        
-                        
-                        
-						<th class="left middle" style="height:30px;width:55px;">Agency:</th>
-                        
-						<td style="width:2px;"></td>
-                        
-						<td id="user_agency" class="frm"  style="width:115px;">
-                            <select class="rounded" style="width:110px;">
-                                <option value=""> </option>
-									<cfset cnt = 1>
-                                    
-                                    <cfloop query="getAgency">
-                                        <cfset sel = ""><!--- <cfif cnt is 1><cfset sel = "selected"><cfset cnt = cnt+1></cfif> --->
-                                        <option value="#name#" #sel#>#name#</option>
-                                    </cfloop>
-                            </select>
-						</td>
-                        
-                        
-                        
-						<td style="width:2px;"></td>
-						
-                        
-                        
-                        
-                        <th class="left middle" style="height:30px;width:45px;">Role:</th>
-                        
-						<td style="width:2px;"></td>
-                        
-						<td id="user_role" class="frm"  style="width:165px;">
-                        
-                            <select class="rounded" style="width:160px;">
-                                <option value=""></option>
-                                
-                                <cfset cnt = 1>
-                                <cfloop query="getRole">
-                                    <cfset sel = ""><!--- <cfif cnt is 1><cfset sel = "selected"><cfset cnt = cnt+1></cfif> --->
-                                    <option value="#Role_Name#" #sel#>#Role_Name#</option>
-                                </cfloop>
-                                
-                            </select>
-						</td>
-                      
+                                        <th class="left middle" style="width:80px;">Password:</th>
+                                        <td style="width:2px;"></td>
+                                        
+                                        <td class="frm"  style="width:180px;">
+                                            <input type="Text" name="add_user_password" id="add_user_password" value="" style="width:178px;" class="rounded" >
+                                        </td>
+                                        
+                                        <td style="width:2px;"></td>
+                                        
+                                        
+                                        
+                                        
+                                        <th class="left middle" style="height:30px;width:60px;">Agency:</th>
+                                        <td style="width:2px;"></td>
+                                        <td class="frm"  style="width:180px;">
+                                                       <select name="add_user_agency" id="add_user_agency" class="rounded" style="width:178px;">
+                                                                        <option value=""> </option>
+                                                                            <cfset cnt = 1>
+                                                                            
+                                                                            <cfloop query="getAgency">
+                                                                                <cfset sel = ""><!--- <cfif cnt is 1><cfset sel = "selected"><cfset cnt = cnt+1></cfif> --->
+                                                                                <option value="#name#" #sel#>#name#</option>
+                                                                            </cfloop>
+                                                       </select>
+                                                                    
+                                        </td>
+                                        <td style="width:2px;"></td>
+                                        
+                                        
+                                        
+                                        
+                                        <th class="left middle" style="width:40px;">Role:</th>
+                                        <td style="width:2px;"></td>
+                                        <td class="frm" style="width:180px;">
+                                                 <select name="add_user_role" id="add_user_role" class="rounded" style="width:178px;" >
+                                                                        <option value=""></option>
+                                                                        
+                                                                        <cfset cnt = 1>
+                                                                        <cfloop query="getRole">
+                                                                            <cfset sel = ""><!--- <cfif cnt is 1><cfset sel = "selected"><cfset cnt = cnt+1></cfif> --->
+                                                                            <option value="#Role_Name#" #sel#>#Role_Name#</option>
+                                                                        </cfloop>
+                                                                        
+                                                 </select>
+                                        </td>
 						
 						</tr>
 					</table>
@@ -183,75 +445,41 @@ SELECT * FROM tblRole  order by Role_Id
 			
 			
 			
+			
+			
+			
+			
+			
 
 		</table>
 	</td>
 	</tr>
-	</form>
+		
 </table>
 
-<table align=center border="0" cellpadding="0" cellspacing="0">
-	<tr><td height=15></td></tr>
-	<tr>
-		<td align="center">
-			<a  id="add_new" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;  cursor:pointer;" 
-			>Add New User</a>
-		</td>
-        
-        
-		<td style="width:15px;"></td>
-		<td align="center">
-			<a  id="clear_search_parameter" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;  cursor: pointer;" 
-			>Clear</a>
-		</td>
-		
-		
-		
-		
-	</tr>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="3">
+  <tr><td style="height:3px;"></td></tr>
+  <tr>
+    <td align="center">
+	<a id="cancel_btn" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;   cursor: pointer;">Cancel</a>
+	</td>
+  </tr>
+  <tr><td style="height:5px;"></td></tr>
 </table>
 
-</div>
-
-
-<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
-
-
-
-
-<div name="ss_arrow" id="ss_arrow" onClick="toggleSearchBox();"
-style="position:absolute;top:192px;left:0px;height:15px;width:50px;border:0px red solid;overflow:hidden;display:none;">
-<img id="ss_arrow_img" style="position:absolute;top:0px;left:20px;visibility:visible;" src="../images/arrow_up.png" width="19" height="12" title="Hide Search Filter Box"  onmouseover="this.style.cursor='pointer';">
-</div>
-
-
-<div name="ps_header" id="ps_header" 
-style="position:relative;top:10px;left:5px;height:25px;width:100%;border:2px #request.color# solid;overflow:hidden;">
-<table border="0" cellpadding="0" cellspacing="0" style="height:25px;width:100%;border:0px red solid;">
-	<tr><td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
-		<table align="center" bgcolor="white" cellspacing="2" cellpadding="2" border="0" style="width:100%;">
-		<tr>
-			<th class="drk center middle" style="height:21px;width:60px;">Edit</th>
-            <th class="drk center middle" style="height:21px;width:60px;">Remove</th>
-			<th class="drk center middle" style="width:120px;" id="header_full_name" onMouseOver="this.style.cursor='pointer';">Full Name</th>
-			<th class="drk center middle" style="width:120px;" id="header_name" onMouseOver="this.style.cursor='pointer';">Login Name</th>
-			<th class="drk center middle" style="width:120px;" id="header_password" onMouseOver="this.style.cursor='pointer';">Password</th>
-			<th class="drk center middle" style="width:120px;" id="header_agency" onMouseOver="this.style.cursor='pointer';">Agency</th>
-			<th class="drk center middle"                      id="header_role" onMouseOver="this.style.cursor='pointer';">Role</th>
-		</tr>
-		</table>
-	</td></tr>
-</table>
 
 </div>
 
-<div name="ps_results" id="ps_results" 
-style="position:relative;top:8px;left:5px;height:100%;width:100%;border:2px #request.color# solid;overflow-y:auto;overflow-x:hidden;">
-<table id="tbl_results" border="0" cellpadding="0" cellspacing="0" ><tr><td></td></tr></table>
-</div>
+
+
+
+
+
+<!--- -------------------- End ------------ add User ---------------------------------------- --->
+
+
+
 
 
 	
@@ -276,6 +504,38 @@ style="position:relative;top:8px;left:5px;height:100%;width:100%;border:2px #req
 </div>
 	
 	
+  <!--- <div id="msg2" class="box" style="top:40px;left:1px;width:300px;height:90px;display:none;z-index:505;">  --->
+  <div id="msg2" class="box" style="position: absolute; left: 40%; top: 40%;  transform: translateY(-50%);   width:300px;height:90px;display:none;z-index:505;">
+  
+
+
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg2').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<div id="msg_header2" class="box_header"><strong>Warning:</strong></div>
+	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
+		<div id="msg_text2" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">
+		Are you sure you want to delete this user?
+		</div>
+		
+		<div style="position:absolute;bottom:15px;width:100%;">
+		<table align=center border="0" cellpadding="0" cellspacing="0" width="45%">
+			<tr>
+			<td align="center">
+				<a id="confirmed_removeUser_btn" href="" class="button buttonText" style="height:15px;width:60px;padding:2px 0px 0px 0px;    cursor: pointer;">Continue...</a>
+			</td>
+			<td style="width:15px;"></td>
+			<td align="center">
+				<a href="" class="button buttonText" style="height:15px;width:60px;padding:2px 0px 0px 0px;" 
+				onclick="$('#chr(35)#msg2').hide();return false;">Cancel</a>
+			</td>
+			</tr>
+			
+		</table>
+		</div>
+		
+	</div>
+</div>
+    
+    
 	
 	
 
