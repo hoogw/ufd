@@ -301,6 +301,8 @@ SELECT * FROM tblRole  order by Role_Id
 
 
 
+
+
 <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:800px;">
 	
 	<tr>
@@ -314,14 +316,28 @@ SELECT * FROM tblRole  order by Role_Id
 						<tr>
 						<th class="drk left middle" style="width:55px;"></th>
 						
-						<td class="left middle pagetitle" style="width:295px;padding:2px 3px 0px 0px;">
+						<td  align="middle" style="width:295px;padding:2px 3px 0px 0px;">
+                        
+                              <span id="user_exist_already"  style="display:none;color:white;"> Full Name Invalid</span>
+                              
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              <span id="login_exist_already"  style="display:none;color:white;"> Login Name Invalid</span>
+                              
+                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                              <span id="all_field_required"  style="display:none;color:white;"> All Fields Required</span>
+                              
+                              
+                              
 						</td>
 						
 						
 						<td align="left" style="width:332px;">
 							
-							<a id="save_new_user_btn" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;   cursor: pointer;">Save</a>
-							<a id="update_user_btn" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;   cursor: pointer;">Update</a>
+                            
+							<a id="save_new_user_btn" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Save</a>
+							<a id="update_user_btn" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;   cursor: pointer;"    >Update</a>
+                           
+                            
 						</td>
 						
 						<td align="right" style="width:90px;">
@@ -358,7 +374,7 @@ SELECT * FROM tblRole  order by Role_Id
                                     <td style="width:2px;"></td>
                                     
                                     <td class="frm"  style="width:180px;">
-                                        <input type="Text" name="add_user_full_name" id="add_user_full_name" value="" style="width:178px;" class="rounded" >
+                                        <input type="Text" name="add_user_full_name" id="add_user_full_name" value="" style="width:178px;" class="rounded" required >
                                     </td>
                                     
                                     
@@ -370,11 +386,13 @@ SELECT * FROM tblRole  order by Role_Id
                                     <td style="width:2px;"></td>
                                     
                                     <td class="frm" style="width:180px;">
-                                        <input type="Text" name="add_user_name" id="add_user_name" value="" style="width:178px;" class="rounded">
+                                        <input type="Text" name="add_user_name" id="add_user_name" value="" style="width:178px;" class="rounded" disabled required>
                                     </td>
                                     
-                                    
-                                   
+                                    <td style="width:2px;"></td>
+                                    <td class="frm" style="width:50px;">
+                                       <a id="edit_login_name_btn" class="button buttonText" style="height:17px;width:40px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Edit</a>
+                                   </td>
                                     
 						</tr>
 					</table>
@@ -396,8 +414,16 @@ SELECT * FROM tblRole  order by Role_Id
                                         <td style="width:2px;"></td>
                                         
                                         <td class="frm"  style="width:180px;">
-                                            <input type="Text" name="add_user_password" id="add_user_password" value="" style="width:178px;" class="rounded" >
+                                            <input type="password" name="add_user_password" id="add_user_password" value="" style="width:178px;" class="rounded" required>
                                         </td>
+                                        
+                                        
+                                         <td style="width:2px;"></td>
+                                           <td class="frm" style="width:50px;" id="reset_password_btn_td"> 
+                                               <a id="reset_password_btn" class="button buttonText" style="height:17px;width:40px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Reset</a>
+                                          </td>    
+                                        
+                                        
                                         
                                         <td style="width:2px;"></td>
                                         
@@ -503,7 +529,8 @@ SELECT * FROM tblRole  order by Role_Id
 	
 </div>
 	
-	
+	   
+       
   <!--- <div id="msg2" class="box" style="top:40px;left:1px;width:300px;height:90px;display:none;z-index:505;">  --->
   <div id="msg2" class="box" style="position: absolute; left: 40%; top: 40%;  transform: translateY(-50%);   width:300px;height:90px;display:none;z-index:505;">
   

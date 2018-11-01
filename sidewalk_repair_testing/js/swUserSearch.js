@@ -60,7 +60,7 @@ function ajax_get_data(___url, ___query_param) {
 														items.push("<td style='width:59px;height:20px;' class='small center frm'><a onclick='editUserId("   + result[i].ID + ");'> <img src='../Images/rep.gif' width='13' height='16' alt='Edit User' title='Edit User' style='position:relative;top:-1px;   cursor:pointer;'> </a></td>");
 														
 														// Remove
-														items.push("<td style='width:59px;height:20px;' class='small center frm'><a onclick='removeUserId(" + result[i].ID + ");'><img src='../Images/rep.gif' width='13' height='16' alt='Remove User' title='Remove User' style='position:relative;top:-1px;   cursor:pointer;'></a></td>");
+														items.push("<td style='width:59px;height:20px;' class='small center frm'><a onclick='removeUserId(" + result[i].ID + ");'><img src='../Images/x.png' width='13' height='16' alt='Remove User' title='Remove User' style='position:relative;top:-1px;   cursor:pointer;'></a></td>");
 														
 														// Full name
 														items.push("<td style='width:119px;' class='small center frm'>" + result[i].FULL_NAME + "</td>");
@@ -93,6 +93,10 @@ function ajax_get_data(___url, ___query_param) {
 											
 											  
 										//---- end ----  build data table  ------	
+											
+											
+											
+										
 											
 											
 		   
@@ -172,7 +176,11 @@ function ajax_userById(_userID){
 		                                    $("#add_user_id").val(result[0].ID)
 											$("#add_user_full_name").val(result[0].FULL_NAME)
 											$("#add_user_name").val(result[0].NAME)
+											
+											// instead of show real password, here need to hide as dots.
+											// by toggle input='password'  input='text'
 											$("#add_user_password").val(result[0].PASSWORD)
+											
 											
 											// remove selected attr
 											console.log(result[0].AGENCY)
@@ -266,7 +274,14 @@ function editUserId(_user_id) {
 					// show hide submit button
 					$("#save_new_user_btn").hide()
 					$("#update_user_btn").show()
+					// show reset password button
+					$("#reset_password_btn_td").show()
 					
+					
+					 // hide password
+					  var x = document.getElementById("add_user_password");
+					  x.type = "password";
+							
 					
 					
 					
@@ -277,7 +292,14 @@ function editUserId(_user_id) {
 					populate_form_byUserID(_user_id)
 					
 					
+					
+					// fix bug
+					$("#login_exist_already").hide()
+					$("#user_exist_already").hide()
+					$("#all_field_required").hide()
+					
 }// editUserId
+
 
 
 
@@ -351,7 +373,10 @@ function removeUserId(_user_id) {
 var search_para =  {"full_name" : "", "agency":"", "role":"", "order_by":"", "asc_desc":""};
 
 var getUser_url 
+var checkUser_url
 
+
+var check_para = {"full_name" : "", "name":""};
 
 
 // document.ready  init entrance 
@@ -359,8 +384,8 @@ $(function() {
 		   
 	
 				
-				getUser_url = url + 'cfc/sw.cfc?method=get_user&returnformat=json&queryformat=struct';
-				
+				getUser_url    = url + 'cfc/sw.cfc?method=get_user&returnformat=json&queryformat=struct';
+				checkUser_url  = url + 'cfc/sw.cfc?method=check_user&returnformat=json&queryformat=struct';
 				
 				// init get all users
 				ajax_get_data(getUser_url, search_para);
@@ -488,7 +513,8 @@ $(function() {
 					// show hide submit button
 					$("#save_new_user_btn").show()
 					$("#update_user_btn").hide()
-					
+					// hide reset password button
+					$("#reset_password_btn_td").hide()
 					
 					
 					
@@ -498,6 +524,15 @@ $(function() {
 					
 					populate_form_byUserID(-1)
 					
+						
+				    
+					
+					
+					// fix bug
+					$("#login_exist_already").hide()
+					$("#user_exist_already").hide()
+					$("#all_field_required").hide()
+						
 						
 						 
 			});
@@ -516,6 +551,17 @@ $(function() {
 								
 							
 					$("#add_user").hide()
+					
+					
+					
+					
+					$("#add_user_full_name").val('')
+					
+					$("#add_user_name").val('')
+					
+					$("#add_user_password").val('')
+					
+					
 						
 						 
 			});
@@ -530,6 +576,11 @@ $(function() {
 										 
 							
 							
+					
+						
+						
+						
+						
 						
 						
 	               // this is add new item and save new item to database 
@@ -543,54 +594,433 @@ $(function() {
 					
 					console.log(_new_added_user);
 					
-		   
-		         // --- insert  database use fetch api, you can specify the method as post, delete, put ----
-		   
-					var insertUser_url = url + 'cfc/sw.cfc?method=insert_user&returnformat=json&queryformat=struct';
-			
-					console.log(insertUser_url )
-							
-				   
-				   
-				   fetch(insertUser_url, 
-						  {
-							 method: 'POST',
-							 body:JSON.stringify(_new_added_user)
-						  }
-						)
-						  .then(function (response) 
-								   {
-													  
-										 // if js error here, likely it is coldfusion server output error message instead of valid json 
-										 // so check coldfusion server response.
-									       return response.json()
-										   
-							        })
-									  
-				           .then(function (result) {
-		                                    
-											console.log(result)
-											
-											
-											// init get all users
-				                            ajax_get_data(getUser_url, search_para);
-		   
-		                             })
-                 
-                 .catch((err)=>console.error(err))
-				   
-				   // -----   end     ---- fetch  -------------------------------------
-				   
-							
-							
-							
-							
-							
-					$("#search_listing").show()
-				    $("#add_user").hide()
+					
+					// all field are required. no empty field allowed.
+			if ((_new_added_user.full_name == '') || (_new_added_user.name == '' ) || (_new_added_user.password == '') || (_new_added_user.agency == '') || (_new_added_user.role == '')){
 						
-						 
-			});
+			
+			
+			     $("#all_field_required").show()   
+			
+			
+						
+			}
+			else {		
+					
+					 $("#all_field_required").hide()   
+					
+						   
+								 // --- insert  database use fetch api, you can specify the method as post, delete, put ----
+						   
+									var insertUser_url = url + 'cfc/sw.cfc?method=insert_user&returnformat=json&queryformat=struct';
+							
+									console.log(insertUser_url )
+											
+								   
+								   
+								   fetch(insertUser_url, 
+										  {
+											 method: 'POST',
+											 body:JSON.stringify(_new_added_user)
+										  }
+										)
+										  .then(function (response) 
+												   {
+																	  
+														 // if js error here, likely it is coldfusion server output error message instead of valid json 
+														 // so check coldfusion server response.
+														   return response.json()
+														   
+													})
+													  
+										   .then(function (result) {
+															
+															console.log(result)
+															
+															
+															// init get all users
+															ajax_get_data(getUser_url, search_para);
+						   
+													 })
+								 
+								 .catch((err)=>console.error(err))
+								   
+								   // -----   end     ---- fetch  -------------------------------------
+								   
+											
+											
+											
+											
+											
+									$("#search_listing").show()
+									$("#add_user").hide()
+										
+					
+					
+			 } // if
+					
+					
+			}); //$("#save_new_user_btn").click(a
+			
+			
+			
+			
+			
+			
+			
+			
+			// ...........................  check user if duplicate full name, 	..........................................
+			
+			var getInitials = function (string) {
+													var names = string.split(' '),
+														initials = names[0].substring(0, 1).toUpperCase();
+													
+													if (names.length > 1) {
+														initials += names[names.length - 1].substring(0, 1).toUpperCase();
+													}
+													return initials;
+												};
+			
+			
+			var getFirstNameFirstLetter_LastName = function (string) {
+													var names = string.split(' '),
+														initials2 = names[0].substring(0, 1);
+													
+													if ((names[1] == undefined) || (names[1] == null)) {
+														
+														initials2 = names[0]
+													                             
+													} else {
+														initials2 += names[1]
+														}
+													
+													
+													return initials2;
+												};
+			
+			
+			
+			
+			
+			// full name text input keyup event
+					$("#add_user_full_name").keyup(async function(){
+											
+											console.log(this.value)
+										
+										 var _calculated_loginName = getFirstNameFirstLetter_LastName(this.value)
+										
+										  console.log(getFirstNameFirstLetter_LastName(this.value));
+										  
+										  // login name , password, all lower case
+										    _calculated_loginName = _calculated_loginName.toLowerCase();
+										  
+										  
+										  $("#add_user_name").val(_calculated_loginName);
+										
+										  // add new user, default password is same as login name
+										  $("#add_user_password").val(_calculated_loginName);
+										
+										
+										
+										
+										
+										
+										
+										
+										// check full name 
+										check_para.full_name = this.value;
+										check_para.name = '';
+										
+										
+													await fetch(checkUser_url, 
+																  {
+																	 method: 'POST',
+																	 body:JSON.stringify(check_para)
+																	// body: ___query_param
+																  }
+																).then(function (response) 
+																		   {
+																							  
+																				 // if js error here, likely it is coldfusion server output error message instead of valid json 
+																				 // so check coldfusion server response.
+																				   return response.json()
+																				   
+																			})
+																			  
+																   .then(function (result) {
+																				   
+																				   // success
+																					
+																					console.log(result)
+																					console.log(result.length)
+																					
+																	     // found duplicate name, exist full name
+																	    if (result.length >0 ) {
+																			
+																		         // fail
+																		        //  $(this).css("border", "5px solid red");
+																		        
+																		        $("#user_exist_already").show()
+				                                                                $("#save_new_user_btn").hide()
+																		
+																		} else {
+																			
+																			     $("#user_exist_already").hide()
+				                                                                $("#save_new_user_btn").show()
+																			
+																		}
+																					
+																					
+																					
+																					
+																					
+																			
+															 })
+										 
+										 .catch((err)=>console.error(err))
+										 
+										 // End check full name 
+										 
+										 
+										 
+										 
+										 
+										 
+										 
+										 
+										 // check login name 
+										check_para.full_name = '';
+										check_para.name = _calculated_loginName;
+										
+										
+													await fetch(checkUser_url, 
+																  {
+																	 method: 'POST',
+																	 body:JSON.stringify(check_para)
+																	// body: ___query_param
+																  }
+																).then(function (response) 
+																		   {
+																							  
+																				 // if js error here, likely it is coldfusion server output error message instead of valid json 
+																				 // so check coldfusion server response.
+																				   return response.json()
+																				   
+																			})
+																			  
+																   .then(function (result) {
+																				   
+																				   // success
+																					
+																					console.log(result)
+																					console.log(result.length)
+																					
+																	     // found duplicate name, exist full name
+																	    if (result.length >0 ) {
+																			
+																		         // fail
+																		        //  $(this).css("border", "5px solid red");
+																		        
+																		        $("#login_exist_already").show()
+				                                                                $("#save_new_user_btn").hide()
+																				// $("#edit_login_name_btn").show()
+																				
+																				
+																		
+																		} else {
+																			
+																			     $("#login_exist_already").hide()
+				                                                                $("#save_new_user_btn").show()
+																			//	$("#edit_login_name_btn").hide()
+																			
+																		}
+																					
+																					
+																					
+																					
+																					
+																			
+															 })
+										 
+										 .catch((err)=>console.error(err))
+										 
+										 // End check login name 
+										 
+				   		
+																					
+																					
+																					
+																					
+											
+								});// keyup
+			
+			
+			
+			
+			
+			
+			
+			                 
+							 
+							 
+							 
+							 	$("#add_user_name").keyup(async function(){
+			
+			
+			                                            
+										 // check login name 
+										check_para.full_name = '';
+										check_para.name = this.value;
+										
+										
+													await fetch(checkUser_url, 
+																  {
+																	 method: 'POST',
+																	 body:JSON.stringify(check_para)
+																	// body: ___query_param
+																  }
+																).then(function (response) 
+																		   {
+																							  
+																				 // if js error here, likely it is coldfusion server output error message instead of valid json 
+																				 // so check coldfusion server response.
+																				   return response.json()
+																				   
+																			})
+																			  
+																   .then(function (result) {
+																				   
+																				   // success
+																					
+																					console.log(result)
+																					console.log(result.length)
+																					
+																	     // found duplicate name, exist full name
+																	    if (result.length >0 ) {
+																			
+																		         // fail
+																		        //  $(this).css("border", "5px solid red");
+																		        
+																		        $("#login_exist_already").show()
+				                                                                $("#save_new_user_btn").hide()
+																				// $("#edit_login_name_btn").show()
+																				
+																				
+																		
+																		} else {
+																			
+																			     $("#login_exist_already").hide()
+				                                                                $("#save_new_user_btn").show()
+																				//$("#edit_login_name_btn").hide()
+																			
+																		}
+																					
+																					
+																					
+																					
+																					
+																			
+															 })
+										 
+										 .catch((err)=>console.error(err))
+										 
+										 // End check login name 
+			
+			
+			
+			
+			
+			                              
+			
+			
+			
+			
+			
+			
+			                               	
+										// check full name 
+										check_para.full_name = $("#add_user_full_name").val();
+										check_para.name = '';
+										
+										
+													await fetch(checkUser_url, 
+																  {
+																	 method: 'POST',
+																	 body:JSON.stringify(check_para)
+																	// body: ___query_param
+																  }
+																).then(function (response) 
+																		   {
+																							  
+																				 // if js error here, likely it is coldfusion server output error message instead of valid json 
+																				 // so check coldfusion server response.
+																				   return response.json()
+																				   
+																			})
+																			  
+																   .then(function (result) {
+																				   
+																				   // success
+																					
+																					console.log(result)
+																					console.log(result.length)
+																					
+																	     // found duplicate name, exist full name
+																	    if (result.length >0 ) {
+																			
+																		         // fail
+																		        //  $(this).css("border", "5px solid red");
+																		        
+																		        $("#user_exist_already").show()
+				                                                                $("#save_new_user_btn").hide()
+																		
+																		} else {
+																			
+																			     $("#user_exist_already").hide()
+				                                                                $("#save_new_user_btn").show()
+																			
+																		}
+																					
+																					
+																					
+																					
+																					
+																			
+															 })
+										 
+										 .catch((err)=>console.error(err))
+										 
+										 // End check full name 
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+																	
+											
+								});// keyup
+			
+			
+			
+			
+			
+								$("#edit_login_name_btn").click(function() {
+												
+										// click edit toggle disable, true, false		
+										$('#add_user_name').prop('disabled', function(i, v) { return !v; });				 
+							          // $("#add_user_name").prop("disabled", false); 
+							
+							
+								});// edit 
+			
+			
+			
+			            // ............... end ...........................  check user if duplicate full name, 	..........................................
 			
 			
 			
@@ -680,12 +1110,36 @@ $(function() {
 							
 					$("#search_listing").show()
 				    $("#add_user").hide()
-						
+					
 						 
 			});
 			
 			
 			
+			
+			
+			
+			
+			
+			$("#reset_password_btn").click(async function() {
+				
+			          // show password
+					  var x = document.getElementById("add_user_password");
+							if (x.type === "password") {
+								x.type = "text";
+							} else {
+								x.type = "password";
+							}
+					  
+					  
+					  
+					  // reset password  = login name
+					  var current_loginname = $("#add_user_name").val();
+					  $("#add_user_password").val(current_loginname);
+			
+			
+			
+				});
 			
 			// ============================+    end  ============================+  Edit update user event ============================+
 			

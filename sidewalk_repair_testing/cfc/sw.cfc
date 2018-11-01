@@ -6791,15 +6791,73 @@
                                                          </cfloop>
                                                          
                                                          
+                                                        
+                                                         
+														 
+                                             <!---  ------------- if user full name exist,  do not insert new user, instead update exist user -----------  --->     
+                                                         
+                                                         
+                                                 <cfquery name="select_user_by_user_full_name" datasource="#request.sqlconn#">
+                                                                                         
+                                                                  SELECT User_FullName
+                                                                            
+                                                                  FROM tblUsers
+                                                                  
+                                                                  where  User_FullName = '#_full_name#'
+                                                                              
+                                                 </cfquery>
+                                                         
+                                                
+                                               <!---   <cfreturn select_user_by_user_full_name>  --->   
+                                                
+                                                <cfif select_user_by_user_full_name.recordCount gt 0 >
+                                                    
+                                                        <!---  ------------- do not insert new user, instead update exist user -----------  --->     
+                                                    
+                                                    
+                                                        <cfquery name="update_user_by_full_name" datasource="#request.sqlconn#">
+                                                                                         
+                                                                                         UPDATE tblUsers
+                                                                                            SET 
+                                                                                                  
+                                                                                                  User_Name  = '#_name#', 
+                                                                                                   User_Password = '#_password#',
+                                                                                                   User_Agency   = '#_agency#',
+                                                                                                   User_Level   =  #_level#, 
+                                                                                                   User_Power    =   #_power#,
+                                                                                                   User_Cert    =    #_cert#, 
+                                                                                                   User_UFD     =     #_ufd#, 
+                                                                                                   User_Report    =   '#_report#'
+                                                                                                   
+                                                                                                   
+                                                                                            WHERE User_FullName = '#_full_name#'                                                                                                                                                                                     
+                                                                                              
+                                                                                              
+                                                                                         
+                                                         </cfquery>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                <cfelse>
+                                                  
+                                                      
+                                                         
+                                                         
+                                                         
+                                                         
+                                                         
                                                          
                                                          
                                                          
                                          
-                                         			<!---  -------------    insert user -----------  --->
+                                         			                                   <!---  -------------    insert user -----------  --->
 										 
                                          
-                                                                                          
-                                                                                          
                                                                                           <cfquery name="insert_user" datasource="#request.sqlconn#">
                                                                                          
                                                                                                insert into tblUsers 
@@ -6848,19 +6906,13 @@
                                                                                          </cfquery>
                                                                                           
                                                                                           
-                                                                                         
-                                                                               
-                                                         
-                                                              			
                                                         
-                                                        
-                                                        
-                                                          <!--------- end ------ update user tables   ------------    --->  
+                                                                                         <!--------- end ------ insert user  ------------    --->  
                                                           
                                                           
+                                                           </cfif>       
                                                           
-                                                          
-                                                                         
+                                                                            
                                                          
                                                           <cftransaction action="commit" />
                       
@@ -7124,6 +7176,7 @@
                                               <cfreturn _result>             
                                                           
                                             
+                                            
                                         </cffunction>
     
     
@@ -7132,6 +7185,121 @@
     
     
     
+    
+    
+    
+    
+      <cffunction name="check_user" access="remote" returnType="any" returnFormat="json" output="false">
+                                    
+                                    
+                           
+                                
+                                <cfset requestBody = toString( getHttpRequestData().content ) />
+                    
+                                    <!--- Double-check to make sure it's a JSON value. --->
+                                   
+                                   
+                                    <cfif isJSON( requestBody )>
+                                    
+                                    
+                                        <cfset json_post = deserializeJson( requestBody ) >
+                                        
+                                    
+                                         
+                                           
+                                            
+                                            <cfset _full_name     = json_post.full_name>
+											<cfset _name          = json_post.name>
+                                           
+                                    
+                                          
+                                                
+                                        </cfif>	 
+                                         
+                                                
+                                                
+                                                          
+                                    
+                                     <cftransaction action="begin">
+									<cftry>
+                                             
+                                    
+                                    
+                                    
+                                                   
+                                                        <!---  User_Power = -1  means deleted user   --->
+                                                      <cfquery name="check_user" datasource="#request.sqlconn#">
+                                                                                         
+                                                                  SELECT 
+                                                                            *
+                                                                            
+                                                                  FROM tblUsers
+                                                                  
+                                                                  WHERE User_Power > -1 
+                                                                  
+                                                                  
+                                                                  
+                                                                   
+                                                                 
+                                                                 
+                                                                 <cfif len(_full_name)>
+                                                                 
+                                                                  AND
+                                                                 
+                                                                      User_FullName = '#_full_name#'
+                                                                    
+                                                                 </cfif>
+                                                                 
+                                                                 
+                                                                 <cfif len(_name)>
+                                                                 
+                                                                 AND
+                                                                     User_Name = '#_name#'
+                                                                    
+                                                                 </cfif>
+                                                                 
+                                                                  
+                                                                                        
+                                                       </cfquery>
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                         
+                                                          <cftransaction action="commit" />
+                      
+                                                          <!--- something happened, roll everyting back ---> 
+                                                          <cfcatch type="any">
+                                                         
+                                                                                        <cftransaction action="rollback" />
+                                                                                        
+                                                                                         
+																						<!--- <cfset _error = #cfcatch#>    ---> <!--- full error details in json --->
+                                                                                        
+																						 <cfset _error = #cfcatch.Message#>  <!--- only error message in string--->
+                                                                                         
+                                                                                         
+                                                                                        <cfreturn _error>
+                                                                                        <cfabort>
+                                                                                        
+                                                          </cfcatch>
+                                                        
+                                                        
+                                                        
+                                                        
+                                               </cftry>
+                                            </cftransaction>
+                                            
+                                                       
+                                                       
+                                                       
+                                                       
+                                                    <cfreturn check_user>
+                                            
+                                        </cffunction>
     
     
     
