@@ -33,6 +33,13 @@ function ajax_get_data(___url, ___query_param) {
 											   
 											   
 											   
+											   
+											   
+											   
+											   
+											   
+											   
+											   
 											
 											//----  build data table  ------
 											
@@ -203,6 +210,43 @@ function ajax_userById(_userID){
 											
 											$(_select_agency).prop("selected", true);
 											$(_select_role).prop("selected", true);
+											
+											
+											
+											console.log('result[0].CERT ---- ', result[0].CERT)
+											// cert checkbox 
+											if (result[0].CERT == 1){
+											        
+													
+													
+													  $('#add_user_certificate_checkbox').prop('checked', true);
+											
+											          console.log('result[0].CERT ---- checked ', result[0].CERT)
+											
+											} else {
+											
+											           $('#add_user_certificate_checkbox').prop('checked', false);
+											
+											           console.log('result[0].CERT ---- un--- checked ', result[0].CERT)
+											}
+											
+											// if (($("#add_user_role").val() === 'BSS Power User') || ($("#add_user_role").val() === 'BSS User') || ($("#add_user_role").val() === 'Viewer'))
+											if ((result[0].ROLE == 'BSS Power User') || (result[0].ROLE == 'BSS User') || (result[0].ROLE == 'Viewer'))
+											{
+												$("#certificate_th").show()
+												$("#certificate_td").show()
+											}
+											
+											
+											//----------- end checkbox ---------------------
+											
+											
+											
+											
+											
+											
+											
+											
 				
 		                             })
                  
@@ -231,6 +275,8 @@ function populate_form_byUserID(_userID){
 		// remove selected attr
 		$('#add_user_agency option:selected').removeAttr('selected');
 		$('#add_user_role option:selected').removeAttr('selected');
+		//$('#add_user_certificate_checkbox').removeAttr("checked");
+		$('#add_user_certificate_checkbox').prop('checked', false);
 		
 		
 		
@@ -276,6 +322,13 @@ function editUserId(_user_id) {
 					$("#update_user_btn").show()
 					// show reset password button
 					$("#reset_password_btn_td").show()
+					
+					
+					
+					$("#certificate_th").hide()
+					$("#certificate_td").hide()
+					//$("#add_user_certificate_checkbox").removeAttr("checked");
+					$('#add_user_certificate_checkbox').prop('checked', false);
 					
 					
 					 // hide password
@@ -493,6 +546,36 @@ $(function() {
 			
 			
 			
+			$("#add_user_role").change(function(){
+												
+												
+					
+						
+						 if (($("#add_user_role").val() === 'BSS Power User') || ($("#add_user_role").val() === 'BSS User') || ($("#add_user_role").val() === 'Viewer'))
+						{
+						    					
+						     $("#certificate_th").show()
+					         $("#certificate_td").show()
+						     $('#add_user_certificate_checkbox').prop('checked', false);
+						
+						} else {
+							
+							 $("#certificate_th").hide()
+					         $("#certificate_td").hide()
+							 $('#add_user_certificate_checkbox').prop('checked', false);
+							 
+						}
+									   
+										  
+			});
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			
 			
@@ -516,6 +599,12 @@ $(function() {
 					// hide reset password button
 					$("#reset_password_btn_td").hide()
 					
+					
+					
+					$("#certificate_th").hide()
+					$("#certificate_td").hide()
+					//$("#add_user_certificate_checkbox").removeAttr("checked");
+					$('#add_user_certificate_checkbox').prop('checked', false);
 					
 					
 					$("#add_edit_user").text('Add New User')
@@ -570,6 +659,26 @@ $(function() {
 			
 			
 			
+			// test checkbox
+			$("#add_user_certificate_checkbox").change(function() {
+																		// this will contain a reference to the checkbox   
+																		if (this.checked) {
+																			// the checkbox is now checked 
+																			console.log('checked: ',$("#add_user_certificate_checkbox").prop('checked'))
+																			
+																			
+																		} else {
+																			// the checkbox is now no longer checked
+																			
+																			console.log('un-check: ',$("#add_user_certificate_checkbox").prop('checked'))
+																			
+																			
+																		}
+																	});
+			
+			
+			
+			
 			
 			
 			$("#save_new_user_btn").click(async function() {
@@ -591,6 +700,25 @@ $(function() {
 					_new_added_user.password       = $("#add_user_password").val();
 					_new_added_user.agency         = $("#add_user_agency").val();
 					_new_added_user.role           = $("#add_user_role").val();
+					
+					// failed, always is 0, not sure why?
+					// _new_added_user.certificate    = $("#add_user_certificate_checkbox").attr("checked")?1:0;
+					
+					if ($("#add_user_certificate_checkbox").prop('checked')) 
+					{
+																			// the checkbox is now checked 
+																			
+																			_new_added_user.certificate    = 1
+																			
+					} else {
+																			// the checkbox is now no longer checked
+																			
+																			
+																			_new_added_user.certificate    = 0
+																			
+					} // if
+					
+					
 					
 					console.log(_new_added_user);
 					
@@ -1061,6 +1189,23 @@ $(function() {
 					_edited_user.password       = $("#add_user_password").val();
 					_edited_user.agency         = $("#add_user_agency").val();
 					_edited_user.role           = $("#add_user_role").val();
+					
+					if ($("#add_user_certificate_checkbox").prop('checked')) 
+					{
+																			// the checkbox is now checked 
+																			
+																			_edited_user.certificate    = 1
+																			
+					} else {
+																			// the checkbox is now no longer checked
+																			
+																			
+																			_edited_user.certificate    = 0
+																			
+					} // if
+					
+					
+					
 					
 					console.log(_edited_user);
 					

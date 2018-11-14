@@ -12,13 +12,14 @@
 	</script>
 	<cfabort>
 </cfif>
-<!--- <cfif session.user_power is 1>
+<cfif session.user_level lt 3>
 	<script>
-	self.location.replace("../login.cfm?relog=false&r=#Rand()#&s=4&chk=authority");
+	self.location.replace("../login.cfm?relog=false&r=#Rand()#&s=5&chk=authority");
 	</script>
 	<cfabort>
-</cfif> --->
+</cfif>
 </cfoutput>
+
 
 <cfset shellName = "">
 <cfif (findNoCase('Android', cgi.http_user_agent,1) AND findNoCase('mobile', cgi.http_user_agent,1)) OR 
@@ -393,6 +394,29 @@ SELECT * FROM tblRole  order by Role_Id
                                     <td class="frm" style="width:50px;">
                                        <a id="edit_login_name_btn" class="button buttonText" style="height:17px;width:40px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Edit</a>
                                    </td>
+                                   
+                                   
+                                      <td style="width:2px;"></td>
+                                   
+                                   
+                                   
+                                    <th class="left middle" style="width:80px;">Password:</th>
+                                        <td style="width:2px;"></td>
+                                        
+                                        <td class="frm"  style="width:180px;">
+                                            <input type="password" name="add_user_password" id="add_user_password" value="" style="width:178px;" class="rounded" required>
+                                        </td>
+                                   
+                                   
+                                         <td style="width:2px;"></td>
+                                           <td class="frm" style="width:50px;" id="reset_password_btn_td"> 
+                                               <a id="reset_password_btn" class="button buttonText" style="height:17px;width:40px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Reset</a>
+                                          </td>    
+                                        
+                                        
+                                        
+                                     
+                                   
                                     
 						</tr>
 					</table>
@@ -410,22 +434,9 @@ SELECT * FROM tblRole  order by Role_Id
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
                         
-                                        <th class="left middle" style="width:80px;">Password:</th>
-                                        <td style="width:2px;"></td>
-                                        
-                                        <td class="frm"  style="width:180px;">
-                                            <input type="password" name="add_user_password" id="add_user_password" value="" style="width:178px;" class="rounded" required>
-                                        </td>
+                                       
                                         
                                         
-                                         <td style="width:2px;"></td>
-                                           <td class="frm" style="width:50px;" id="reset_password_btn_td"> 
-                                               <a id="reset_password_btn" class="button buttonText" style="height:17px;width:40px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Reset</a>
-                                          </td>    
-                                        
-                                        
-                                        
-                                        <td style="width:2px;"></td>
                                         
                                         
                                         
@@ -463,6 +474,20 @@ SELECT * FROM tblRole  order by Role_Id
                                                                         
                                                  </select>
                                         </td>
+                                        
+                                        
+                                        <td style="width:2px;"></td>
+                                        
+                                        
+                                        
+                                        
+                                        <th id="certificate_th" class="left middle" style="width:180px;">Can issue certificate of compliance:</th>
+                                        <td id="certificate_td" class="frm"  style="width:20px;">
+                                              <input type="checkbox" id="add_user_certificate_checkbox" style="width:20px;" class="rounded" required>
+                                        </td>
+                                        
+                                        
+                                        
 						
 						</tr>
 					</table>

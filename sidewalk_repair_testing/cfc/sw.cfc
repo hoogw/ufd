@@ -6757,7 +6757,7 @@
                                             <cfset _password      = json_post.password>
                                             <cfset _agency        = json_post.agency>
                                             <cfset _role          = json_post.role>
-                                            <cfset _cert          = 0>
+                                            <cfset _cert          = json_post.certificate>
                                             <cfset _ufd           = 0>
                                             <cfset _report 			= '' >  
                                             
@@ -6995,7 +6995,7 @@
                                             <cfset _password      = json_post.password>
                                             <cfset _agency        = json_post.agency>
                                             <cfset _role          = json_post.role>
-                                            <cfset _cert          = 0>
+                                            <cfset _cert          = json_post.certificate>
                                             <cfset _ufd           = 0>
                                             <cfset _report 			= '' >  
                                             
