@@ -6536,7 +6536,7 @@
                                     
                                     
                                                    
-                                                        <!---  User_Power = -1  means deleted user   --->
+                                                        <!---  User_Level = -1  means deleted user   --->
                                                       <cfquery name="select_user" datasource="#request.sqlconn#">
                                                                                          
                                                                   SELECT 
@@ -6554,7 +6554,7 @@
                                                                             
                                                                   FROM vwUserRole
                                                                   
-                                                                  where  User_Power > -1   and  User_FullName <> 'Joe Hu'  and  User_FullName <> 'Nathan Neumann'
+                                                                  where  User_Level > -1   and  User_FullName <> 'Joe Hu'  and  User_FullName <> 'Nathan Neumann'
                                                                   
                                                                  and   User_FullName like <cfqueryparam cfsqltype="cf_sql_varchar" value="%#_full_name#%">
                                                                  
@@ -6661,7 +6661,7 @@
                                   <cftransaction action="begin">
 									<cftry>
                                                   
-                                                        <!---  User_Power = -1  means deleted user   --->
+                                                        <!---  User_Level = -1  means deleted user   --->
                                                       <cfquery name="select_user_by_id" datasource="#request.sqlconn#">
                                                                                          
                                                                   SELECT 
@@ -6827,7 +6827,10 @@
                                                                                                    User_Power    =   #_power#,
                                                                                                    User_Cert    =    #_cert#, 
                                                                                                    User_UFD     =     #_ufd#, 
-                                                                                                   User_Report    =   '#_report#'
+                                                                                             
+                                                                                             <!---  comment out this line to make sure,  User_Report is null,    --->      
+                                                                                             <!---       User_Report    =   '#_report#'    --->   
+                                                                                             
                                                                                                    
                                                                                                    
                                                                                             WHERE User_FullName = '#_full_name#'                                                                                                                                                                                     
@@ -6873,8 +6876,10 @@
                                                                                                         
                                                                                                        
                                                                                                         User_Cert, 
-                                                                                                        User_UFD, 
-                                                                                                        User_Report
+                                                                                                        User_UFD
+                                                                                                        
+                                                                                                      <!---  comment out this line to make sure,  User_Report is null,    --->         
+                                                                                                    <!---    User_Report    --->
 																										
                                                                                                  )
                                                                                                  
@@ -6893,8 +6898,10 @@
                                                                                                          
                                                                                                          
                                                                                                          #_cert#, 
-                                                                                                         #_ufd#, 
-                                                                                                        '#_report#'
+                                                                                                         #_ufd#
+                                                                                                         
+                                                                                                          <!---  comment out this line to make sure,  User_Report is null,    --->       
+                                                                                                       <!---  '#_report#'    --->     
                                                                                                           
                                                                                                  
                                                                                                  
@@ -7049,8 +7056,10 @@
                                                                                                    User_Level   =  #_level#, 
                                                                                                    User_Power    =   #_power#,
                                                                                                    User_Cert    =    #_cert#, 
-                                                                                                   User_UFD     =     #_ufd#, 
-                                                                                                   User_Report    =   '#_report#'
+                                                                                                   User_UFD     =     #_ufd#
+                                                                                                   
+                                                                                                   
+                                                                                                <!---   User_Report    =   '#_report#'   --->
                                                                                                    
                                                                                                    
                                                                                             WHERE User_ID = #_id#                                                                                                                                                                                     
@@ -7136,12 +7145,12 @@
                                   <cftransaction action="begin">
 									<cftry>
                                                   
-                                                        <!---  User_Power = -1  means deleted user   --->
+                                                        <!---  User_Level = -1  means deleted user   --->
                                                       <cfquery name="remove_user_by_id" datasource="#request.sqlconn#">
                                                                                          
                                                                   update tblUsers 
                                                                            
-                                                                  set User_Power = -1
+                                                                  set User_Level = -1
                                                                       
                                                                   where  User_ID = #_user_id#
                                                                               
@@ -7227,7 +7236,7 @@
                                     
                                     
                                                    
-                                                        <!---  User_Power = -1  means deleted user   --->
+                                                        <!---  User_Level = -1  means deleted user   --->
                                                       <cfquery name="check_user" datasource="#request.sqlconn#">
                                                                                          
                                                                   SELECT 
@@ -7235,7 +7244,7 @@
                                                                             
                                                                   FROM tblUsers
                                                                   
-                                                                  WHERE User_Power > -1 
+                                                                  WHERE User_Level > -1 
                                                                   
                                                                   
                                                                   
@@ -7312,6 +7321,119 @@
     <!--- ------- end --- joe hu ---------- nanage users ---------  9/25/2018 ---------------  --->
     
     
-	
+    
+    
+    <!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+ 
+     
+ 
+ 
+
+    
+    
+    
+    
+    
+    
+              <cffunction name="getSubTypeByCategory" access="remote" returnType="any" returnFormat="json" output="false">
+                                    
+                                    
+                           
+                                
+                                <cfset requestBody = toString( getHttpRequestData().content ) />
+                    
+                                    <!--- Double-check to make sure it's a JSON value. --->
+                                   
+                                   
+                                    <cfif isJSON( requestBody )>
+                                    
+                                    
+                                        <cfset json_post = deserializeJson( requestBody ) >
+                                        
+                                    
+                                         
+                                           
+                                            
+                                            <cfset _category  = json_post.category>
+											
+                                           
+                                    
+                                          
+                                                
+                                        </cfif>	 
+                                         
+                                                
+                                                
+                                                          
+                                    
+                                     <cftransaction action="begin">
+									<cftry>
+                                             
+                                    
+                                    
+                                    
+                                                   
+                                                        <!---  User_Level = -1  means deleted user   --->
+                                                      <cfquery name="_getSubTypeByCategory" datasource="#request.sqlconn#">
+                                                                                         
+                                                                  SELECT 
+                                                                            *
+                                                                            
+                                                                  FROM tblType
+                                                                  
+                                                                  WHERE Category  =  '#_category#'  
+                                                                  
+                                                                  
+                                                                  
+                                                                 
+                                                                 
+                                                                  
+                                                                                        
+                                                       </cfquery>
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                         
+                                                          <cftransaction action="commit" />
+                      
+                                                          <!--- something happened, roll everyting back ---> 
+                                                          <cfcatch type="any">
+                                                         
+                                                                                        <cftransaction action="rollback" />
+                                                                                        
+                                                                                         
+																						<!--- <cfset _error = #cfcatch#>    ---> <!--- full error details in json --->
+                                                                                        
+																						 <cfset _error = #cfcatch.Message#>  <!--- only error message in string--->
+                                                                                         
+                                                                                         
+                                                                                        <cfreturn _error>
+                                                                                        <cfabort>
+                                                                                        
+                                                          </cfcatch>
+                                                        
+                                                        
+                                                        
+                                                        
+                                               </cftry>
+                                            </cftransaction>
+                                            
+                                                       
+                                                       
+                                                       
+                                                       
+                                                    <cfreturn _getSubTypeByCategory>
+                                            
+                                        </cffunction>
+    
+    
+    
+    
+    
+	<!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
 	
 </cfcomponent>

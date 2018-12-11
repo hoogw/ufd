@@ -103,6 +103,50 @@ SELECT id FROM getType WHERE iscity = 1 ORDER BY id
 <cfset isCityList = ValueList(getIsCity.id)>
 
 
+
+
+
+
+
+
+ <!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+
+		<!--- Get all Category --->
+        <cfquery name="getCategory" datasource="#request.sqlconn#" dbtype="ODBC">
+              SELECT * FROM vwCategory
+        </cfquery>
+        
+        <cfset _subType_id = getSite.type>
+        
+        
+        
+        <!--- Get current selected Category --->
+        <cfquery name="getCategory_currentSelected" datasource="#request.sqlconn#" dbtype="ODBC">
+              SELECT category FROM tblType where ID = '#_subType_id#' 
+        </cfquery>
+        <cfset _current_selected_category = getCategory_currentSelected.category>
+        
+        
+        
+        <!--- Get available subtype by current selected Category --->
+        <cfquery name="getCurrentAvailableSubtype" datasource="#request.sqlconn#" dbtype="ODBC">
+                SELECT * from tblType where category = '#_current_selected_category#'  ORDER BY type
+        
+        </cfquery>
+        
+
+ <!---  ----- end ------ joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+
+
+
+
+
+
+
+
+
+
+
 <!--- Get Access Type --->
 <cfquery name="getAccess" datasource="#request.sqlconn#" dbtype="ODBC">
 SELECT * FROM tblAccessImprovementType ORDER BY id
@@ -430,22 +474,89 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			</td>
 		</tr>
 		
-			<tr>
-				<th class="left middle" style="height:30px;width:85px;">Facility Name:</th>
-				<cfset v = ""><cfif getSite.name is not ""><cfset v = getSite.name></cfif>
-				<td class="frm"  style="width:295px;">
-				<input type="Text" name="sw_name" id="sw_name" value="#v#" style="width:293px;" class="rounded" #dis#></td>
-				<th class="left middle" style="width:93px;">Subtype:</th>
-				<td class="frm"  style="width:182px;">
-				<select name="sw_type" id="sw_type" class="rounded" style="width:181px;" onChange="chkAccess();" #dis#>
-				<option value=""></option>
-				<cfloop query="getType">
-					<cfset sel = ""><cfif getSite.type is id><cfset sel = "selected"></cfif>
-					<option value="#id#" #sel#>#type#</option>
-				</cfloop>
-				</select>
-				</td>
-			</tr>
+        
+        
+        
+        
+        
+        
+       <!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+       
+       
+       
+        
+        <tr>	
+				<td colspan="4" style="padding:0px 0px 0px 0px;">
+					<table cellpadding="0" cellspacing="0" border="0">
+        
+                    
+                        <tr>
+                            <th class="left middle" style="height:30px;width:86px;">
+                                 Facility Name:
+                             </th>
+                            
+                                <cfset v = "">
+                                <cfif getSite.name is not "">
+                                      <cfset v = getSite.name>
+                                </cfif>
+                                
+                            <td class="frm"  style="width:195px;">
+                            
+                               <input type="Text" name="sw_name" id="sw_name" value="#v#" style="width:193px;" class="rounded" #dis#>
+                            </td>
+                               
+                               
+                            <th class="left middle" style="width:30px;">
+                                Type:
+                                
+                            </th>
+                            
+                            
+                            <td class="frm"  style="width:152px;">
+                                <select name="sw_category" id="sw_category" class="rounded" style="width:150px;" onChange="chkAccess();" #dis#>
+                           <!---     <option value=""></option>   --->
+                                <cfloop query="getCategory">
+                                    <cfset sel = ""><cfif getCategory.category is _current_selected_category><cfset sel = "selected"></cfif> 
+                                    <option value="#category#" #sel# >#category#</option>
+                                </cfloop>
+                                </select>
+                            </td>
+                               
+                               
+                               
+                            <th class="left middle" style="width:50px;">
+                                Subtype:
+                                
+                            </th>
+                            
+                            
+                            <td class="frm"  style="width:152px;">
+                                <select name="sw_type" id="sw_type" class="rounded" style="width:150px;" onChange="chkAccess();" #dis#>
+                           <!---      <option value=""></option>  --->
+                                <cfloop query="getCurrentAvailableSubtype">
+                                    <cfset sel = ""><cfif getCurrentAvailableSubtype.ID is _subType_id><cfset sel = "selected"></cfif>
+                                    <option value="#id#" #sel#>#type#</option>
+                                </cfloop>
+                                </select>
+                            </td>
+                            
+                        </tr>
+    
+    
+            
+            </table>
+		</td>
+	</tr>
+            
+    <!--- ------------ end --------- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+            
+            
+            
+            
+            
+            
+            
+            
 	
 			<tr>	
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
@@ -4507,6 +4618,7 @@ var arrSpecies = [];
 function submitForm() {
 
 	$('#msg').hide();
+	
 	var errors = '';var cnt = 0;
 	if (trim($('#sw_name').val()) == '')	{ cnt++; errors = errors + "- Facility Name is required!<br>"; }
 	if (trim($('#sw_address').val()) == '')	{ cnt++; errors = errors + "- Address is required!<br>"; }
@@ -4533,7 +4645,14 @@ function submitForm() {
 		return false;	
 	}
 	
-
+	<!--- joe hu  10/22/2018 ----- if construction completed date is not null, uncheck 'scheduled' checkbox ---> 
+	
+	if ($('#sw_con_comp').val().length != 0){
+	       $('#sw_scheduled').removeAttr("checked");
+	}
+	
+	<!--- end -----  joe hu  10/22/2018 ----- if construction completed date is not null, uncheck 'scheduled' checkbox ---> 
+	
 	var frm = $('#form1').serializeArray();
 	//frm.push({"name" : "sw_notes", "value" : trim($('#sw_notes').val()) });
 	//frm.push({"name" : "sw_loc", "value" : trim($('#sw_loc').val()) });
@@ -6431,36 +6550,161 @@ return false;
 
 
 <cfoutput>
-$(function() {
-<cfloop index="i" from="1" to="#lngth1#">
-	<cfloop index="j" from="1" to="#lngth2#">
-	    $( "#chr(35)#trspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
-		$( "#chr(35)#trpidt_#i#_#j#" ).datepicker();
-		$( "#chr(35)#trtrdt_#i#_#j#" ).datepicker();
-		$( "#chr(35)#tpspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
-		$( "#chr(35)#tppidt_#i#_#j#" ).datepicker();
-		$( "#chr(35)#tptrdt_#i#_#j#" ).datepicker();
-		$( "#chr(35)#tpswdt_#i#_#j#" ).datepicker();
-		$( "#chr(35)#tpewdt_#i#_#j#" ).datepicker();
-		
-		<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
-		$( "#chr(35)#trpsspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
-		$( "#chr(35)#trpspidt_#i#_#j#" ).datepicker();
-		$( "#chr(35)#trpstrdt_#i#_#j#" ).datepicker();
-		$( "#chr(35)#trpsrpdt_#i#_#j#" ).datepicker();
-		$( "#chr(35)#trpsfurpdt_#i#_#j#" ).datepicker();
-		<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
-		
-	</cfloop>
-		$( "#chr(35)#sirdt_#i#" ).datepicker();
-</cfloop>
+    $(function() {
+				<cfloop index="i" from="1" to="#lngth1#">
+					<cfloop index="j" from="1" to="#lngth2#">
+						$( "#chr(35)#trspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
+						$( "#chr(35)#trpidt_#i#_#j#" ).datepicker();
+						$( "#chr(35)#trtrdt_#i#_#j#" ).datepicker();
+						$( "#chr(35)#tpspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
+						$( "#chr(35)#tppidt_#i#_#j#" ).datepicker();
+						$( "#chr(35)#tptrdt_#i#_#j#" ).datepicker();
+						$( "#chr(35)#tpswdt_#i#_#j#" ).datepicker();
+						$( "#chr(35)#tpewdt_#i#_#j#" ).datepicker();
+						
+						<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+						$( "#chr(35)#trpsspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
+						$( "#chr(35)#trpspidt_#i#_#j#" ).datepicker();
+						$( "#chr(35)#trpstrdt_#i#_#j#" ).datepicker();
+						$( "#chr(35)#trpsrpdt_#i#_#j#" ).datepicker();
+						$( "#chr(35)#trpsfurpdt_#i#_#j#" ).datepicker();
+						<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+						
+					</cfloop>
+						$( "#chr(35)#sirdt_#i#" ).datepicker();
+				</cfloop>
+				
+				<cfif isdefined("url.editcr")>
+				toggleArrows();
+				</cfif>
 
-<cfif isdefined("url.editcr")>
-toggleArrows();
-</cfif>
 
- });
-</cfoutput>
+               //console.log('_subType_id ----', '#_subType_id#')
+
+
+          </cfoutput>
+
+
+
+
+
+
+
+<!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+ 
+ 
+ 
+ 
+      
+	  <!--- -------  category on change event -------------  --->
+	  
+				   var _current_subtype =  $("#sw_type").val();
+				   console.log("_current_subtype --",_current_subtype)
+				   
+				   
+				   
+				   $('#sw_category').on('change', function() {
+								
+					console.log(" Category dropdown change to --",this.value)		  
+								  
+						
+				  var ___url = url + "cfc/sw.cfc?method=getSubTypeByCategory&returnformat=json&queryformat=struct";
+				  var ___category = {"category":this.value};
+	  
+	                                fetch(___url, 
+										  {
+											 method: 'POST',
+											 body:JSON.stringify(___category)
+										  }
+										)
+										  .then(function (response) 
+												   {
+																	  
+														 // if js error here, likely it is coldfusion server output error message instead of valid json 
+														 // so check coldfusion server response.
+														   return response.json()
+														   
+													})
+													  
+										   .then(function (result) {
+															
+															console.log('getSubTypeByCategory -:-  ', result)
+														
+														
+														// --------rebuild subtype select options -----------------
+														
+														
+														/*       
+														var options = [
+																		  {text: "one", value: 1},
+																		  {text: "two", value: 2}
+																		];
+														*/
+														
+														var options = 	result			
+														$("#sw_type").replaceOptions(options);
+														
+														
+														
+														
+														
+													   // ----- end ----- rebuild subtype select options  -----------------
+						   
+													 })
+								 
+								 .catch((err)=>console.error(err)) // fetch
+ 
+ 
+ 
+ 
+
+						   });  // on change    
+						   
+						   
+					    <!--- ------- end ---------  category on change event -------------  --->
+						   
+						   
+					
+					 });  //   $(function() {
+	 
+	 
+	 
+	 
+				// 	 ============= this is a helper function to rebuild select options based on a json  ================
+								(function($, window) {
+								  $.fn.replaceOptions = function(options) {
+									var self, $option;
+								
+									this.empty();
+									self = this;
+								
+									$.each(options, function(index, option) {
+									  $option = $("<option></option>")
+										.attr("value", option.ID)
+										.text(option.TYPE);
+									  self.append($option);
+									});
+								  };
+								})(jQuery, window);
+				// 	 =========   end   ==== this is a helper function to rebuild select options based on a json  ================
+
+
+
+
+
+
+<!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+
+
+
+
+
+
+
+
+
+
+
 
 $( "#sw_assdate" ).datepicker();
 $( "#sw_qcdate" ).datepicker();

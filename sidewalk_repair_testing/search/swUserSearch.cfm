@@ -315,8 +315,12 @@ SELECT * FROM tblRole  order by Role_Id
 				
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
-						<th class="drk left middle" style="width:55px;"></th>
 						
+						
+                        <!---
+						
+						<th class="drk left middle" style="width:55px;"></th>
+                        
 						<td  align="middle" style="width:295px;padding:2px 3px 0px 0px;">
                         
                               <span id="user_exist_already"  style="display:none;color:white;"> Full Name Invalid</span>
@@ -331,8 +335,11 @@ SELECT * FROM tblRole  order by Role_Id
                               
 						</td>
 						
-						
-						<td align="left" style="width:332px;">
+						--->
+                        
+                        
+                        
+						<td align="right" style="width:430px;">
 							
                             
 							<a id="save_new_user_btn" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Save</a>
@@ -366,16 +373,20 @@ SELECT * FROM tblRole  order by Role_Id
 			<tr>	
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
+                    
+                    
+                    
+                    
 						<tr>
                                     
                                      <input type="hidden" id="add_user_id" name="add_user_id" value="" >
                                     
                                     
-                                    <th class="left middle" style="height:30px;width:80px;">Full Name:</th>
+                                    <th class="left middle" style="height:30px;width:60px;">Full Name:</th>
                                     <td style="width:2px;"></td>
                                     
-                                    <td class="frm"  style="width:180px;">
-                                        <input type="Text" name="add_user_full_name" id="add_user_full_name" value="" style="width:178px;" class="rounded" required >
+                                    <td class="frm" >
+                                        <input type="Text" name="add_user_full_name" id="add_user_full_name" value="" style="width:180px;" class="rounded" required >
                                     </td>
                                     
                                     
@@ -386,8 +397,8 @@ SELECT * FROM tblRole  order by Role_Id
                                     <th class="left middle" style="width:80px;">Login Name:</th>
                                     <td style="width:2px;"></td>
                                     
-                                    <td class="frm" style="width:180px;">
-                                        <input type="Text" name="add_user_name" id="add_user_name" value="" style="width:178px;" class="rounded" disabled required>
+                                    <td class="frm" >
+                                        <input type="Text" name="add_user_name" id="add_user_name" value="" style="width:150px;" class="rounded" disabled required>
                                     </td>
                                     
                                     <td style="width:2px;"></td>
@@ -400,11 +411,11 @@ SELECT * FROM tblRole  order by Role_Id
                                    
                                    
                                    
-                                    <th class="left middle" style="width:80px;">Password:</th>
+                                    <th class="left middle" style="width:60px;">Password:</th>
                                         <td style="width:2px;"></td>
                                         
-                                        <td class="frm"  style="width:180px;">
-                                            <input type="password" name="add_user_password" id="add_user_password" value="" style="width:178px;" class="rounded" required>
+                                        <td class="frm"  >
+                                            <input type="password" name="add_user_password" id="add_user_password" value="" style="width:120px;" class="rounded" required>
                                         </td>
                                    
                                    
@@ -419,6 +430,12 @@ SELECT * FROM tblRole  order by Role_Id
                                    
                                     
 						</tr>
+                        
+                        
+                        
+                        
+                        
+                        
 					</table>
 				</td>
 			</tr>
@@ -443,8 +460,8 @@ SELECT * FROM tblRole  order by Role_Id
                                         
                                         <th class="left middle" style="height:30px;width:60px;">Agency:</th>
                                         <td style="width:2px;"></td>
-                                        <td class="frm"  style="width:180px;">
-                                                       <select name="add_user_agency" id="add_user_agency" class="rounded" style="width:178px;">
+                                        <td class="frm"  style="width:80px;">
+                                                       <select name="add_user_agency" id="add_user_agency" class="rounded" style="width:180px;">
                                                                         <option value=""> </option>
                                                                             <cfset cnt = 1>
                                                                             
@@ -460,10 +477,10 @@ SELECT * FROM tblRole  order by Role_Id
                                         
                                         
                                         
-                                        <th class="left middle" style="width:40px;">Role:</th>
+                                        <th class="left middle" style="width:80px;">Role:</th>
                                         <td style="width:2px;"></td>
-                                        <td class="frm" style="width:180px;">
-                                                 <select name="add_user_role" id="add_user_role" class="rounded" style="width:178px;" >
+                                        <td class="frm" >
+                                                 <select name="add_user_role" id="add_user_role" class="rounded" style="width:150px;" >
                                                                         <option value=""></option>
                                                                         
                                                                         <cfset cnt = 1>
@@ -480,12 +497,17 @@ SELECT * FROM tblRole  order by Role_Id
                                         
                                         
                                         
-                                        
+                                        <!---
                                         <th id="certificate_th" class="left middle" style="width:180px;">Can issue certificate of compliance:</th>
                                         <td id="certificate_td" class="frm"  style="width:20px;">
                                               <input type="checkbox" id="add_user_certificate_checkbox" style="width:20px;" class="rounded" required>
                                         </td>
+                                        --->
                                         
+                                        <th id="certificate_th" class="left middle" style="width:210px;"> Can issue certificate of compliance: <input type="checkbox" id="add_user_certificate_checkbox" style="width:20px;" class="rounded" required></th>
+                                        <td id="certificate_td">
+                                              
+                                        </td>
                                         
                                         
 						
@@ -498,6 +520,29 @@ SELECT * FROM tblRole  order by Role_Id
 			
 			
 			
+            
+                       <tr>
+                              <tr>	
+                                    <td colspan="4" style="padding:0px 0px 0px 0px;">
+                                        <table cellpadding="0" cellspacing="0" border="0">
+                                            <tr>
+                        
+                                          <td class="left middle frm" id="user_exist_already"  style="height:30px;display:none;width:250px;"> Full Name Invalid</td>
+                                          
+                                          
+                                          <td class="left middle frm" id="login_exist_already"  style="height:30px;display:none;width:250px;"> Login Name Invalid</td>
+                                          
+                                          
+                                          <td class="left middle frm" id="all_field_required"  style="height:30px;display:none;width:180px;"> All Fields Required</td>
+                              
+                              
+                                                  </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+						    
+                    
+                    </tr>
 			
 			
 			
