@@ -3704,6 +3704,7 @@
 			<cfset session.user_num = login_chk.user_id>
 			<cfset session.user_cert = login_chk.user_cert>
 			<cfset session.user_ufd = login_chk.user_ufd>
+			<cfset session.user_report = login_chk.user_report>
 			<cfset data.response = "Success">
 			
 			<cfset session.token = CreateUUID()>
@@ -3750,6 +3751,7 @@
 			<cfset StructDelete(Session, "user_power")>
 			<cfset StructDelete(Session, "user_cert")>
 			<cfset StructDelete(Session, "user_ufd")>
+			<cfset StructDelete(Session, "user_report")>
 			<cfset StructDelete(Session, "user_num")>
 			<cfset StructDelete(Session, "arrSUMAll")>
 			<cfset StructDelete(Session, "arrWWUsers")>
@@ -7323,6 +7325,14 @@
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
     <!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
  
      
@@ -7356,9 +7366,8 @@
                                             
                                             <cfset _category  = json_post.category>
 											
-                                           
-                                    
-                                          
+                                            
+                                            
                                                 
                                         </cfif>	 
                                          
@@ -7371,9 +7380,7 @@
                                              
                                     
                                     
-                                    
-                                                   
-                                                        <!---  User_Level = -1  means deleted user   --->
+                                                      
                                                       <cfquery name="_getSubTypeByCategory" datasource="#request.sqlconn#">
                                                                                          
                                                                   SELECT 
@@ -7381,13 +7388,8 @@
                                                                             
                                                                   FROM tblType
                                                                   
-                                                                  WHERE Category  =  '#_category#'  
-                                                                  
-                                                                  
-                                                                  
-                                                                 
-                                                                 
-                                                                  
+                                                                 WHERE Category  =  '#_category#'   
+                                                              
                                                                                         
                                                        </cfquery>
                                                        
@@ -7434,6 +7436,176 @@
     
     
     
+    
+                       <cffunction name="getAllSubType" access="remote" returnType="any" returnFormat="json" output="false">
+                                    
+                                <cftransaction action="begin">
+									<cftry>
+                                              
+                                                      <cfquery name="_getAllSubType" datasource="#request.sqlconn#">
+                                                                                         
+                                                                  SELECT 
+                                                                            *
+                                                                            
+                                                                  FROM tblType
+                                                                  order by type
+                                                                                     
+                                                       </cfquery>
+                                                       
+                                                       
+                                                       
+                                                         
+                                                          <cftransaction action="commit" />
+                      
+                                                          <!--- something happened, roll everyting back ---> 
+                                                          <cfcatch type="any">
+                                                         
+                                                                                        <cftransaction action="rollback" />
+                                                                                        
+                                                                                         
+																						<!--- <cfset _error = #cfcatch#>    ---> <!--- full error details in json --->
+                                                                                        
+																						 <cfset _error = #cfcatch.Message#>  <!--- only error message in string--->
+                                                                                         
+                                                                                         
+                                                                                        <cfreturn _error>
+                                                                                        <cfabort>
+                                                                                        
+                                                          </cfcatch>
+                                                        
+                                               </cftry>
+                                            </cftransaction>
+                                            
+                                                    <cfreturn _getAllSubType>
+                                            
+                                        </cffunction>
+    
+    
+    
+    
+    
+    
+    
+    
+    
 	<!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <!--- --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->  
+    
+       <cffunction name="site_lock" access="remote" returnType="any" returnFormat="json" output="false">
+                                    
+                                    
+                           
+                                
+                                <cfset requestBody = toString( getHttpRequestData().content ) />
+                    
+                                    <!--- Double-check to make sure it's a JSON value. --->
+                                   
+                                   
+                                    <cfif isJSON( requestBody )>
+                                    
+                                    
+                                        <cfset json_post = deserializeJson( requestBody ) >
+                                        
+                                    
+                                         
+                                           
+                                            
+                                            <cfset _site_number  = json_post.site_number>
+											
+                                             <cfset _lock_value  = json_post.lock_value>
+                                            
+                                                
+                                        </cfif>	 
+                                         
+                                                
+                                                
+                                                          
+                                    
+                                     <cftransaction action="begin">
+									<cftry>
+                                             
+                                    
+                                    
+                                                      
+                                                      <cfquery name="_updateSiteLockStatus" datasource="#request.sqlconn#">
+                                                                                         
+                                                                  UPDATE tblSites
+                                                                    SET Locked = #_lock_value#
+                                                                    WHERE Location_No =  #_site_number#
+                                                              
+                                                                                        
+                                                       </cfquery>
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                       
+                                                         
+                                                          <cftransaction action="commit" />
+                      
+                                                          <!--- something happened, roll everyting back ---> 
+                                                          <cfcatch type="any">
+                                                         
+                                                                                        <cftransaction action="rollback" />
+                                                                                        
+                                                                                         
+																						<!--- <cfset _error = #cfcatch#>    ---> <!--- full error details in json --->
+                                                                                        
+																						 <cfset _error = #cfcatch.Message#>  <!--- only error message in string--->
+                                                                                         
+                                                                                         
+                                                                                        <cfreturn _error>
+                                                                                        <cfabort>
+                                                                                        
+                                                          </cfcatch>
+                                                        
+                                                        
+                                                        
+                                                        
+                                               </cftry>
+                                            </cftransaction>
+                                            
+                                                       
+                                                      <!--- success  --->
+													  <cfset _result = "success"/>              
+                                                      <cfreturn _result>     
+                                                       
+                                                       
+                                                   
+                                            
+                                        </cffunction>
+              
+    
+             
+    
+    
+    
+    
+    
+    <!--- --------- End ------ super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->  
+    
+    
+    
+    
+    
 	
 </cfcomponent>

@@ -73,10 +73,43 @@ SELECT * FROM tblPackageGroup ORDER BY package_group
 SELECT * FROM tblType ORDER BY type
 </cfquery>
 
+
+
+
+<!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+
+  <!--- commnent out this section replace by below section 
+
 <!--- Get Category Type --->
 <cfquery name="getCategory" dbtype="query">
 SELECT DISTINCT category FROM getType ORDER BY category
 </cfquery>
+
+    --->
+
+
+        <!--- Get all Category --->
+        <cfquery name="getCategory" datasource="#request.sqlconn#" dbtype="ODBC">
+              SELECT * FROM vwCategory
+        </cfquery>
+        
+
+
+
+<!---  ----- end ------ joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <cfset flw = "style='overflow:auto;'"><cfif shellName is "Handheld"><cfset flw="style='overflow:auto;'"></cfif>
@@ -171,16 +204,24 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						<td class="frm" style="width:55px;">
 						<input type="Text" name="ss_pno" id="ss_pno" value="" style="width:50px;height:20px;padding:0px 0px 0px 4px;" class="roundedsmall"></td>
 						<td style="width:2px;"></td>						
-						<th class="left middle" style="width:35px;">Type:</th>
+						
+                        
+                        
+                        
+                        <th class="left middle" style="width:35px;">Type:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:188px;">
-						<select name="ss_category" id="ss_category" class="roundedsmall" style="width:183px;height:20px;padding:0px 0px 0px 4px;">
-						<option value=""></option>
-						<cfloop query="getCategory">
-							<option value="#category#">#category#</option>
-						</cfloop>
-						</select>
+                            <select name="ss_category" id="ss_category" class="roundedsmall" style="width:183px;height:20px;padding:0px 0px 0px 4px;">
+                                    <option value=""></option>
+                                    <cfloop query="getCategory">
+                                        <option value="#category#">#category#</option>
+                                    </cfloop>
+                            </select>
 						</td>
+                        
+                        
+                        
+                        
 						
 						<td style="width:2px;"></td>
 						<th class="left middle" style="width:80px;">Council District:</th>
@@ -863,6 +904,141 @@ $(function() {
 	$(document).keyup(function (e) { 
 		if (e.keyCode == 13) { submitForm(); }
 	});
+	
+	
+	
+	
+	
+	    
+
+
+<!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+ 
+ 
+ 
+ 
+      
+						  <!--- -------  category on change event -------------  --->
+						  
+									   var _current_subtype =  $("#ss_type").val();
+									   console.log("_current_subtype --",_current_subtype)
+									   
+									   
+									   
+									   $('#ss_category').on('change', function() {
+													
+										console.log(" Category dropdown change to --",this.value)		  
+													  
+											
+									  
+											
+									  var ___url = url + "cfc/sw.cfc?method=getSubTypeByCategory&returnformat=json&queryformat=struct";
+									  
+									  
+									  // Bug fix --- for search only, if category is empty blank, should get all subTypes
+									  if (( this.value == '') || ( this.value == null)) {
+										  ___url = url + "cfc/sw.cfc?method=getAllSubType&returnformat=json&queryformat=struct";
+									  }
+									  
+									  
+									  
+									  var ___category = {"category":this.value};
+						  
+														fetch(___url, 
+															  {
+																 method: 'POST',
+																 body:JSON.stringify(___category)
+															  }
+															)
+															  .then(function (response) 
+																	   {
+																						  
+																			 // if js error here, likely it is coldfusion server output error message instead of valid json 
+																			 // so check coldfusion server response.
+																			   return response.json()
+																			   
+																		})
+																		  
+															   .then(function (result) {
+																				
+																				console.log('getSubTypeByCategory -:-  ', result)
+																			
+																			
+																			// --------rebuild subtype select options -----------------
+																			
+																			
+																			/*       
+																			var options = [
+																							  {text: "one", value: 1},
+																							  {text: "two", value: 2}
+																							];
+																			*/
+																			
+																			
+																			// bug fix, always add a new empty at the begining of array as first top empty option. 
+																			result.unshift({ID:'', TYPE:''});
+																			
+																			
+																			
+																			var options = 	result			
+																			$("#ss_type").replaceOptions(options);
+																			
+																			
+																			
+																			
+																			
+																		   // ----- end ----- rebuild subtype select options  -----------------
+											   
+																		 })
+													 
+													 .catch((err)=>console.error(err)) // fetch
+					 
+					 
+					 
+					 
+					
+											   });  // on change    
+											   
+											   
+											<!--- ------- end ---------  category on change event -------------  --->
+											   
+											   
+										
+										
+						 
+						 
+						 
+						 
+						 
+									// 	 ============= this is a helper function to rebuild select options based on a json  ================
+													(function($, window) {
+													  $.fn.replaceOptions = function(options) {
+														var self, $option;
+													
+														this.empty();
+														self = this;
+													
+														$.each(options, function(index, option) {
+														  $option = $("<option></option>")
+															.attr("value", option.ID)
+															.text(option.TYPE);
+														  self.append($option);
+														});
+													  };
+													})(jQuery, window);
+									// 	 =========   end   ==== this is a helper function to rebuild select options based on a json  ================
+					
+					
+					
+					
+					
+					
+					  <!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
+	
+	
+	
+	
+	
 });
 
 

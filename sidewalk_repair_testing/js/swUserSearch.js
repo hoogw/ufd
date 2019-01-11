@@ -39,7 +39,6 @@ function ajax_get_data(___url, ___query_param) {
 											   
 											   
 											   
-											   
 											
 											//----  build data table  ------
 											
@@ -546,9 +545,18 @@ $(function() {
 			
 			
 			
+			$("#add_user_agency").change(function(){
+												
+							$("#all_field_required").hide() 	
+			
+			});
+			
+			
+			
+			
 			$("#add_user_role").change(function(){
 												
-												
+							$("#all_field_required").hide() 					
 					
 						
 						 if (($("#add_user_role").val() === 'BSS Power User') || ($("#add_user_role").val() === 'BSS User') || ($("#add_user_role").val() === 'Viewer'))
@@ -599,6 +607,15 @@ $(function() {
 					// hide reset password button
 					$("#reset_password_btn_td").hide()
 					
+					
+					
+					
+					// only add new user, display show password, when edit user, password will not show.
+					// show password
+					  var p = document.getElementById("add_user_password");
+							
+						  p.type = "text";
+							
 					
 					
 					$("#certificate_th").hide()
@@ -828,10 +845,28 @@ $(function() {
 			
 			
 			
+			// password
+			
+			$("#add_user_password").keyup(async function(){
+			
+			                                                  $("#all_field_required").hide()
+			
+						
+								});// keyup
+			
+			
+			
+			
 			
 			
 			// full name text input keyup event
 					$("#add_user_full_name").keyup(async function(){
+											
+											
+											
+											$("#all_field_required").hide()
+											
+											
 											
 											console.log(this.value)
 										
@@ -855,7 +890,11 @@ $(function() {
 										
 										
 										
-										// check full name 
+								// check full name 
+										
+								if (this.value.length > 0)
+								{
+									
 										check_para.full_name = this.value;
 										check_para.name = '';
 										
@@ -907,6 +946,8 @@ $(function() {
 										 
 										 .catch((err)=>console.error(err))
 										 
+								}// if
+										 
 										 // End check full name 
 										 
 										 
@@ -917,6 +958,9 @@ $(function() {
 										 
 										 
 										 // check login name 
+								if (_calculated_loginName.length > 0)
+								{
+								
 										check_para.full_name = '';
 										check_para.name = _calculated_loginName;
 										
@@ -972,6 +1016,7 @@ $(function() {
 										 
 										 .catch((err)=>console.error(err))
 										 
+								}// if
 										 // End check login name 
 										 
 				   		
@@ -995,8 +1040,13 @@ $(function() {
 							 	$("#add_user_name").keyup(async function(){
 			
 			
+			                               $("#all_field_required").hide()
+			
+			
 			                                            
-										 // check login name 
+							// check login name 
+								if (this.value.length > 0)
+								{	 
 										check_para.full_name = '';
 										check_para.name = this.value;
 										
@@ -1052,6 +1102,8 @@ $(function() {
 										 
 										 .catch((err)=>console.error(err))
 										 
+										 
+								}// if
 										 // End check login name 
 			
 			
@@ -1067,6 +1119,9 @@ $(function() {
 			
 			                               	
 										// check full name 
+								if ($("#add_user_full_name").val().length > 0)
+								{		
+										
 										check_para.full_name = $("#add_user_full_name").val();
 										check_para.name = '';
 										
@@ -1118,6 +1173,7 @@ $(function() {
 										 
 										 .catch((err)=>console.error(err))
 										 
+								}// if
 										 // End check full name 
 			
 			

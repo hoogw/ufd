@@ -300,6 +300,19 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 		  </td>
 		  </cfif>
 		  </tr>
+          
+          
+          
+          
+
+          
+          
+          
+          
+          
+          
+          
+          
 		  <cfif session.user_level lt 2>
 		  	<cfif session.user_level is 0 AND session.user_power is 1 AND isBSS><!--- Added for BSS Power User --->
 				<cfif getEst.recordcount gt 0 OR getContract.recordcount gt 0>
@@ -334,12 +347,45 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 		</table>
   	</td>
   </tr>
+  
+  
 </table>
 
 <cfset w = 700>
 <cfset dis = ""><cfif getSite.removed is 1><cfset dis="disabled"></cfif>
 <cfif session.user_level is 0><cfset dis="disabled"></cfif>
 <cfif session.user_power lt 0><cfset dis="disabled"></cfif>
+
+
+
+
+
+
+
+   <!--- -------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu ------------ ---> 
+
+				
+                <cfif getSite.Locked eq 1>
+            
+                       <cfset lock = 1>
+                       <cfset dis="disabled">
+                  <cfelse>
+                         <cfset lock = 0>
+                      
+                       
+                </cfif>
+
+
+    <!--- -------- End ---------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+    
+    
+
+
+    
+    
+    
+    
+
 <cfif session.user_level is 0 AND session.user_power is 1 AND isBSS><cfset dis=""></cfif><!--- Added for BSS bonus power --->
 
 
@@ -373,11 +419,129 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 
 
 
+                      <!--- -------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu ------------ ---> 
+                        
+                        
+						   	 <!---  <cfif session.user_level gt 2 AND session.user_power gt 3>  ---> 
+                                    <table cellspacing="0" cellpadding="0" border="0"  align="center" style="width:#w#px;">
+                                        <tr>
+                                            
+                                           <td>
+                                              
+                                                 <div id="lock-wrapper">
+                                                
+                                                 
+                                                       <div id="lock-left">
+															 <cfif lock eq 1>    
+                                                             
+                                                                     <img src="../images/lock.png" width="20" height="20" title="lock" id="lock" >
+                                                                      <!---  lock   --->
+                                                                        
+                                                                   
+                                                              </cfif> 
+                                                
+                                                        </div>
+                                              
+                                              
+                                              
+                                               <cfif session.user_level gt 2 AND session.user_power gt 3> 
+                                               
+                                               
+                                                     <div id="lock-left2">  
+                                                        <cfif lock neq 1>                                                
+                                                                  <img src="../images/unlock.png" width="20" height="20" title="unlock" id="unlock" style="position:relative;top:0px;left:0px;">
+                                                                    <!--- Unlock   --->
+                                                                
+                                                         </cfif>
+                                                          </div>
+                                               
+                                               
+                                               
+                                               
+                                                  <div id="lock-right">
+                                                        <label class="switch">
+                                                          <input type="checkbox" id="editable_toggle"  <cfif lock neq 1>   checked      </cfif>     
+                                                          
+                                                             <!---  for regular user, toggle disabled 
+                                                                <cfif session.user_level gt 2 AND session.user_power gt 3> 
+                                                          
+                                                                 
+                                                                 <cfelse>
+                                                                 
+                                                                     disabled
+                                                                 
+                                                                 </cfif> 
+                                                                 
+                                                                 --->
+                                                                 
+                                                                >
+                                                          <span class="slider round"></span>
+                                                          
+                                                      </label>
+                                                          
+                                                   </div>      
+                                                        
+                                                      
+                                                        
+                                                       
+                                                 
+                                              </cfif>     
+                                                 
+                                                 
+                                                
+                                          </div>       
+                                                        
+                                                
+                                                
+                                                
+                                                
+                                                  
+                                                
+                                       		 </td>
+                                             
+                                             
+                                             <!---
+                                             
+                                             <cfif lock neq 1>                                                
+                                                     <td align="left">
+                                                        Unlock
+                                                     </td>
+                                             <cfelse>
+                                             
+                                                      <td align="left">
+                                                        lock
+                                                        
+                                                     </td>
+                                              </cfif> 
+                                              
+                                              --->
+                                              
+                                              
+                                              
+                                        </tr>
+                                      <table>  
+                           <!---    </cfif>   ---> 
+                                
+                        <!--- -------- End ---------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+
+   
+ 
+ 
+                   
 
 <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:#w#px;">
-	<form name="form1" id="form1" method="post" action="" enctype="multipart/form-data">
+
+
+
+
+         
+
+
+
+
+  <form name="form1" id="form1" method="post" action="" enctype="multipart/form-data">   
 	<tr>
-	<td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
+	    <td cellspacing="0" cellpadding="0" border="0" bgcolor="white" bordercolor="white">
 		<table align=center bgcolor=white cellspacing="2" cellpadding="2" border="0">
 		<tr>
 			<th class="drk left middle" colspan="4" style="height:30px;padding:0px 0px 0px 0px;">
@@ -407,9 +571,15 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						</td>
 						</cfif>
 
+
+
+
 						<cfif session.user_level gt 0><cfset w0 = 94><cfelse><cfset w0 = 242></cfif>
 						<td align="left" style="width:#w0#px;"></td>
-						
+                        
+                        
+                        
+                        
 						
 						<cfif getSite.removed is "">
 						
@@ -473,7 +643,24 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			
 			</td>
 		</tr>
-		
+        
+        
+        
+        
+        
+        
+        
+   
+        <!--- -------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu ------------ --->                    
+        
+            
+                <div class="overlay_editable" style="display: none;">   
+                </div>    
+               
+               
+               
+         <!--- -------- End ---------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+        
         
         
         
@@ -491,10 +678,10 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
         
                     
                         <tr>
-                            <th class="left middle" style="height:30px;width:86px;">
+                            <th class="left middle" style="height:30px;width:73px;">
                                  Facility Name:
                              </th>
-                            
+                            <td style="width:2px;"></td>
                                 <cfset v = "">
                                 <cfif getSite.name is not "">
                                       <cfset v = getSite.name>
@@ -504,13 +691,13 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
                             
                                <input type="Text" name="sw_name" id="sw_name" value="#v#" style="width:193px;" class="rounded" #dis#>
                             </td>
-                               
+                            <td style="width:2px;"></td>
                                
                             <th class="left middle" style="width:30px;">
                                 Type:
                                 
                             </th>
-                            
+                            <td style="width:2px;"></td>
                             
                             <td class="frm"  style="width:152px;">
                                 <select name="sw_category" id="sw_category" class="rounded" style="width:150px;" onChange="chkAccess();" #dis#>
@@ -521,14 +708,14 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
                                 </cfloop>
                                 </select>
                             </td>
-                               
+                            <td style="width:2px;"></td>
                                
                                
                             <th class="left middle" style="width:50px;">
                                 Subtype:
                                 
                             </th>
-                            
+                            <td style="width:2px;"></td>
                             
                             <td class="frm"  style="width:152px;">
                                 <select name="sw_type" id="sw_type" class="rounded" style="width:150px;" onChange="chkAccess();" #dis#>
@@ -562,11 +749,11 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
-							<th class="left middle" style="height:30px;width:86px;">Address:</th>
+							<th class="left middle" style="height:30px;width:74px;">Address:</th>
 							<td style="width:2px;"></td>
 							<cfset v = ""><cfif getSite.address is not ""><cfset v = getSite.address></cfif>
-							<td class="frm" style="width:300px;">
-							<input type="Text" name="sw_address" id="sw_address" value="#v#" style="width:293px;" class="rounded" #dis#></td>
+							<td class="frm" style="width:312px;">
+							<input type="Text" name="sw_address" id="sw_address" value="#v#" style="width:305px;" class="rounded" #dis#></td>
 							<td style="width:2px;"></td>
 							<th class="left middle" style="width:94px;">Council District:</th>
 							<td style="width:2px;"></td>
@@ -849,111 +1036,6 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			
 			
 			
-			<!--- <tr>	
-				<td colspan="4" style="padding:0px 0px 0px 0px;">
-					<table cellpadding="0" cellspacing="0" border="0">
-						<tr>
-						
-						<th class="left middle" style="width:147px;">Access Improvement Type:</th>
-						<td style="width:2px;"></td>
-						<td class="frm"  style="width:339px;">
-						
-						<cfset typedis = "">
-						<cfif ListFindNoCase(isCityList, getSite.access_improvement) is 1>
-							<cfset typedis = "disabled">
-						</cfif>
-						
-						
-						<select name="sw_ait_type" id="sw_ait_type" class="rounded" style="width:334px;" #dis# #typedis#>
-						<option value=""></option>
-						<cfloop query="getAccess">
-							<cfset sel = ""><cfif getSite.access_improvement is id><cfset sel = "selected"></cfif>
-							<option value="#id#" #sel#>#type#</option>
-						</cfloop>
-						</select>
-						</td>
-				
-						<td style="width:2px;"></td>
-						<th class="left middle" style="width:120px;">Cost Effective:</th>
-						<td style="width:2px;"></td>
-						<td class="frm" style="width:60px;">
-						<select name="sw_costeffect" id="sw_costeffect" class="rounded" style="width:55px;" #dis#>
-						<option value=""></option>
-						<cfloop query="getYesNo">
-							<cfset sel = ""><cfif getSite.cost_effective is id><cfset sel = "selected"></cfif>
-							<option value="#id#" #sel#>#value#</option>
-						</cfloop>
-						</select>
-						</td>
-						
-						</tr>
-					</table>
-				</td>
-			</tr> --->
-			
-			
-			<!--- <tr>	
-				<td colspan="4" style="padding:0px 0px 0px 0px;">
-					<table cellpadding="0" cellspacing="0" border="0">
-						<tr>
-						
-						<th class="left middle" style="width:85px;">Within High<br>Injury Network:</th>
-						<td style="width:2px;"></td>
-						<td class="frm" style="width:56px;">
-						<select name="sw_injury" id="sw_injury" class="rounded" style="width:51px;" #dis#>
-						<option value=""></option>
-						<cfloop query="getYesNo">
-							<cfset sel = ""><cfif getSite.within_high_injury is id><cfset sel = "selected"></cfif>
-							<option value="#id#" #sel#>#value#</option>
-						</cfloop>
-						</select>
-						</td>
-				
-						<td style="width:2px;"></td>
-						<th class="left middle" style="width:114px;">Traveled By<br>Disabled Person(s):</th>
-						<td style="width:2px;"></td>
-						<td class="frm" style="width:60px;">
-						<select name="sw_disabled" id="sw_disabled" class="rounded" style="width:55px;" #dis#>
-						<option value=""></option>
-						<cfloop query="getYesNo">
-							<cfset sel = ""><cfif getSite.traveled_by_disabled is id><cfset sel = "selected"></cfif>
-							<option value="#id#" #sel#>#value#</option>
-						</cfloop>
-						</select>
-						</td>
-						
-						<td style="width:2px;"></td>
-						<th class="left middle" style="width:80px;">Number of 311<br>Complaints:</th>
-						<td style="width:2px;"></td>
-						<td class="frm" style="width:65px;">
-						<select name="sw_complaints" id="sw_complaints" class="rounded" style="width:60px;" #dis#>
-						<option value=""></option>
-						<cfloop query="getComplaintType">
-							<cfset sel = ""><cfif getSite.complaints_no is id><cfset sel = "selected"></cfif>
-							<option value="#id#" #sel#>#value#</option>
-						</cfloop>
-						</select>
-						</td>
-						
-						<td style="width:2px;"></td>
-						<th class="left middle" style="width:120px;">High Pedestrian Traffic:</th>
-						<td style="width:2px;"></td>
-						<td class="frm" style="width:60px;">
-						<select name="sw_pedestrian" id="sw_pedestrian" class="rounded" style="width:55px;" #dis#>
-						<option value=""></option>
-						<cfloop query="getYesNo">
-							<cfset sel = ""><cfif getSite.high_pedestrian_traffic is id><cfset sel = "selected"></cfif>
-							<option value="#id#" #sel#>#value#</option>
-						</cfloop>
-						</select>
-						</td>
-						
-						</tr>
-					</table>
-				</td>
-			</tr> --->
-			
-			
 			<tr>	
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
@@ -1191,22 +1273,44 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			</tr>
 			
 
+       
+          
+       
+
+
 		</table>
 	</td>
 	</tr>
-	<input type="Hidden" id="sw_id" name="sw_id" value="#url.sid#">
+    
+    
+        
+    
+    
+    
+	   <input type="Hidden" id="sw_id" name="sw_id" value="#url.sid#">
 	</form>
 </table>
 
-<table align=center border="0" cellpadding="0" cellspacing="0">
+
+
+
+
+           <table align=center border="0" cellpadding="0" cellspacing="0">                             
+          
+           
+       
+
 		<cfset w2 = (w-80)/2><cfset cs = 3><cfif url.pid gt 0 OR url.search is true OR url.crid gt 0><cfset w2 = (w-180)/2><cfset cs = 5></cfif>
 		<cfset v = getSite.removed>
 		<tr><td height="22" colspan="#cs#" class="right" style="width:#w#px;">
         
              
+                                
+                              
+             
         
         
-				<cfif session.user_level gt 2>
+				<cfif session.user_level gt 2 AND lock neq 1>
 					<cfif v is "">
 					<a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" 
 					onclick="showRemove();return false;">Delete</a>
@@ -1219,35 +1323,67 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 		<cfif v is "">
 		<tr>
 			
+           <!--- <cfset w2 = w2-50>  --->
 			<td  style="width:#w2#px;"></td>
             
+             
             
-			<cfif session.user_level gt 0 AND session.user_power gte 0>
-			<td align="center">
-				<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-				onclick="submitForm();return false;">Update</a>
-			</td>
+            
+            
+            <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->  
+			<cfif session.user_level gt 0 AND session.user_power gte 0 AND lock neq 1> 
+                    <td align="center">
+                       	
+                    
+                        <a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+                        onclick="submitForm();return false;">Update</a>
+                        
+                         
+                        
+                    </td>
+            </cfif>
+            
+            
+            <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+            <cfif session.user_level is 0 AND session.user_power is 1 AND isBSS  AND lock neq 1><!--- Added for BSS bonus power reset --->
+                    <td align="center">
+                       
+						 
+						 
+                        <a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+                        onclick="submitForm();return false;">Update</a>
+                        
+                        
+                        
+                        
+                    </td>
+            </cfif>
+            
+            
+            <cfif url.pid gt 0 OR url.search is true OR url.crid gt 0>
+                    <cfset v = "Back"><cfif session.user_level is 0><cfset v = "Back"></cfif>
+                    <td style="width:15px;"></td>
+                    <td align="center">
+                        <a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+                        onclick="cancelUpdate();return false;">#v#</a>
+                    </td>
 			</cfif>
-			<cfif session.user_level is 0 AND session.user_power is 1 AND isBSS><!--- Added for BSS bonus power reset --->
-			<td align="center">
-				<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-				onclick="submitForm();return false;">Update</a>
-			</td>
-			</cfif>
-			<cfif url.pid gt 0 OR url.search is true OR url.crid gt 0>
-			<cfset v = "Back"><cfif session.user_level is 0><cfset v = "Back"></cfif>
-			<td style="width:15px;"></td>
-			<td align="center">
-				<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-				onclick="cancelUpdate();return false;">#v#</a>
-			</td>
-			</cfif>
+            
+            
+            
+            
 			<td class="right top" style="width:#w2#px;">
 				
 			</td>
 		</tr>
 		</cfif>
+        
+        
+        
+        
+        
 		<tr><td height="20px;"></td></tr>
+        
 	</table>
 	
 	
@@ -1434,7 +1570,9 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 						
 						
 						<td align="right" style="width:87px;">
-							<cfif (session.user_level gt 0 AND session.user_power gte 0) OR (session.user_level is 0 AND session.user_power is 1)>
+                        
+                        <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+							<cfif ((session.user_level gt 0 AND session.user_power gte 0) OR (session.user_level is 0 AND session.user_power is 1))  AND lock neq 1>
 							<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 							onclick="submitForm2(0);return false;">Update</a>
 							</cfif>
@@ -1854,7 +1992,8 @@ SELECT * FROM tblQCQuantity WHERE location_no = #getSite.location_no#
 						<td class="left middle pagetitle" style="width:40px;padding:1px 3px 0px 0px;">
 						</td>
 						
-						<cfif (session.user_level gt 0 AND session.user_power gte 0) OR (session.user_level is 0 AND session.user_power is 1)>
+                        <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+						<cfif ((session.user_level gt 0 AND session.user_power gte 0) OR (session.user_level is 0 AND session.user_power is 1))  AND lock neq 1>
 						<td align="right" style="width:599px;">
 							<a href="" id="btn2" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 							onclick="submitForm2(1);return false;">Update</a>
@@ -2058,7 +2197,7 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
 					<th class="left middle" style="height:30px;width:320px;">
-					<cfif session.user_power gte 0>
+					<cfif session.user_power gte 0 AND lock neq 1>
 					<a id="btnFilter" href="" class="buttonSoft buttonText" style="height:15px;width:100px;padding:2px 0px 0px 0px;position:relative;top:1px;left:0px;" 
 				onclick="addRamp(#getSite.location_no#);return false;">Add Curb Ramp</a>
 					</cfif>
@@ -2139,11 +2278,16 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 						
 						
 						<td align="right" style="width:87px;">
-							<cfif session.user_level gt 0 AND session.user_power gte 0>
+                        
+                        <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+							<cfif session.user_level gt 0 AND session.user_power gte 0  AND lock neq 1>
 							<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 							onclick="submitForm5();return false;">Update</a>
 							</cfif>
-							<cfif session.user_level is 0 AND session.user_power is 1 AND isBSS><!--- Added for BSS Power User --->
+                            
+                            
+                            <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+							<cfif session.user_level is 0 AND session.user_power is 1 AND isBSS  AND lock neq 1><!--- Added for BSS Power User --->
 								<!--- <cfif getSite.package_group is "BSS"> --->
 								<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 								onclick="submitForm5();return false;">Update</a>
@@ -2318,11 +2462,16 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 					
 					
 					<td align="right" style="width:454px;">
-						<cfif session.user_level gt 0 AND session.user_power gte 0>
+                    
+                    
+                    <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+						<cfif session.user_level gt 0 AND session.user_power gte 0  AND lock neq 1>
 						<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 						onclick="submitForm5();return false;">Update</a>
 						</cfif>
-						<cfif session.user_level is 0 AND session.user_power is 1 AND isBSS><!--- Added for BSS Power User --->
+                        
+                        <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+						<cfif session.user_level is 0 AND session.user_power is 1 AND isBSS  AND lock neq 1><!--- Added for BSS Power User --->
 							<!--- <cfif getSite.package_group is "BSS"> --->
 							<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 							onclick="submitForm5();return false;">Update</a>
@@ -2394,7 +2543,9 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 						
 						<td align="right" style="width:107px;">
 							<!--- <cfif session.user_level gt 0 AND session.user_power gte 0> --->
-							<cfif (session.user_power is 3) OR (session.user_level is 0 AND session.user_power is 1)>
+                            
+                            <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+							<cfif  ((session.user_power gte 3) OR (session.user_level is 0 AND session.user_power is 1))  AND lock neq 1>
 							<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 							onclick="submitForm6();return false;">Update</a>
 							</cfif>
@@ -2541,7 +2692,7 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 
 				<cfset out=""><cfif session.user_level lt 3><cfset out = "disabled"></cfif>
 				<cfif session.user_level is 0 AND session.user_power is 1><cfset out=""></cfif>
-				<cfif session.user_power is 3><cfset out = ""></cfif>
+				<cfif session.user_power gte 3><cfset out = ""></cfif>
 				<td class="frm left middle"><input type="Text" name="cor_#fld#_quantity" id="cor_#fld#_quantity" value="#co#" 
 				style="width:53px;text-align:center;" class="center rounded" tabindex="#tab6#" onKeyUp="addCORTotal('#fld#');" #out#></td>
 				<cfset tab6 = tab6+1>
@@ -2627,7 +2778,8 @@ SELECT * FROM tblCurbRamps WHERE location_no = #getSite.location_no# AND Removed
 					
 					<td align="right" style="width:646px;">
 						<!--- <cfif session.user_level gt 0 AND session.user_power gte 0> --->
-						<cfif (session.user_power is 3) OR (session.user_level is 0 AND session.user_power is 1)>
+                        <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+						<cfif ((session.user_power gte 3) OR (session.user_level is 0 AND session.user_power is 1))  AND lock neq 1>
 						<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 						onclick="submitForm6();return false;">Update</a>
 						</cfif>
@@ -2701,7 +2853,9 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<tr>
 					<th class="drk left middle" style="width:312px;">Tree Information</th>
 					<td align="right" style="width:662px;">
-						<cfif session.user_level gte 0 AND session.user_power gte 0>
+                    
+                    <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+						<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
 						<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 						onclick="submitForm7();return false;">Update</a>
 						</cfif>
@@ -2723,7 +2877,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<td class="right" style="width:55px;">
 				<td class="center"><span class="pagetitle" style="position:relative;top:0px;font-size: 12px;">Site No: #getSite.location_no# - #getSite.name#</span></td>
 				<td class="right" style="width:55px;"><span style="position:relative;top:1px;right:-5px;">
-				<cfif session.user_level gte 0 AND session.user_power gte 0>
+				<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
 				<a href="" onClick="addSIR();return false;"><img src="../images/add_sir.png" width="24" height="24" title="Add New SIR" style="position:relative;right:0px;"></a>
 				<a href="" onClick="delSIR();return false;"><img src="../images/remove_sir.png" width="24" height="24" title="Remove Last SIR" style="position:relative;right:0px;"></a>
 				</cfif>
@@ -2810,7 +2964,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Removals</span>
 					<span style="position:relative;top:0px;left:20px;">(Total: <strong><span id="tr_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
 					<th class="drk right middle"><span style="position:relative;top:1px;">
-					<cfif session.user_level gte 0 AND session.user_power gte 0>
+					<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
 					<a href="" onClick="addTree('rmv',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Removal" style="position:relative;right:4px;"></a>
 					<a href="" onClick="delTree('rmv',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Removal" style="position:relative;right:2px;"></a>
 					</cfif>
@@ -2942,7 +3096,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Plantings</span>
 					<span style="position:relative;top:0px;left:25px;">(Total: <strong><span id="tp_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
 					<th class="drk right middle"><span style="position:relative;top:1px;">
-					<cfif session.user_level gte 0 AND session.user_power gte 0>
+					<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
 					<a href="" onClick="addTree('add',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Planting" style="position:relative;right:4px;"></a>
 					<a href="" onClick="delTree('add',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Planting" style="position:relative;right:2px;"></a>
 					</cfif>
@@ -3112,7 +3266,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 						<cfif getCnt.cnt gt 0><cfset img = "map_small_chk.png"></cfif>
 						<cfset fuctn = "geocodeTree(#scnt#,#trcnt#,#getList.id#);">
 					</cfif>
-					<cfif session.user_power lt 0 AND isUFD is false><cfset fuctn = ""></cfif>
+					<cfif (session.user_power lt 0 AND isUFD is false) OR lock eq 1><cfset fuctn = ""></cfif>
 					<div style="position:relative;left:0px;top:-1px">
 					<a id="tplink_#scnt#_#trcnt#" href="" onClick="#fuctn#return false;"><img id="tpicon_#scnt#_#trcnt#" name="tpicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#"></a>
 					</div>
@@ -3214,7 +3368,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<span style="position:relative;top:0px;left:25px;">(Total: <strong><span id="trps_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
 					<th class="drk right middle"><span style="position:relative;top:1px;">
                     
-					<cfif session.user_level gte 0 AND session.user_power gte 0>
+					<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
 					<a href="" onClick="addTree('root',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Root Pruning / Shaving" style="position:relative;right:4px;"></a>
 					<a href="" onClick="delTree('root',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Root Pruning / Shaving" style="position:relative;right:2px;"></a>
 					</cfif>
@@ -3670,7 +3824,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
                                                                     
                                                                     
                                                                     
-                                                                    <cfif session.user_power lt 0 AND isUFD is false>
+                                                                    <cfif (session.user_power lt 0 AND isUFD is false) OR lock eq 1>
                                                                             <cfset fuctn = "">
                                                                     </cfif>
                                                                     
@@ -4261,7 +4415,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr><td class="vspacer" height="5px;"></td></tr>
 				<tr>
 					<cfset attvis = "hidden"><cfif href_cert is not ""><cfset attvis = "visible"></cfif>
-					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_cert" #href_cert# target="_blank"><img id="img_cert" src="#src_cert#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Certification Form</span></a>
@@ -4271,8 +4425,8 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr><td class="vspacer" height="5px;"></td></tr>
 				<tr>
 					<cfset attvis = "hidden"><cfif href_roe is not ""><cfset attvis = "visible"></cfif>
-					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
-					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_roe" #href_roe# target="_blank"><img id="img_roe" src="#src_roe#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">ROE Form</span></a>
 					<span id="rmv_roe" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(3);return false;"><img src="../images/grey_x.png" width="8" height="8" title="ROE Form" style="position:relative;top:-2px;left:7px;"></a></span>
@@ -4281,8 +4435,8 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr><td class="vspacer" height="5px;"></td></tr>
 				<tr>
 					<cfset attvis = "hidden"><cfif href_memo is not ""><cfset attvis = "visible"></cfif>
-					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
-					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_memo" #href_memo# target="_blank"><img id="img_memo" src="#src_memo#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Memos</span></a>
 					<span id="rmv_memo" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(4);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Memos" style="position:relative;top:-2px;left:7px;"></a></span>
@@ -4291,8 +4445,8 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr><td class="vspacer" height="5px;"></td></tr>
 				<tr>
 					<cfset attvis = "hidden"><cfif href_curb is not ""><cfset attvis = "visible"></cfif>
-					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
-					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_curb" #href_curb# target="_blank"><img id="img_curb" src="#src_curb#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Curb Ramp Plans</span></a>
 					<span id="rmv_curb" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(5);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Curb Ramp Plans" style="position:relative;top:-2px;left:7px;"></a></span>
@@ -4301,8 +4455,8 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr><td class="vspacer" height="5px;"></td></tr>
 				<tr>
 					<cfset attvis = "hidden"><cfif href_rcurb is not ""><cfset attvis = "visible"></cfif>
-					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
-					<cfif session.user_level is 0><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_rcurb" #href_rcurb# target="_blank"><img id="img_rcurb" src="#src_rcurb#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Revised Curb Ramp Plans</span></a>
 					<span id="rmv_rcurb" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(7);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Revised Curb Ramp Plans" style="position:relative;top:-2px;left:7px;"></a></span>
@@ -4311,7 +4465,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr><td class="vspacer" height="5px;"></td></tr>
 				<tr>
 					<cfset attvis = "hidden"><cfif href_rmvl is not ""><cfset attvis = "visible"></cfif>
-					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_rmvl" #href_rmvl# target="_blank"><img id="img_rmvl" src="#src_rmvl#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Tree Removal Permits</span></a>
 					<span id="rmv_rmvl" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(0);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Tree Removal Permits" style="position:relative;top:-2px;left:7px;"></a></span>
@@ -4320,7 +4474,7 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr><td class="vspacer" height="5px;"></td></tr>
 				<tr>
 					<cfset attvis = "hidden"><cfif href_prn is not ""><cfset attvis = "visible"></cfif>
-					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_prn" #href_prn# target="_blank"><img id="img_prn" src="#src_prn#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Tree Prune Permits</span></a>
 					<span id="rmv_prn" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(6);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Tree Prune Permits" style="position:relative;top:-2px;left:7px;"></a></span>
@@ -4329,14 +4483,14 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<tr><td class="vspacer" height="5px;"></td></tr>
 				<tr>
 					<cfset attvis = "hidden"><cfif href_arb is not ""><cfset attvis = "visible"></cfif>
-					<cfif session.user_power lt 0><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:120px;"><a id="a_arb" #href_arb# target="_blank"><img id="img_arb" src="#src_arb#" width="17" height="17" style="position:relative;top:2px;">
 					<span style="position:relative;top:-3px;">Arborist Report</span></a>
 					<span id="rmv_arb" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(1);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Remove Arborist Report" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr>
-					<th><cfif session.user_power gte 0><a href="" onClick="showAttach();return false;"><img src="../images/attach.png" width="9" height="15" title="Attach Files" style="position:relative;top:3px;right:5px;">
+					<th><cfif session.user_power gte 0 AND lock neq 1><a href="" onClick="showAttach();return false;"><img src="../images/attach.png" width="9" height="15" title="Attach Files" style="position:relative;top:3px;right:5px;">
 					<span style="position:relative;top:0px;right:5px;" title="Attach Files">Attach Files</span></a></cfif></td>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -4574,9 +4728,19 @@ SELECT * FROM tblTreeTypes ORDER BY id
 </cfoutput>
 
 <cfset ro = 0>
-<cfif session.user_level gt 0 AND session.user_power gte 0><cfset ro = 1></cfif>
+
+<!--- --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->  
 
 
+      <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+      <cfif session.user_level gt 0 AND session.user_power gte 0 AND lock neq 1>
+	        <cfset ro = 1>
+      
+      </cfif>
+      
+      
+
+<!--- --------- End ------ super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->  
 
 <script>
 
@@ -4594,7 +4758,7 @@ var sid = #url.sid#;
 var search = #url.search#;
 var crid = #url.crid#;
 var crsearch = #url.crsearch#;
-var loc = #getSite.location_no#;
+var loc = #getSite.location_no#; 
 var geoCnt = #getGeocode.recordcount#;
 var ro = #ro#;
 var lgth1 = #lngth1#;
@@ -4805,7 +4969,9 @@ if (geoCnt == 0) {
 var url = "http://navigatela.lacity.org/geocoder/geocoder.cfm?permit_code=SRP&ref_no=" + loc + "&pin=&return_url=http%3A%2F%2Fengpermits%2Elacity%2Eorg%2Fexcavation%2Fboe%2Fgo%5Fmenu%5Fgc%2Ecfm&allow_edit=" + ro + "&p_start_ddate=05-01-2003&p_end_ddate=05-30-2003" + search;
 //console.log(url);
 
+<cfif lock neq 1>
 newWindow(url,'',900, 700,'no');
+</cfif>
 return false;
 }
 
@@ -4823,8 +4989,9 @@ var url = "https://navigatela.lacity.org/compliance/geocoder.cfm?user_name=#sess
 </cfoutput>
 
 //console.log(url);
-
+<cfif lock neq 1>
 newWindow(url,'',900, 700,'no');
+</cfif>
 return false;
 }
 
@@ -6755,16 +6922,135 @@ var n = this,
 		$(window).load(function () {
 			
 			  $(".overlay").hide();	
-			
+			  
+			  
 			
 		});
 
-   </script>   
+  
 
 <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
 
 
 
+
+
+            <!--- --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->  
+				
+				$('#editable_toggle').change(function () {
+															
+															
+															if ($('#editable_toggle').prop('checked'))
+															{
+																// checked lock hide
+																
+																// $(".overlay_editable").hide();	
+																 
+																// $("#bottom_panel").show();	
+																
+																
+																
+																// ------------------ ajax save lock = 0 ----------------------------------------------
+																
+																		  var ___url = url + "cfc/sw.cfc?method=site_lock&returnformat=json&queryformat=struct";
+																		  var ___site_lock = {"site_number": loc, "lock_value":0 };
+													  
+																					fetch(___url, 
+																						  {
+																							 method: 'POST',
+																							 body:JSON.stringify(___site_lock)
+																						  }
+																						)
+																						  .then(function (response) 
+																								   {
+																													  
+																										 // if js error here, likely it is coldfusion server output error message instead of valid json 
+																										 // so check coldfusion server response.
+																										   return response.json()
+																										   
+																									})
+																									  
+																						   .then(function (result) {
+																											
+																											console.log('site_lock saved : 0  ', result)
+																										
+																										
+																										
+																										// refresh page 
+																										//swSiteEdit.cfm?sid=#getMinSite.id##x#&search=#search#
+																										location.href=location.href
+																		   
+																									 })
+																				 
+																				 .catch((err)=>console.error(err)) // fetch
+																
+																
+																 // --------- End  --------- ajax save lock = 0 ----------------------------------------------
+																 
+																 
+																 
+															} else {
+																
+															    // uncheck, unlock, show , editable
+															
+															   //  $(".overlay_editable").show();	
+																 
+															  //	 $("#bottom_panel").hide();	
+															  
+															 // ------------------ ajax save lock = 1 ----------------------------------------------
+																
+																		  var ___url = url + "cfc/sw.cfc?method=site_lock&returnformat=json&queryformat=struct";
+																		  var ___site_lock = {"site_number": loc, "lock_value":1 };
+													  
+																					fetch(___url, 
+																						  {
+																							 method: 'POST',
+																							 body:JSON.stringify(___site_lock)
+																						  }
+																						)
+																						  .then(function (response) 
+																								   {
+																													  
+																										 // if js error here, likely it is coldfusion server output error message instead of valid json 
+																										 // so check coldfusion server response.
+																										   return response.json()
+																										   
+																									})
+																									  
+																						   .then(function (result) {
+																											
+																											console.log('site_lock saved : 1 ', result)
+																										
+																										// refresh page 
+																										location.href=location.href
+																										
+																		   
+																									 })
+																				 
+																				 .catch((err)=>console.error(err)) // fetch
+																
+																
+																 // --------- End  --------- ajax save lock = 1 ----------------------------------------------
+															  
+															  
+															  
+																 
+															}
+																
+															
+															
+															
+															
+														 });
+																		
+				
+				
+				
+            
+			 <!--- -------- End ---------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->  
+             
+             
+      </script>           
 
 </html>
 

@@ -69,9 +69,17 @@ SELECT * FROM tblYesNo ORDER BY value
 SELECT * FROM tblAgency order by id
 </cfquery>
 
-<cfquery name="getRole" datasource="#request.sqlconn#" dbtype="ODBC">
-SELECT * FROM tblRole  order by Role_Id
-</cfquery>
+
+
+
+         
+
+            <cfquery name="getRole" datasource="#request.sqlconn#" dbtype="ODBC">
+                SELECT * FROM tblRole  order by Role_Id
+            </cfquery>
+
+
+
 
 
 
@@ -385,8 +393,8 @@ SELECT * FROM tblRole  order by Role_Id
                                     <th class="left middle" style="height:30px;width:60px;">Full Name:</th>
                                     <td style="width:2px;"></td>
                                     
-                                    <td class="frm" >
-                                        <input type="Text" name="add_user_full_name" id="add_user_full_name" value="" style="width:180px;" class="rounded" required >
+                                    <td class="frm" style="width:180px;">
+                                        <input type="Text" name="add_user_full_name" id="add_user_full_name" value="" style="width:175px;" class="rounded" required >
                                     </td>
                                     
                                     
@@ -397,12 +405,12 @@ SELECT * FROM tblRole  order by Role_Id
                                     <th class="left middle" style="width:80px;">Login Name:</th>
                                     <td style="width:2px;"></td>
                                     
-                                    <td class="frm" >
-                                        <input type="Text" name="add_user_name" id="add_user_name" value="" style="width:150px;" class="rounded" disabled required>
+                                    <td class="frm" style="width:130px;">
+                                        <input type="Text" name="add_user_name" id="add_user_name" value="" style="width:125px;" class="rounded" disabled required>
                                     </td>
                                     
                                     <td style="width:2px;"></td>
-                                    <td class="frm" style="width:50px;">
+                                    <td class="frm" style="width:47px;padding:0px 0px 0px 5px;">
                                        <a id="edit_login_name_btn" class="button buttonText" style="height:17px;width:40px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Edit</a>
                                    </td>
                                    
@@ -414,14 +422,14 @@ SELECT * FROM tblRole  order by Role_Id
                                     <th class="left middle" style="width:60px;">Password:</th>
                                         <td style="width:2px;"></td>
                                         
-                                        <td class="frm"  >
-                                            <input type="password" name="add_user_password" id="add_user_password" value="" style="width:120px;" class="rounded" required>
+                                        <td class="frm" style="width:130px;" >
+                                            <input type="password" name="add_user_password" id="add_user_password" value="" style="width:125px;" class="rounded" required>
                                         </td>
                                    
                                    
                                          <td style="width:2px;"></td>
-                                           <td class="frm" style="width:50px;" id="reset_password_btn_td"> 
-                                               <a id="reset_password_btn" class="button buttonText" style="height:17px;width:40px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Reset</a>
+                                           <td class="frm" style="width:47px;padding:0px 0px 0px 5px;" ><span id="reset_password_btn_td">
+                                               <a id="reset_password_btn" class="button buttonText" style="height:17px;width:40px;padding:3px 0px 0px 0px;   cursor: pointer;"  >Reset</a></span>
                                           </td>    
                                         
                                         
@@ -460,8 +468,8 @@ SELECT * FROM tblRole  order by Role_Id
                                         
                                         <th class="left middle" style="height:30px;width:60px;">Agency:</th>
                                         <td style="width:2px;"></td>
-                                        <td class="frm"  style="width:80px;">
-                                                       <select name="add_user_agency" id="add_user_agency" class="rounded" style="width:180px;">
+                                        <td class="frm"  style="width:180px;">
+                                                       <select name="add_user_agency" id="add_user_agency" class="rounded" style="width:175px;">
                                                                         <option value=""> </option>
                                                                             <cfset cnt = 1>
                                                                             
@@ -479,14 +487,37 @@ SELECT * FROM tblRole  order by Role_Id
                                         
                                         <th class="left middle" style="width:80px;">Role:</th>
                                         <td style="width:2px;"></td>
-                                        <td class="frm" >
-                                                 <select name="add_user_role" id="add_user_role" class="rounded" style="width:150px;" >
+                                        <td class="frm" style="width:130px;">
+                                                 <select name="add_user_role" id="add_user_role" class="rounded" style="width:125px;" >
                                                                         <option value=""></option>
                                                                         
                                                                         <cfset cnt = 1>
                                                                         <cfloop query="getRole">
                                                                             <cfset sel = ""><!--- <cfif cnt is 1><cfset sel = "selected"><cfset cnt = cnt+1></cfif> --->
-                                                                            <option value="#Role_Name#" #sel#>#Role_Name#</option>
+                                                                            
+                                                                            
+                                                                                <!--- --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->  
+                                                                            
+																						<!---  only Max admin can add new Max Admin, other user would not see Max Admin option --->
+                                                                                        <cfif Role_Name eq 'Max Admin'>
+                                                                                        
+                                                                                        
+                                                                                               <cfif session.user_level gt 2 AND session.user_power gt 3> 
+                                                                                        
+                                                                                                          <option value="#Role_Name#" #sel#>#Role_Name#</option>
+                                                                                               </cfif>
+                                                                                
+                                                                                        <cfelse>
+                                                                                
+                                                                                                  <option value="#Role_Name#" #sel#>#Role_Name#</option>
+                                                                                
+                                                                                
+                                                                                        </cfif>
+                                                                                    
+                                                                                    
+                                                                                <!--- --------- End ------ super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->       
+                                                                                    
+                                                                            
                                                                         </cfloop>
                                                                         
                                                  </select>
@@ -504,7 +535,7 @@ SELECT * FROM tblRole  order by Role_Id
                                         </td>
                                         --->
                                         
-                                        <th id="certificate_th" class="left middle" style="width:210px;"> Can issue certificate of compliance: <input type="checkbox" id="add_user_certificate_checkbox" style="width:20px;" class="rounded" required></th>
+                                        <th class="left middle" style="width:308px;">&nbsp;<span id="certificate_th"><span style="position:relative;top:-2px;">Can Issue Certificate of Compliance:</span> <span style="position:relative;top:1px;"><input type="checkbox" id="add_user_certificate_checkbox" style="width:20px;" class="rounded" required></span></span></th>
                                         <td id="certificate_td">
                                               
                                         </td>
@@ -521,9 +552,9 @@ SELECT * FROM tblRole  order by Role_Id
 			
 			
             
-                       <tr>
+                       <!--- <tr> --->
                               <tr>	
-                                    <td colspan="4" style="padding:0px 0px 0px 0px;">
+                                    <td colspan="4" style="padding:0px 0px 0px 0px;background: #chr(35)#f5f5f5;">
                                         <table cellpadding="0" cellspacing="0" border="0">
                                             <tr>
                         
@@ -542,7 +573,7 @@ SELECT * FROM tblRole  order by Role_Id
                                 </tr>
 						    
                     
-                    </tr>
+                   <!---  </tr> --->
 			
 			
 			
@@ -557,7 +588,7 @@ SELECT * FROM tblRole  order by Role_Id
 <table width="100%" border="0" cellspacing="0" cellpadding="3">
   <tr><td style="height:3px;"></td></tr>
   <tr>
-    <td align="center">
+    <td align="center" style="padding:0px 10px 0px 0px;">
 	<a id="cancel_btn" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;   cursor: pointer;">Cancel</a>
 	</td>
   </tr>
