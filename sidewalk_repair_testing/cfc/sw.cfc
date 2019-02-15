@@ -3988,6 +3988,11 @@
 					<cfset traddr = evaluate("traddr_" & i & "_" & j)>
 					<cfset trspecies = evaluate("trspecies_" & i & "_" & j)>
 					<cfset trtype = evaluate("trtype_" & i & "_" & j)>
+                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <cfset trExistingCondition = evaluate("trExistingCondition_" & i & "_" & j)>
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
 					<cfset trnote = evaluate("trnote_" & i & "_" & j)>
 					
 					<cfif trim(trpidt) is ""><cfset trpidt = "NULL"></cfif>
@@ -3995,6 +4000,17 @@
 					<cfif trim(traddr) is ""><cfset traddr = "NULL"></cfif>
 					<cfif trim(trspecies) is ""><cfset trspecies = "NULL"></cfif>
 					<cfif trim(trtype) is ""><cfset trtype = "NULL"></cfif>
+                    
+                    
+                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <cfif trim(trExistingCondition) is ""><cfset trExistingCondition = "NULL"></cfif>
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                     
+                     
+                     
+                     
+                    
 					<cfif trim(trnote) is ""><cfset trnote = "NULL"></cfif>
 					
 					<cfset traddr = replace(traddr,"'","''","ALL")>
@@ -4028,6 +4044,11 @@
 						    <cfif trim(traddr) is not "NULL">Address,</cfif>
 						    <cfif trim(trspecies) is not "NULL">Species,</cfif>
 							<cfif trim(trtype) is not "NULL">Type,</cfif>
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(trExistingCondition) is not "NULL">Removals_Existing_Tree_Condition,</cfif>
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            
 							<cfif trim(trnote) is not "NULL">Note,</cfif>
 							Action_Type,
 							Deleted,
@@ -4047,6 +4068,13 @@
 						    <cfif trim(traddr) is not "NULL">'#PreserveSingleQuotes(traddr)#',</cfif>
 						    <cfif trim(trspecies) is not "NULL">'#PreserveSingleQuotes(trspecies)#',</cfif>
 							<cfif trim(trtype) is not "NULL">#trtype#,</cfif>
+                            
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(trExistingCondition) is not "NULL">#trExistingCondition#,</cfif>
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            
+                            
 							<cfif trim(trnote) is not "NULL">'#PreserveSingleQuotes(trnote)#',</cfif>
 							0,
 							0,
@@ -4067,6 +4095,13 @@
 						Address = <cfif traddr is "NULL">NULL<cfelse>'#PreserveSingleQuotes(traddr)#'</cfif>,
 						Species = <cfif trspecies is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trspecies)#'</cfif>,
 						Type = <cfif trtype is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trtype)#'</cfif>,
+                        
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                       Removals_Existing_Tree_Condition = <cfif trExistingCondition is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trExistingCondition)#'</cfif>,
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        
+                        
 						Note = <cfif trnote is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trnote)#'</cfif>,
 						User_ID = #session.user_num#,
 						Modified_Date = #CreateODBCDateTime(Now())#
@@ -4098,6 +4133,16 @@
 					<cfset tpspecies = evaluate("tpspecies_" & i & "_" & j)>
 					<cfset tpoffsite = evaluate("tpoffsite_" & i & "_" & j)>
 					<cfset tptype = evaluate("tptype_" & i & "_" & j)>
+                    
+            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->         
+                    
+                    
+                    <cfset tpPlantedCondition = evaluate("tpPlantedCondition_" & i & "_" & j)>
+                    
+             <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->       
+                    
+                    
+                    
 					<cfset tpparkway = evaluate("tpparkway_" & i & "_" & j)>
 					<cfset tpoverhead = evaluate("tpoverhead_" & i & "_" & j)>
 					<cfset tpsubpos = evaluate("tpsubpos_" & i & "_" & j)>
@@ -4113,6 +4158,13 @@
 					<cfif trim(tpoffsite) is "on"><cfset tpoffsite = 1><cfelse><cfset tpoffsite = 0></cfif>
 					<cfif trim(tptype) is ""><cfset tptype = "NULL"></cfif>
 					
+                    
+                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->   
+                    
+                    <cfif trim(tpPlantedCondition) is ""><cfset tpPlantedCondition = "NULL"></cfif>
+                     <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->  
+                    
+                    
 					<cfif trim(tpparkway) is ""><cfset tpparkway = "NULL"></cfif>
 					<cfif trim(tpoverhead) is "on"><cfset tpoverhead = 1><cfelse><cfset tpoverhead = 0></cfif>
 					<cfif trim(tpsubpos) is ""><cfset tpsubpos = "NULL"></cfif>
@@ -4165,6 +4217,13 @@
 						    <cfif trim(tpspecies) is not "NULL">Species,</cfif>
 							<cfif trim(tpoffsite) is not "NULL">Offsite,</cfif>
 							<cfif trim(tptype) is not "NULL">Type,</cfif>
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(tpPlantedCondition) is not "NULL">Planted_Tree_Condition,</cfif>
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            
+                            
+                            
 							<cfif trim(tpparkway) is not "NULL">Parkway_Treewell_Size,</cfif>
 							<cfif trim(tpoverhead) is not "NULL">Overhead_Wires,</cfif>
 							<cfif trim(tpsubpos) is not "NULL">Sub_Position,</cfif>
@@ -4191,6 +4250,15 @@
 						    <cfif trim(tpspecies) is not "NULL">'#PreserveSingleQuotes(tpspecies)#',</cfif>
 							<cfif trim(tpoffsite) is not "NULL">#tpoffsite#,</cfif>
 							<cfif trim(tptype) is not "NULL">#tptype#,</cfif>
+                            
+                            
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(tpPlantedCondition) is not "NULL">#tpPlantedCondition#,</cfif>
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            
+                            
+                            
 							<cfif trim(tpparkway) is not "NULL">'#PreserveSingleQuotes(tpparkway)#',</cfif>
 							<cfif trim(tpoverhead) is not "NULL">#tpoverhead#,</cfif>
 							<cfif trim(tpsubpos) is not "NULL">'#PreserveSingleQuotes(tpsubpos)#',</cfif>
@@ -4218,6 +4286,13 @@
 						Species = <cfif tpspecies is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpspecies)#'</cfif>,
 						Offsite = <cfif tpoffsite is "NULL">NULL<cfelse>#tpoffsite#</cfif>,
 						Type = <cfif tptype is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tptype)#'</cfif>,
+                        
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        Planted_Tree_Condition = <cfif tpPlantedCondition is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpPlantedCondition)#'</cfif>,
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        
+                        
 						Parkway_Treewell_Size = <cfif tpparkway is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpparkway)#'</cfif>,
 						Overhead_Wires = <cfif tpoverhead is "NULL">NULL<cfelse>#tpoverhead#</cfif>,
 						Sub_Position = <cfif tpsubpos is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpsubpos)#'</cfif>,
@@ -4254,6 +4329,8 @@
             
             
             
+            
+            
              <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
             
             
@@ -4277,6 +4354,16 @@
 				 <!---	<cfset trpsoffsite = evaluate("trpsoffsite_" & i & "_" & j)>   --->
 					
 					<cfset trpstype = evaluate("trpstype_" & i & "_" & j)>
+                    
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <cfset trpsExistingCondition = evaluate("trpsExistingCondition_" & i & "_" & j)>
+                    <cfset trpsPreservationAlternative = evaluate("trpsPreservationAlternative_" & i & "_" & j)>
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
 					<cfset trpsparkway = evaluate("trpsparkway_" & i & "_" & j)>
 					
 				 <!---	<cfset trpsoverhead = evaluate("trpsoverhead_" & i & "_" & j)>   --->
@@ -4297,6 +4384,22 @@
 					<cfif trim(trpsspecies) is ""><cfset trpsspecies = "NULL"></cfif>
 				<!---	<cfif trim(trpsoffsite) is "on"><cfset trpsoffsite = 1><cfelse><cfset trpsoffsite = 0></cfif>                       --->
 					<cfif trim(trpstype) is ""><cfset trpstype = "NULL"></cfif>
+                    
+                    
+                    
+                    
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <cfif trim(trpsExistingCondition) is ""><cfset trpsExistingCondition = "NULL"></cfif>
+                    <cfif trim(trpsPreservationAlternative) is ""><cfset trpsPreservationAlternative = "NULL"></cfif>
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+                    
+                    
 					
 					<cfif trim(trpsparkway) is ""><cfset trpsparkway = "NULL"></cfif>
 				<!---	<cfif trim(trpsoverhead) is "on"><cfset trpsoverhead = 1><cfelse><cfset trpsoverhead = 0></cfif>                       --->
@@ -4350,6 +4453,22 @@
 						    <cfif trim(trpsspecies) is not "NULL">Species,</cfif>
 						<!---	<cfif trim(trpsoffsite) is not "NULL">Offsite,</cfif>   --->
 							<cfif trim(trpstype) is not "NULL">Type,</cfif>
+                            
+                            
+                            
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(trpsExistingCondition) is not "NULL">Preservation_Existing_Tree_Condition,</cfif>
+                            <cfif trim(trpsPreservationAlternative) is not "NULL">Preservation_Alternative,</cfif>
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 							<cfif trim(trpsparkway) is not "NULL">Parkway_Treewell_Size,</cfif>
 						<!---	<cfif trim(trpsoverhead) is not "NULL">Overhead_Wires,</cfif>     --->
 							<cfif trim(trpssubpos) is not "NULL">Sub_Position,</cfif>
@@ -4376,6 +4495,20 @@
 						    <cfif trim(trpsspecies) is not "NULL">'#PreserveSingleQuotes(trpsspecies)#',</cfif>
 						<!---	<cfif trim(trpsoffsite) is not "NULL">#trpsoffsite#,</cfif>                               --->
 							<cfif trim(trpstype) is not "NULL">#trpstype#,</cfif>
+                            
+                            
+                            
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(trpsExistingCondition) is not "NULL">#trpsExistingCondition#,</cfif>
+                            <cfif trim(trpsPreservationAlternative) is not "NULL">#trpsPreservationAlternative#,</cfif>
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            
+                            
+                            
+                            
+                            
 							<cfif trim(trpsparkway) is not "NULL">'#PreserveSingleQuotes(trpsparkway)#',</cfif>
 						<!---	<cfif trim(trpsoverhead) is not "NULL">#trpsoverhead#,</cfif>                              --->
 							<cfif trim(trpssubpos) is not "NULL">'#PreserveSingleQuotes(trpssubpos)#',</cfif>
@@ -4403,6 +4536,23 @@
 						Species = <cfif trpsspecies is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsspecies)#'</cfif>,
 					<!---	Offsite = <cfif trpsoffsite is "NULL">NULL<cfelse>#trpsoffsite#</cfif>,                                                --->
 						Type = <cfif trpstype is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpstype)#'</cfif>,
+                        
+                        
+                        
+                        
+                        
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        Preservation_Existing_Tree_Condition = <cfif trpsExistingCondition is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsExistingCondition)#'</cfif>,
+                        Preservation_Alternative = <cfif trpsPreservationAlternative is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsPreservationAlternative)#'</cfif>,
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        
+                        
+                        
+                        
+                        
+                        
 						Parkway_Treewell_Size = <cfif trpsparkway is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsparkway)#'</cfif>,
 					<!---	Overhead_Wires = <cfif trpsoverhead is "NULL">NULL<cfelse>#trpsoverhead#</cfif>,                                       --->
 						Sub_Position = <cfif trpssubpos is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpssubpos)#'</cfif>,
@@ -7554,6 +7704,39 @@
                                                        </cfquery>
                                                        
                                                        
+                                                       
+                                                            <!--- --------- update related curbRamp associated with this site number ---------    --->
+                                                       
+                                                       
+                                                                    <cfquery name="_getRampBySite" datasource="#request.sqlconn#">
+                                                                                         
+                                                                              select Ramp_No from tblCurbRamps
+                                                                              where Location_No = #_site_number#
+                                                              
+                                                                                        
+                                                       				</cfquery>
+                                                       
+                                                       
+                                                       
+                                                       
+                                                                     <cfloop query = "_getRampBySite"> 
+																		
+                                                                             <cfquery name="_updateCurbRampLockStatus" datasource="#request.sqlconn#">
+                                                                                         
+                                                                                          UPDATE tblCurbRamps
+                                                                                            SET Locked = #_lock_value#
+                                                                                            WHERE Ramp_No =  #Ramp_No#
+                                                                                      
+                                                                                                                
+                                                                               </cfquery>
+                                                                        
+                                                                        
+                                                                        
+                                                                    </cfloop>
+                                                       
+                                                       
+                                                       
+                                                              <!--- --------- end -------------- update related curbRamp associated with this site number --->
                                                        
                                                        
                                                        

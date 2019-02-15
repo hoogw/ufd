@@ -56,7 +56,15 @@ SELECT max(ramp_no) as id FROM tblCurbRamps
 
 <!--- Get Sites --->
 <cfquery name="getSites" datasource="#request.sqlconn#" dbtype="ODBC">
-SELECT location_no as id FROM tblSites WHERE removed is null ORDER BY location_no
+
+   <!---  SELECT location_no as id FROM tblSites WHERE removed is null ORDER BY location_no   --->
+   
+    <!--- --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+     SELECT location_no as id FROM tblSites WHERE (removed is null) and  ((Locked is null) or (Locked = 0))  ORDER BY location_no
+    <!--- -------- end ------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+    
+    
+    
 </cfquery>
 
 
@@ -354,7 +362,7 @@ SELECT * FROM tblYesNo ORDER BY value
 						<th class="left middle" style="height:30px;width:100px;">Utility Conflict:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:60px;">
-						<select name="cr_utility" id="cr_utility" class="rounded" style="width:55px;" onchange="setDisabled('cr_utility',0);">
+						<select name="cr_utility" id="cr_utility" class="rounded" style="width:55px;" onChange="setDisabled('cr_utility',0);">
 						<option value=""></option>
 						<cfloop query="getYesNo">
 							<option value="#id#">#value#</option>
@@ -403,7 +411,7 @@ SELECT * FROM tblYesNo ORDER BY value
 						<th class="left middle" style="height:30px;width:100px;">Minor Repairs Only:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:60px;">
-						<select name="cr_minor" id="cr_minor" class="rounded" style="width:55px;" onchange="setDisabled('cr_minor',1);">
+						<select name="cr_minor" id="cr_minor" class="rounded" style="width:55px;" onChange="setDisabled('cr_minor',1);">
 						<option value=""></option>
 						<cfloop query="getYesNo">
 							<option value="#id#">#value#</option>
@@ -440,7 +448,7 @@ SELECT * FROM tblYesNo ORDER BY value
 								<th class="left middle">ADA Compliance Exception:<br>(See Notes)</th>
 								<th style="width:10px;"></th>
 								<th class="middle">
-								<div style="position:relative;top:1px;"><input id="cr_excptn" name="cr_excptn" type="checkbox" onclick="toggleADANotes();"></div></th>
+								<div style="position:relative;top:1px;"><input id="cr_excptn" name="cr_excptn" type="checkbox" onClick="toggleADANotes();"></div></th>
 								</tr>
 							</table>
 						
@@ -501,7 +509,7 @@ SELECT * FROM tblYesNo ORDER BY value
 	
 	
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">

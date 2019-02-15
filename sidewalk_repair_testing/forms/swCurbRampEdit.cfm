@@ -160,6 +160,156 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 
 
 
+
+ <!--- -------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu ------------ ---> 
+
+				
+                <cfif getCurbRamp.Locked eq 1>
+            
+                       <cfset lock = 1>
+                       <cfset dis="disabled">
+                  <cfelse>
+                         <cfset lock = 0>
+                      
+                       
+                </cfif>
+
+
+    <!--- -------- End ---------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+
+
+
+
+
+
+
+
+  <!--- -------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu ------------ ---> 
+                        
+                        
+						   	 <!---  <cfif session.user_level gt 2 AND session.user_power gt 3>  ---> 
+                                    
+                                    <table cellspacing="0" cellpadding="0" border="0"  align="center" style="width:744px;">
+                                        <tr>
+                                            
+                                           <td>
+                                              
+                                                 <div id="lock-wrapper">
+                                                
+                                                 
+                                            
+                                                 
+                                                       <div id="lock-left">
+															 <cfif lock eq 1>    
+                                                             
+                                                                     <img src="../images/lock.png" width="20" height="20" title="lock" id="lock" >
+                                                                      <!---  lock   --->
+                                                                        
+                                                                   
+                                                              </cfif> 
+                                                
+                                                        </div>
+                                              
+                                              
+                                        <!---   ------------- no need lock/unlock switch   -------------   --->  
+                                              
+                                               <!---
+											   
+                                               <cfif session.user_level gt 2 AND session.user_power gt 3> 
+                                               
+                                               
+                                                     <div id="lock-left2">  
+                                                        <cfif lock neq 1>                                                
+                                                                  <img src="../images/unlock.png" width="20" height="20" title="unlock" id="unlock" style="position:relative;top:0px;left:0px;">
+                                                                    <!--- Unlock   --->
+                                                                
+                                                         </cfif>
+                                                          </div>
+                                               
+                                               
+                                               
+                                               
+                                                  <div id="lock-right">
+                                                        <label class="switch">
+                                                          <input type="checkbox" id="editable_toggle"  <cfif lock neq 1>   checked      </cfif>     
+                                                          
+                                                             <!---  for regular user, toggle disabled 
+                                                                <cfif session.user_level gt 2 AND session.user_power gt 3> 
+                                                          
+                                                                 
+                                                                 <cfelse>
+                                                                 
+                                                                     disabled
+                                                                 
+                                                                 </cfif> 
+                                                                 
+                                                                 --->
+                                                                 
+                                                                >
+                                                          <span class="slider round"></span>
+                                                          
+                                                      </label>
+                                                          
+                                                   </div>      
+                                                        
+                                                      
+                                                        
+                                                       
+                                                 
+                                              </cfif>    
+                                              
+                                              
+                                              --->   
+                                               
+                                                 
+                                           <!--- ---- end ------  no need lock/unlock switch --->   
+                                           
+                                           
+                                                
+                                          </div>       
+                                                        
+                                                
+                                                
+                                                
+                                                
+                                                  
+                                                
+                                       		 </td>
+                                             
+                                             
+                                             <!---
+                                             
+                                             <cfif lock neq 1>                                                
+                                                     <td align="left">
+                                                        Unlock
+                                                     </td>
+                                             <cfelse>
+                                             
+                                                      <td align="left">
+                                                        lock
+                                                        
+                                                     </td>
+                                              </cfif> 
+                                              
+                                              --->
+                                              
+                                              
+                                              
+                                        </tr>
+                                      <table>  
+                           <!---    </cfif>   ---> 
+                                
+                        <!--- -------- End ---------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+
+
+
+
+
+
+
+
+
+
 <table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:744px;">
 	<form name="form1" id="form1" method="post" action="" enctype="multipart/form-data">
 	<tr>
@@ -687,6 +837,7 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
 	
 		<cfset v = getCurbRamp.Removed>
 	
+     
     
 	   <cfif session.user_level gt 2>
 	
@@ -696,18 +847,26 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
                     <td height="22" class="right" colspan="#cs#"  style="width:#w#px;">
                    
                         
+                            <!--- --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->  
+							<cfif dis is "">
+                            <!--- ------- end -------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
                          
                         
-                            <cfif v is "">
-                               
-                                <a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" onClick="showRemove();return false;">
-                                     Delete 
-                                </a>
-                            <cfelse>
-                                    <a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" onClick="showRemove();return false;">
-                                   Restore
-                                    </a>
-                            </cfif>
+									<cfif v is "">
+                                       
+                                        <a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" onClick="showRemove();return false;">
+                                             Delete 
+                                        </a>
+                                    <cfelse>
+                                            <a href="" class="button buttonText" style="height:13px;width:60px;padding:1px 0px 1px 0px;" onClick="showRemove();return false;">
+                                           Restore
+                                            </a>
+                                    </cfif>
+                                
+                                
+                            <!--- --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->     
+                            </cfif>    
+                            <!--- --------- end ------ super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ --->    
                                 
                         
                     </td>
@@ -718,6 +877,9 @@ SELECT min(ramp_no) as ramp_no FROM tblCurbRamps WHERE ramp_no > #url.crid# AND 
             <tr><td height=15></td></tr>
         
 		</cfif>
+        
+      
+    
 		
 	<!--- cfif v is ""   ---->
         

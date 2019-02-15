@@ -39,6 +39,9 @@
 
 
 
+
+
+
 </head>
 
 <style type="text/css">
@@ -2828,6 +2831,72 @@ SELECT DISTINCT common FROM dbo.ags_bss_tree_inventory WHERE common is not null 
 SELECT * FROM tblTreeTypes ORDER BY id
 </cfquery>
 
+
+
+
+
+
+
+
+
+
+
+<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+
+
+
+
+
+        <cfquery name="getTreePlantedCondition" datasource="#request.sqlconn#" dbtype="ODBC">
+        		SELECT * FROM tblTreePlantedCondition ORDER BY id
+        </cfquery>
+
+
+      <cfquery name="getTreeExistingCondition" datasource="#request.sqlconn#" dbtype="ODBC">
+        		SELECT * FROM tblTreeExistingCondition ORDER BY id
+        </cfquery>
+
+
+
+ 		<cfquery name="getTreePreservationAlternative" datasource="#request.sqlconn#" dbtype="ODBC">
+        		SELECT * FROM tblTreePreservationAlternative ORDER BY id
+        </cfquery>
+
+
+
+
+<!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<cfquery name="getContractorType" datasource="#request.sqlconn#" dbtype="ODBC">
+SELECT * FROM tblContractorType ORDER BY id
+</cfquery>
+
+
+
+
 <div id="box_tree" style="position:absolute;top:0px;left:0px;height:100%;width:100%;border:0px red solid;z-index:25;display:none;">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="3">
@@ -2855,7 +2924,12 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<td align="right" style="width:662px;">
                     
                     <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
-						<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
+                     <!--- --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
+						<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>
+                        <!--- cfif session.user_level gte 0 AND session.user_power gte 0 --->
+                        
+                        
+                        
 						<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
 						onclick="submitForm7();return false;">Update</a>
 						</cfif>
@@ -2875,14 +2949,121 @@ SELECT * FROM tblTreeTypes ORDER BY id
 			<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 				<tr>
 				<td class="right" style="width:55px;">
-				<td class="center"><span class="pagetitle" style="position:relative;top:0px;font-size: 12px;">Site No: #getSite.location_no# - #getSite.name#</span></td>
-				<td class="right" style="width:55px;"><span style="position:relative;top:1px;right:-5px;">
-				<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
-				<a href="" onClick="addSIR();return false;"><img src="../images/add_sir.png" width="24" height="24" title="Add New SIR" style="position:relative;right:0px;"></a>
-				<a href="" onClick="delSIR();return false;"><img src="../images/remove_sir.png" width="24" height="24" title="Remove Last SIR" style="position:relative;right:0px;"></a>
-				</cfif>
-				</span>
-				</td></tr>
+                
+                
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                
+                
+                            
+                            <td class="center">
+                                      <span class="pagetitle" style="position:relative;top:0px;font-size: 12px;">
+                                      
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            <!--- package number --->
+                                            
+                                               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            
+													 <cfif sw_pid is not "">		
+                                                
+                                                        <cfset x = url.pid>
+                                                        <cfif x is 0>
+                                                                <cfquery name="getPackageNo" datasource="#request.sqlconn#" dbtype="ODBC">
+                                                                     SELECT id FROM tblPackages WHERE package_no = #sw_pid# AND package_group = '#sw_grp#'
+                                                                </cfquery>
+                                                                <cfset x = getPackageNo.id>
+                                                        </cfif>   
+                                                  
+                                                                   Package: #sw_grp# - #sw_pid#  
+                                                                   
+                                                       <cfelse>  
+                                                             
+                                                             
+                                                             
+                                                       </cfif>          
+                                               
+                                               
+                                               
+                                                <!--- Council District --->
+                                               
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                               
+                                               
+                                                    Council District: #getSite.council_district#
+                                               
+                                               
+                                               <!--- site number --->
+                                               
+                                               
+                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                 
+                                                        Site No: #getSite.location_no# - #getSite.name#
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                      </span>
+                           </td>
+                           
+               
+               
+               
+               
+				<td class="right" style="width:55px;">
+                
+                    <span style="position:relative;top:1px;right:-5px;">
+                
+                
+                
+							<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
+                            <a href="" onClick="addSIR();return false;"><img src="../images/add_sir.png" width="24" height="24" title="Add New SIR" style="position:relative;right:0px;"></a>
+                            <a href="" onClick="delSIR();return false;"><img src="../images/remove_sir.png" width="24" height="24" title="Remove Last SIR" style="position:relative;right:0px;"></a>
+                            </cfif>
+                            
+				     </span>
+				</td>
+               
+               
+               
+               
+               
+                <!--- ------------------- joe hu  Feb 2019 multiple update --------------------  --->
+               
+               <td class="right" style="width:25px;">
+                
+                    <span style="position:relative;top:1px;right:-5px;">
+               
+    
+                                       <!--- add printer tool --->
+                                       
+                                     <a href="" onClick="window.print();return false;"><img src="../images/printer.png" width="24" height="24" title="printer" style="position:relative;right:0px;"></a>
+                
+                      </span>
+				</td>
+               
+                <!--- ---------- end ---------- joe hu  Feb 2019 multiple update --------------------  --->
+               
+               
+               
+               
+               
+               
+                
+                
+                
+                
+                
+                
+                </tr>
 			</table>
 
 			</td>
@@ -2936,11 +3117,24 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfset v = trim(getSIRs.sir_no)></cfif>
 					<th class="left middle" style="height:22px;width:48px;">SIR #chr(35)#:</th>
 					<td style="width:2px;"></td>
-					<td class="frm left middle" style="width:83px;"><input type="Text" name="sir_#scnt#" id="sir_#scnt#" value="#v#" 
-					style="width:78px;height:20px;padding:0px 0px 0px 4px;" maxlength="10" class="roundedsmall" #sirdis#></td>
+                    
+                    
+                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                      	<!---  allow 18 digital  --->
+                    
+                        <td class="frm left middle" style="width:150px;">
+                              <input type="Text" name="sir_#scnt#" id="sir_#scnt#" value="#v#" 
+                                style="width:145px;height:20px;padding:0px 0px 0px 4px;" maxlength="18" class="roundedsmall" #sirdis#>
+                        </td>
+                    
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
 					<td style="width:2px;"></td>
 					<cfset v = ""><cfif trim(getSIRs.sir_date) is not "">
 					<cfset v = dateformat(trim(getSIRs.sir_date),"mm/dd/yyyy")></cfif>
+                    
 					<th class="left middle" style="width:70px;">&nbsp;SIR Date:</th>
 					<td style="width:2px;"></td>
 					<td class="frm left middle" style="width:100px;"><input type="Text" name="sirdt_#scnt#" id="sirdt_#scnt#" value="#v#" 
@@ -2964,7 +3158,17 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Removals</span>
 					<span style="position:relative;top:0px;left:20px;">(Total: <strong><span id="tr_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
 					<th class="drk right middle"><span style="position:relative;top:1px;">
-					<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
+                    
+                    
+                    
+                     <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+                     <!---  --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
+						<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>
+                        <!--- cfif session.user_level gte 0 AND session.user_power gte 0 --->
+					
+                    
+                    
+                    
 					<a href="" onClick="addTree('rmv',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Removal" style="position:relative;right:4px;"></a>
 					<a href="" onClick="delTree('rmv',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Removal" style="position:relative;right:2px;"></a>
 					</cfif>
@@ -2976,6 +3180,11 @@ SELECT * FROM tblTreeTypes ORDER BY id
 			<tr>
 				<td colspan="2" style="padding:0px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+                
+                 <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->  
+                
+                
+                  <!---
 					<th class="left middle" style="height:22px;width:48px;">Tree No:</th>
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:57px;"><span style="font-size:10px;">Size<br>(Diameter):</span></th>
@@ -2990,7 +3199,39 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<td style="width:2px;"></td>
 					<th class="left middle" style="width:112px;">Type:</th>	
 					<td style="width:2px;"></td>
-					<th class="left middle" style="">Note:</th>
+					<th class="left middle" style="">Note:</th>   
+                    
+					--->
+                    
+                    
+					<th class="left middle" style="height:22px;width:48px;">Tree No:</th>
+					<td style="width:2px;"></td>
+					<th class="center middle" style="width:57px;"><span style="font-size:10px;">Size<br>(Diameter):</span></th>
+					<td style="width:2px;"></td>
+					<th class="center middle" style="width:75px;"><span style="font-size:10px;">Permit Issuance<br>Date:</span></th>
+					<td style="width:2px;"></td>
+					<th class="center middle" style="width:70px;"><span style="font-size:10px;">Tree Removal<br>Date:</span></th>
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:240px;">Address:</th>
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:189px;">Species:</th>	
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:112px;">Type:</th>	
+					<td style="width:2px;"></td>
+                    
+              
+              
+                   
+                     <th class="center middle" style="width:60px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Existing Tree Condition:</span></th>
+                     <td style="width:2px;"></td>
+                    <th class="left middle" style="">Note:</th>   
+				 <!---	<th class="center middle" style="width:28px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Note:</span></th>   --->
+                    
+               <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+               
+               
+               
+                    
 				</table>
 				
 				<cfloop index="i" from="1" to="#lngth2#">
@@ -3058,10 +3299,146 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					</cfloop>
 					</select>
 					</td>
-					<td style="width:2px;"></td>
-					<cfset v = ""><cfif trim(getList.note) is not ""><cfset v = trim(getList.note)></cfif>
-					<td class="frm left middle"><input type="Text" name="trnote_#scnt#_#trcnt#" id="trnote_#scnt#_#trcnt#" value="#v#" 
-					style="width:237px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#></td>
+                    
+                    
+                    
+                    
+                    
+                    
+                     								<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                                                            <td style="width:2px;"></td>
+                                                            <td class="frm left middle">
+                                                            <select name="trExistingCondition_#scnt#_#trcnt#" id="trExistingCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:60px;height:20px;font-size:9px;" #trdis#>
+                                                            <!--- <option value=""></option> --->
+                                                            <cfloop query="getTreeExistingCondition">
+                                                                       <cfset sel = "">
+                                                                       <cfif getList.Removals_Existing_Tree_Condition is id>
+                                                                           <cfset sel = "selected">
+                                                                       </cfif>
+                                                                <option value="#id#" #sel#>#value#</option>
+                                                            </cfloop>
+                                                            </select>
+                                                            </td>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+					
+                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                             <!--- popup text input  --->
+                             
+                             
+                    
+                    
+                    <td style="width:2px;"></td>
+                    
+					   <cfset v = "">
+					   <cfif trim(getList.note) is not "">
+					       <cfset v = trim(getList.note)>
+                       </cfif>
+                     
+                     
+                    <!---   
+					<td class="frm left middle">
+                          <input type="Text" name="trnote_#scnt#_#trcnt#" id="trnote_#scnt#_#trcnt#" value="#v#" 
+					          style="width:237px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#>
+                    </td>
+                    --->
+                    
+                    
+                    
+					<td class="frm left middle" style="width:28px;">
+                        <div style="position:relative;left:7px;top:-1px">
+                            <a href="" onClick="$('#chr(35)#trnotediv_#scnt#_#trcnt#').toggle();return false;">
+                            
+                            
+                                      						<cfif len(trim(v)) EQ 0>
+                                                                 <img id="trnoteicon_#scnt#_#trcnt#"  src="../images/rep.gif" width="12" height="14" alt="Note" title="Note">
+                                                              <cfelse>
+                                                              
+                                                                  <img id="trnoteicon_#scnt#_#trcnt#" src="../images/rep3.gif" width="12" height="14" alt="Note" title="Note">
+                                                               </cfif> 
+                                       
+                            </a>
+                        </div>
+					</td>
+                    
+                    
+                    
+                    
+                    
+                    <td style="width:0px;position:absolute;">
+                            <div id="trnotediv_#scnt#_#trcnt#" style="position:absolute;height:30px;width:400px;top:-2px;left:-456px;border:0px red solid;background:white;display:none;">
+                                <table cellpadding="0" cellspacing="0" border="0" class="frame" style="width:100%;position:relative;top:0px;border-width:1px;">
+                                <tr><td colspan="2" style="height:1px;"></td></tr>
+                                <tr>
+                                <td style="width:1px;"></td>
+                                <th class="left middle" style="width:28px;height:24px;"><span style="font-size:10px;">Note:</span></th>
+                                <td style="width:2px;"></td>
+                                <cfset v = ""><cfif trim(getList.note) is not ""><cfset v = trim(getList.note)></cfif>
+                                <td class="frm left middle" style=""><input type="Text" name="trnote_#scnt#_#trcnt#" id="trnote_#scnt#_#trcnt#" value="#v#" 
+                            style="width:354px;height:20px;padding:0px 2px 0px 4px;font-size:10px;top:-1px;position:relative;" class="roundedsmall" #trdis#></td>
+                                <td style="width:1px;"></td>
+                                </tr>
+                                <tr><td colspan="2" style="height:1px;"></td></tr>
+                                </table>
+                            </div>
+					</td>
+                    
+                 
+								 <!---  --------- dynamically add jquery script attache to individual note input,  handle note keyup event, change icon ------------------     --->
+                                 
+                                     <script>
+                                               $( '#chr(35)#trnote_#scnt#_#trcnt#').keyup(function( event ) {
+													 
+													  // console.log('key up -->',$( '#chr(35)#trnote_#scnt#_#trcnt#').val() )
+													  var  _note_val = $( '#chr(35)#trnote_#scnt#_#trcnt#').val();
+													 
+													     if (_note_val.length > 0) {
+															
+															   $( '#chr(35)#trnoteicon_#scnt#_#trcnt#').attr('src', '../images/rep3.gif')
+															     
+																 
+														 }else {
+															
+															   $( '#chr(35)#trnoteicon_#scnt#_#trcnt#').attr('src', '../images/rep.gif')
+														 }
+													 
+													 
+																								   })
+									          
+                                    
+                                    
+                                     </script>
+                    
+                                 <!---  --------- end ------------ dynamically add jquery script attache to individual note input,  handle note keyup event, change icon ------------------     --->
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                    
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+                    
+                    
+                    
 				</table>
 				</div>
 				</cfloop>
@@ -3096,7 +3473,15 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Plantings</span>
 					<span style="position:relative;top:0px;left:25px;">(Total: <strong><span id="tp_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
 					<th class="drk right middle"><span style="position:relative;top:1px;">
-					<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
+                    
+					
+                     <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+                    <!---   --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
+						<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>
+                        <!--- cfif session.user_level gte 0 AND session.user_power gte 0 --->
+                    
+                    
+                    
 					<a href="" onClick="addTree('add',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Planting" style="position:relative;right:4px;"></a>
 					<a href="" onClick="delTree('add',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Planting" style="position:relative;right:2px;"></a>
 					</cfif>
@@ -3109,21 +3494,35 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<td colspan="2" style="padding:0px;">
 				
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-					<th class="center middle" style="height:28px;width:30px;"><span style="font-size:10px;">Tree<br>No:</span></th>
+                
+                
+                <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                
+					<th class="center middle" style="height:28px;width:28px;"><span style="font-size:10px;">Tree<br>No:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:47px;"><span style="font-size:10px;">Box<br>Size:</span></th>
+                    
+                     
+
+                              <!--- >Box<br>Size:  to  DBH  --->
+                    
+					          <!--- th class="center middle" style="width:47px;"><span style="font-size:10px;">Box<br>Size:</span></th --->
+                               <th class="center middle" style="width:44px;"><span style="font-size:10px;">DBH:</span></th>
+					
+                   
+                    
+                    
+                    <td style="width:2px;"></td>
+					<th class="center middle" style="width:60px;"><span style="font-size:10px;">Permit<br>Issuance<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Permit<br>Issuance<br>Date:</span></th>
+					<th class="center middle" style="width:60px;"><span style="font-size:10px;">Tree<br>Planting<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Tree<br>Planting<br>Date:</span></th>
+					<th class="center middle" style="width:60px;"><span style="font-size:10px;">Start<br>Watering<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Start<br>Watering<br>Date:</span></th>
+					<th class="center middle" style="width:60px;"><span style="font-size:10px;">End<br>Watering<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:61px;"><span style="font-size:10px;">End<br>Watering<br>Date:</span></th>
+					<th class="left middle" style="width:128px;"><span style="font-size:10px;">Address:</span></th>
 					<td style="width:2px;"></td>
-					<th class="left middle" style="width:190px;"><span style="font-size:10px;">Address:</span></th>
-					<td style="width:2px;"></td>
-					<th class="left middle" style="width:118px;"><span style="font-size:10px;">Species:</span></th>		
+					<th class="left middle" style="width:95px;"><span style="font-size:10px;">Species:</span></th>		
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:53px;"><span style="font-size:10px;">Parkway or<br>Tree Well<br>Size:</span></th>
 					<td style="width:2px;"></td>
@@ -3133,13 +3532,36 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:48px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Post<br>Inspected:</span></th>	
 					<td style="width:2px;"></td>
-					<th class="left middle" ><span style="font-size:10px;">Type:</span></th>	
+                    
+                  
+                    
+							<!---   <th class="left middle" ><span style="font-size:10px;">Type:</span></th>	--->
+                   			 <th class="center middle" style="width:95px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Planted By:</span></th>	
+                    
+                    
+                    
+                    <td style="width:2px;"></td>
+					<th class="center middle" style="width:32px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Offsite:</span></th>	
 					<td style="width:2px;"></td>
-					<th class="left middle" style="width:32px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Offsite:</span></th>	
-					<td style="width:2px;"></td>
+                    
+                    
+                    
+                            <th class="center middle" style="width:60px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Planted Tree Condition:</span></th>	
+                    
+                    
+                   
+                    
+                    
+                    
+                    
+                    <td style="width:2px;"></td>
 					<th class="center middle" style="width:28px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Note:</span></th>
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:16px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;"></span></th>
+                    
+                    
+                    
+                     <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
 
 				</table>
 				
@@ -3155,16 +3577,21 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<div id="tr_add_div_#scnt#_#trcnt#" style="display:#vis#;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;"><tr><td height="2px;"></td></tr></table>
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+                
+                
+                  <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                
+                
 					<cfquery name="getList" dbtype="query">
 					SELECT * FROM getTreeListInfo WHERE action_type = 1 AND group_no = #scnt# AND tree_no = #trcnt#
 					</cfquery>
-					<td class="frm left middle" style="width:29px;height:26px;">
+					<td class="frm left middle" style="width:28px;height:26px;">
 					<cfset v = 24><cfif trim(getList.tree_box_size) is not "">
 					<cfset v = trim(getList.tree_box_size)></cfif>
 					<input type="Text" name="tpcnt_#scnt#_#trcnt#" id="tpcnt_#scnt#_#trcnt#" value="#trcnt#" 
 					style="width:26px;height:20px;padding:0px;" class="center roundedsmall" disabled></td>
 					<td style="width:2px;"></td>
-					<td class="frm left middle" style="width:46px;">
+					<td class="frm left middle" style="width:44px;">
 					<select name="tpdia_#scnt#_#trcnt#" id="tpdia_#scnt#_#trcnt#" class="roundedsmall" style="width:45px;height:20px;font-size:9px;" onChange="calcTrees();" #trdis#>
 					<cfloop index="i" from="1" to="#arrayLen(arrDia)#">
 						<cfset sel = ""><cfif arrDia[i] is v><cfset sel = "selected"></cfif>
@@ -3196,17 +3623,27 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<cfset v = "">
 					<cfif trim(getList.address) is not ""><cfset v = trim(getList.address)></cfif>
 					<cfif getList.recordcount is 0><cfset v = getSite.address></cfif>
-					<td class="frm left middle" style="width:191px;"><input type="Text" name="tpaddr_#scnt#_#trcnt#" id="tpaddr_#scnt#_#trcnt#" value="#v#" 
-					style="width:188px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" class="roundedsmall" #trdis#></td>
+                    
+                    
+                    
+					<td class="frm left middle" style="width:132px;">
+                             <input type="Text" name="tpaddr_#scnt#_#trcnt#" id="tpaddr_#scnt#_#trcnt#" value="#v#" 
+									style="width:131px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" class="roundedsmall" #trdis#>
+                    </td>
+                    
+                    
+                    
 					<td style="width:2px;"></td>
-					<td class="frm left middle" style="width:119px;">
-					<div class="ui-widget">
-					<cfset v = ""><cfif trim(getList.species) is not ""><cfset v = trim(getList.species)></cfif>
-  					<label for="tp_species_#scnt#_#trcnt#"></label>
-					<input type="Text" name="tpspecies_#scnt#_#trcnt#" id="tpspecies_#scnt#_#trcnt#" value="#v#" 
-					style="width:116px;height:20px;padding:0px 2px 0px 4px;font-size:9px;" class="roundedsmall" #trdis#>
-					</div>
+					<td class="frm left middle" style="width:101px;">
+                        <div class="ui-widget">
+							<cfset v = ""><cfif trim(getList.species) is not ""><cfset v = trim(getList.species)></cfif>
+                            <label for="tp_species_#scnt#_#trcnt#"></label>
+                            <input type="Text" name="tpspecies_#scnt#_#trcnt#" id="tpspecies_#scnt#_#trcnt#" value="#v#" 
+                            style="width:99px;height:20px;padding:0px 2px 0px 4px;font-size:9px;" class="roundedsmall" #trdis#>
+                        </div>
 					</td>	
+
+
 
 					<td style="width:2px;"></td>
 					<cfset v = ""><cfif trim(getList.parkway_treewell_size) is not ""><cfset v = trim(getList.parkway_treewell_size)></cfif>
@@ -3241,16 +3678,73 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					</select>
 					</td>
 					
-					<td style="width:2px;"></td>
+                    
+                    <td style="width:2px;"></td>
 					<cfset v = ""><cfif getList.offsite is 1><cfset v = "checked"></cfif>
 					<td class="frm left middle" style="width:32px;">
 					<div style="position:relative;left:5px;"><input id="tpoffsite_#scnt#_#trcnt#" name="tpoffsite_#scnt#_#trcnt#" type="checkbox" #v# #trdis#></div>
 					</td>
+                    
+                    
+                  
+                    
+                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                            <td style="width:2px;"></td>
+                            <td class="frm left middle">
+                            <select name="tpPlantedCondition_#scnt#_#trcnt#" id="tpPlantedCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:60px;height:20px;font-size:9px;" #trdis#>
+                            <!--- <option value=""></option> --->
+                            <cfloop query="getTreePlantedCondition">
+                                       <cfset sel = "">
+								       <cfif getList.Planted_Tree_Condition is id>
+									       <cfset sel = "selected">
+                                       </cfif>
+                                <option value="#id#" #sel#>#value#</option>
+                            </cfloop>
+                            </select>
+                            </td>
+                    
+                    
+                    
+                    
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+					
 					
 					<td style="width:2px;"></td>
 					<td class="frm left middle" style="width:28px;">
 					<div style="position:relative;left:7px;top:-1px">
-					<a href="" onClick="$('#chr(35)#tpnotediv_#scnt#_#trcnt#').toggle();return false;"><img src="../images/rep.gif" width="12" height="14" alt="Note" title="Note"></a>
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+
+       					<!---  change note icon if it has content  --->
+                        
+                        
+                                     <cfset v = "">
+													<cfif trim(getList.note) is not "">
+													     <cfset v = trim(getList.note)>
+                                                    </cfif>
+                        
+                    
+                                <a href="" onClick="$('#chr(35)#tpnotediv_#scnt#_#trcnt#').toggle();return false;">
+                                
+                                
+                                
+                                                                         <cfif len(trim(v)) EQ 0>
+                                                                             <img id="tpnoteicon_#scnt#_#trcnt#"  src="../images/rep.gif" width="12" height="14" alt="Note" title="Note">
+                                                                          <cfelse>
+                                                                          
+                                                                              <img id="tpnoteicon_#scnt#_#trcnt#"  src="../images/rep3.gif" width="12" height="14" alt="Note" title="Note">
+                                                                           </cfif> 
+                                           
+                                           
+                                </a>
+                    
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
 					</div>
 					</td>
 					
@@ -3267,10 +3761,16 @@ SELECT * FROM tblTreeTypes ORDER BY id
 						<cfset fuctn = "geocodeTree(#scnt#,#trcnt#,#getList.id#);">
 					</cfif>
 					<cfif (session.user_power lt 0 AND isUFD is false) OR lock eq 1><cfset fuctn = ""></cfif>
+                    
 					<div style="position:relative;left:0px;top:-1px">
-					<a id="tplink_#scnt#_#trcnt#" href="" onClick="#fuctn#return false;"><img id="tpicon_#scnt#_#trcnt#" name="tpicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#"></a>
+					<a id="tplink_#scnt#_#trcnt#" href="" onClick="#fuctn#return false;">
+                                  <img id="tpicon_#scnt#_#trcnt#" name="tpicon_#scnt#_#trcnt#" src="../images/#img#" width="16" height="16" alt="#msg#" title="#msg#">
+                    </a>
 					</div>
-					</td>
+					
+                    
+                    
+                    </td>
 					
 					<td style="width:0px;position:absolute;">
 					<div id="tpnotediv_#scnt#_#trcnt#" style="position:absolute;height:30px;width:400px;top:-2px;left:-456px;border:0px red solid;background:white;display:none;">
@@ -3289,6 +3789,42 @@ SELECT * FROM tblTreeTypes ORDER BY id
 						</table>
 					</div>
 					</td>
+                    
+                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    		<!---  --------- dynamically add jquery script attache to individual note input,  handle note keyup event, change icon ------------------     --->
+                                 
+                                     <script>
+                                               $( '#chr(35)#tpnote_#scnt#_#trcnt#').keyup(function( event ) {
+													 
+													  
+													  var  _note_val = $( '#chr(35)#tpnote_#scnt#_#trcnt#').val();
+													 
+													     if (_note_val.length > 0) {
+															
+															   $( '#chr(35)#tpnoteicon_#scnt#_#trcnt#').attr('src', '../images/rep3.gif')
+															     
+																 
+														 }else {
+															
+															   $( '#chr(35)#tpnoteicon_#scnt#_#trcnt#').attr('src', '../images/rep.gif')
+														 }
+													 
+													 
+																								   })
+									          
+                                    
+                                    
+                                     </script>
+                    
+                                 <!---  --------- end ------------ dynamically add jquery script attache to individual note input,  handle note keyup event, change icon ------------------     --->
+                                    
+                    
+                    
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
 					
 				</table>
 				</div>
@@ -3364,11 +3900,34 @@ SELECT * FROM tblTreeTypes ORDER BY id
 			<tr>
                 <th class="drk left middle" colspan="2" style="height:20px;padding:0px;">
 				 <table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Root Pruning / Shaving</span>
+					
+                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+
+                              <!--- Tree Preservation  --->
+                              
+                    
+					          <!--- <tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Root Pruning / Shaving</span> --->
+                               <tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Preservation</span>
+					
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                   
+                    
+                    
+                    
+                    
 					<span style="position:relative;top:0px;left:25px;">(Total: <strong><span id="trps_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
 					<th class="drk right middle"><span style="position:relative;top:1px;">
                     
-					<cfif session.user_level gte 0 AND session.user_power gte 0 AND lock neq 1>
+					
+                     <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+                     <!---   --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
+						<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>
+                        <!--- cfif session.user_level gte 0 AND session.user_power gte 0 --->
+                    
+                    
+                    
 					<a href="" onClick="addTree('root',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Tree Root Pruning / Shaving" style="position:relative;right:4px;"></a>
 					<a href="" onClick="delTree('root',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Tree Root Pruning / Shaving" style="position:relative;right:2px;"></a>
 					</cfif>
@@ -3386,8 +3945,25 @@ SELECT * FROM tblTreeTypes ORDER BY id
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<th class="center middle" style="height:28px;width:30px;"><span style="font-size:10px;">Tree<br>No:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:47px;"><span style="font-size:10px;">Box<br>Size:</span></th>
-					<td style="width:2px;"></td>
+                    
+                    
+					
+					
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+
+                              <!--- >Box<br>Size:  to  DBH  --->
+                    
+					          <!--- th class="center middle" style="width:47px;"><span style="font-size:10px;">Box<br>Size:</span></th --->
+                               <th class="center middle" style="width:47px;"><span style="font-size:10px;">DBH:</span></th>
+					
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+                    
+                    
+                    
+                    <td style="width:2px;"></td>
 					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Permit<br>Issuance<br>Date:</span></th>
 					<td style="width:2px;"></td>
                     
@@ -3421,8 +3997,24 @@ SELECT * FROM tblTreeTypes ORDER BY id
 					<td style="width:2px;"></td>
 					--->
                     
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <th class="center middle" style="width:60px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Preservation Alternative:</span></th>
+                    <td style="width:2px;"></td>
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
                     <th class="left middle" style="width:95px;padding: 1px 1px 1px 3px;" ><span style="font-size:10px;">Type:</span></th>	
 					<td style="width:2px;"></td>
+                    
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <th class="center middle" style="width:60px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Existing Tree Condition:</span></th>
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
                     
                     <!---
 					<th class="left middle" style="width:32px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Offsite:</span></th>	
@@ -3731,6 +4323,35 @@ SELECT * FROM tblTreeTypes ORDER BY id
 													
 													
                                                     
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                                                          <td style="width:2px;"></td>
+                                                            <td class="frm left middle">
+                                                            <select name="trpsPreservationAlternative_#scnt#_#trcnt#" id="trpsPreservationAlternative_#scnt#_#trcnt#" class="roundedsmall" style="width:60px;height:20px;font-size:9px;" #trdis#>
+                                                            <!--- <option value=""></option> --->
+                                                            <cfloop query="getTreePreservationAlternative">
+                                                                       <cfset sel = "">
+                                                                       <cfif getList.Preservation_Alternative is id>
+                                                                           <cfset sel = "selected">
+                                                                       </cfif>
+                                                                <option value="#id#" #sel#>#value#</option>
+                                                            </cfloop>
+                                                            </select>
+                                                            </td>
+                                                    
+                                                            <td style="width:2px;"></td>
+                                                    
+                                                    
+                                                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
                                                     <td class="frm left middle">
                                                         <select name="trpstype_#scnt#_#trcnt#" id="trpstype_#scnt#_#trcnt#" class="roundedsmall" style="width:95px;height:20px;font-size:9px;" #trdis#>
                                                         <!--- <option value=""></option> --->
@@ -3778,19 +4399,158 @@ SELECT * FROM tblTreeTypes ORDER BY id
 													--->
 													
                                                     
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                   
+                                                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                                                          
+                                                            <td class="frm left middle">
+                                                            <select name="trpsExistingCondition_#scnt#_#trcnt#" id="trpsExistingCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:60px;height:20px;font-size:9px;" #trdis#>
+                                                            <!--- <option value=""></option> --->
+                                                            <cfloop query="getTreeExistingCondition">
+                                                                       <cfset sel = "">
+                                                                       <cfif getList.Preservation_Existing_Tree_Condition is id>
+                                                                           <cfset sel = "selected">
+                                                                       </cfif>
+                                                                <option value="#id#" #sel#>#value#</option>
+                                                            </cfloop>
+                                                            </select>
+                                                            </td>
+                                                    
+                                                            <td style="width:2px;"></td>
+                                                    
+                                                    
+                                                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                   
+                                                    
+                                                    
+													
+                                                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                             <!--- popup text input  --->
+                             
+                             
+                    
+                    
+                  								 
+                    
+					   
                                                     <cfset v = "">
 													<cfif trim(getList.note) is not "">
 													     <cfset v = trim(getList.note)>
                                                     </cfif>
+                     
+                     
+												<!---   
+                                                 <td class="frm left middle">
+                                                                                
+                                                                                       <input type="Text" name="trpsnote_#scnt#_#trcnt#" id="trpsnote_#scnt#_#trcnt#" value="#v#" 
+                                                                                                  style="width:237px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#>
+                                                                                </td>
+                                                --->
+                    
+                    
+                    
+                                            <td class="frm left middle" style="width:28px;">
+                                                <div style="position:relative;left:7px;top:-1px">
+                                                    <a href="" onClick="$('#chr(35)#trpsnotediv_#scnt#_#trcnt#').toggle();return false;">
                                                     
-					                                <td class="frm left middle">
+                                                              <cfif len(trim(v)) EQ 0>
+                                                                 <img id="trpsnoteicon_#scnt#_#trcnt#" src="../images/rep.gif" width="12" height="14" alt="Note" title="Note">
+                                                              <cfelse>
+                                                              
+                                                                  <img id="trpsnoteicon_#scnt#_#trcnt#" src="../images/rep3.gif" width="12" height="14" alt="Note" title="Note">
+                                                               </cfif>  
+                                                                 
+                                                     </a>
+                                                </div>
+                                            </td>
+                    
+                    
+                    
+                    
+                    
+                    <td style="width:0px;position:absolute;">
+                            <div id="trpsnotediv_#scnt#_#trcnt#" style="position:absolute;height:30px;width:400px;top:-2px;left:-456px;border:0px red solid;background:white;display:none;">
+                                <table cellpadding="0" cellspacing="0" border="0" class="frame" style="width:100%;position:relative;top:0px;border-width:1px;">
+                                <tr><td colspan="2" style="height:1px;"></td></tr>
+                                <tr>
+                                <td style="width:1px;"></td>
+                                <th class="left middle" style="width:28px;height:24px;"><span style="font-size:10px;">Note:</span></th>
+                                <td style="width:2px;"></td>
+                                <cfset v = ""><cfif trim(getList.note) is not ""><cfset v = trim(getList.note)></cfif>
+                                <td class="frm left middle" style=""><input type="Text" name="trpsnote_#scnt#_#trcnt#" id="trpsnote_#scnt#_#trcnt#" value="#v#" 
+                            style="width:354px;height:20px;padding:0px 2px 0px 4px;font-size:10px;top:-1px;position:relative;" class="roundedsmall" #trdis#></td>
+                                <td style="width:1px;"></td>
+                                </tr>
+                                <tr><td colspan="2" style="height:1px;"></td></tr>
+                                </table>
+                            </div>
+					</td>
+                    
+                 
+                 
+                    
+                    
+                    
+                    
+                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    		<!---  --------- dynamically add jquery script attache to individual note input,  handle note keyup event, change icon ------------------     --->
+                                 
+                                     <script>
+                                               $( '#chr(35)#trpsnote_#scnt#_#trcnt#').keyup(function( event ) {
+													 
+													  
+													  var  _note_val = $( '#chr(35)#trpsnote_#scnt#_#trcnt#').val();
+													 
+													     if (_note_val.length > 0) {
+															
+															   $( '#chr(35)#trpsnoteicon_#scnt#_#trcnt#').attr('src', '../images/rep3.gif')
+															     
+																 
+														 }else {
+															
+															   $( '#chr(35)#trpsnoteicon_#scnt#_#trcnt#').attr('src', '../images/rep.gif')
+														 }
+													 
+													 
+																								   })
+									          
+                                    
+                                    
+                                     </script>
+                    
+                                 <!---  --------- end ------------ dynamically add jquery script attache to individual note input,  handle note keyup event, change icon ------------------     --->
+                    
+                    
+                    
+                    
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
                                                     
-                                                           <input type="Text" name="trpsnote_#scnt#_#trcnt#" id="trpsnote_#scnt#_#trcnt#" value="#v#" 
-					                                                  style="width:237px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#>
-                                                    </td>
                                                     
                                                     
-													
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
                                                     
                                                     
                                                     
@@ -4147,18 +4907,92 @@ SELECT * FROM tblTreeTypes ORDER BY id
 							<tr>
 								<th class="left middle" style="height:30px;width:220px;">Tree Removal Contractor:&nbsp;</th>
 								<td style="width:2px;"></td>
-								<cfset v = ""><cfif trim(getTreeInfo.tree_removal_contractor) is not "">
-								<cfset v = trim(getTreeInfo.tree_removal_contractor)></cfif>
-								<td class="frm left middle" style="width:375px;"><input type="Text" name="tree_trc" id="tree_trc" value="#v#" 
-								style="width:370px;" class="rounded"></td>
+                                
+								<cfset v = "">
+								<cfif trim(getTreeInfo.tree_removal_contractor) is not "">
+								   <cfset v = trim(getTreeInfo.tree_removal_contractor)>
+                                </cfif>
+                                
+                                
+                                
+                               
+                                
+                                
+								<td class="frm left middle" style="width:375px;">
+                                    <input type="Text" name="tree_trc" id="tree_trc" value="#v#" 	style="width:370px;" class="rounded">
+                                
+                                 </td>
+                                
+                                
+                                
+                                
+                               <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                                      
+                                      <!---  11, 12 pending
+									  
+									  
+									     11, 12 :  existing text value are not possible converted to drop down list.
+											The possible way is to add a completely new field " Tree Contractor Type"
+											Editable dropdown list is more complex. (pending)
+									        
+                                      
+                                      <select name="tree_trc" id="tree_trc" class="roundedsmall" style="width:370px;height:20px;font-size:9px;">
+											<!--- <option value=""></option> --->
+                                            <cfloop query="getContractorType">
+                                                     
+                                                     
+                                                      <cfset sel = "">
+                                                      <cfif v eq type>
+                                                            <cfset sel = "selected">
+                                                      </cfif>
+                                                
+                                                
+                                                
+                                                
+                                                 <cfif v eq 'other'>
+                                                 
+                                                        <option class="editable" value="#id#" #sel#>#type#</option>
+                                                 
+                                                 
+                                                 <cfelse>
+                                                      
+                                                    <option value="#id#" #sel#>#type#</option>
+                                                
+                                                </cfif>
+                                                
+                                            </cfloop>
+                                        </select>
+                                        <input class="editOption" style="display:none;" placeholder="user input"></input>
+                                      
+                                      
+                                      --->
+                                      
+                               
+                                
+                                
+                                <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+
+                                
+                                
+                                
 								<td></td>
+                                
 								<td style="width:2px;"></td>
-								<cfset v = ""><cfif getTreeInfo.pre_inspection_date is not ""><cfset v = dateformat(getTreeInfo.pre_inspection_date,"MM/DD/YYYY")></cfif>
+                                
+								     <cfset v = "">
+								     <cfif getTreeInfo.pre_inspection_date is not "">
+									      <cfset v = dateformat(getTreeInfo.pre_inspection_date,"MM/DD/YYYY")>
+                                     </cfif>
+                                     
+                                     
 								<th class="left middle" style="height:30px;width:120px;">Pre-Inspection Date:&nbsp;</th>
 								<td style="width:2px;"></td>
-								<td class="frm left middle" style="width:149px;"><input type="Text" name="tree_preinspdt" id="tree_preinspdt" value="#v#" 
-								style="width:144px;text-align:center;" class="rounded"></td>
+                                
+                                
+								<td class="frm left middle" style="width:149px;">
+                                     <input type="Text" name="tree_preinspdt" id="tree_preinspdt" value="#v#" 	style="width:144px;text-align:center;" class="rounded"></td>
 								<td style="width:2px;"></td>
+                                
 								<th class="left middle" style="height:30px;width:183px;"></th>
 							</tr>
 						</table>
@@ -5904,16 +6738,70 @@ function submitForm7() {
 		
 		console.log(data);
 		
+		
+			<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+
+				   <!---  refresh this page to reflect changed note icon   --->
+			
+			           <!--- because use jquery do front end keyup change icon, no need reload page here 
+					   console.log('reloading..........')
+							
+					  	location.reload(true);  
+						
+						--->
+						
+						
+					  
+					<!---     
+					
+					   	window.location.href = window.location.href;
+					   
+						history.go(0);
+					
+					 --->
+					
+					
+					<!---  
+					            
+					           user dialog below start another js thread. It is different from the current js thread, 
+					           reload page wourld not work if you put reload function inside or after below section
+							   
+							   reload page function must stay in current thread, before below section. 
+							   
+							   
+					
+							if(data.RESULT != "Success") {
+									
+									
+									
+								showMsg5(data.RESULT,1);   
+									
+									return false;	
+								}
+					
+					
+					
+					
+					--->
+					
+			
+			<!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+		
+		
+		
+		
 
              <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
               $(".overlay").hide();	
              <!--- ---------- End -- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
 
 
-		if(data.RESULT != "Success") {
-			showMsg5(data.RESULT,1);
-			return false;	
-		}
+		
+		
+		
+		
+		
+		
 		
 		$('#box_tree').hide();
 		$('#msg5').hide();
@@ -6072,7 +6960,7 @@ function showMsg5(txt,cnt) {
 function addTree(typ,scnt) {
 	
 	
-	console.log(typ,scnt);
+	console.log('addTree clicked', 'typ--',typ, 'scnt',scnt);
 	
 	var cnt = parseInt($('#tr_' + typ + '_cnt_' + scnt).val());
 	
@@ -6177,10 +7065,15 @@ function calcTrees() {
 
 function calcTrees_root() {
 	var cnt = parseInt($('#trees_sir_cnt').val());
+	
+	console.log('calcTrees_root, cnt :', cnt )
+	
 	var tot = 0; 
 	var tot2 = 0;
 	for (var i = 1; i < cnt+1; i++) {
 		var cnt2 = parseInt($('#tr_root_cnt_' + i).val());
+		
+		 console.log('calcTrees_root, cnt2 :', cnt2 )
 		
 		for (var j = 1; j < cnt2+1; j++) {
 			var v = parseInt($("#trpsdia_" + i + "_" + j).val());
@@ -6189,9 +7082,12 @@ function calcTrees_root() {
 				//console.log("tot=" + tot);
 			}
 		}
+		
+		console.log('calcTrees_root, tot :', tot )
+		
 		tot2 = tot2 + cnt2;
 	}
-	$('#tree_TREE_ROOT_PRUNING_L_SHAVING__PER_TREE___QUANTITY').val(tot);
+	$('#tree_TREE_ROOT_PRUNING_L_SHAVING__PER_TREE___QUANTITY').val(tot2);
 	
 	/*
 	if ($('#tree_lock').is(':checked') == false) {	
