@@ -112,15 +112,6 @@ SELECT DISTINCT category FROM getType ORDER BY category
 
 
 
-<!--- joe hu 2019-8 add dropdown --->
-            <cfquery name="getTreeAction" datasource="#request.sqlconn#" dbtype="ODBC">
-            SELECT * FROM tblTreeActions where id <> 3 ORDER BY id
-            </cfquery>
- <!---   end  -----  joe hu 2019-8 add dropdown --->
-
-
-
-
 
 
 
@@ -303,7 +294,7 @@ SELECT DISTINCT category FROM getType ORDER BY category
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
-						<th class="left middle" style="height:22px;width:80px;">Field Assessed:</th>
+						<th class="left middle" style="height:22px;width:100px;">Field Assessed:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:60px;">
 						<select name="ss_assessed" id="ss_assessed" class="roundedsmall" style="width:55px;height:20px;padding:0px 0px 0px 4px;">
@@ -319,10 +310,10 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						<td class="frm" style="width:60px;">
 						<input type="Text" name="ss_assessor" id="ss_assessor" value="" style="width:55px;" class="rounded"></td> --->
 						<td style="width:2px;"></td>
-						<th class="left middle" style="width:95px;">Repairs Required:</th>
+						<th class="left middle" style="width:115px;">Repairs Required:</th>
 						<td style="width:2px;"></td>
-						<td class="frm"  style="width:45px;">
-						<select name="ss_repairs" id="ss_repairs" class="roundedsmall" style="width:43px;height:20px;padding:0px 0px 0px 4px;">
+						<td class="frm"  style="width:78px;">
+						<select name="ss_repairs" id="ss_repairs" class="roundedsmall" style="width:73px;height:20px;padding:0px 0px 0px 4px;">
 						<option value=""></option>
 						<cfloop query="getYesNo">
 							<option value="#id#">#value#</option>
@@ -360,7 +351,7 @@ SELECT DISTINCT category FROM getType ORDER BY category
                                 
 						
 						<td style="width:2px;"></td>
-						<th class="left middle" style="width:70px;">Site Deleted:</th>
+						<th class="left middle" style="width:100px;">Site Deleted:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:55px;">
 						<select name="ss_removed" id="ss_removed" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
@@ -374,7 +365,7 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						</td>
 						
 						<td style="width:2px;"></td>
-						<th class="left middle" style="width:88px;">Curb Ramp Only:</th>
+						<th class="left middle" style="width:108px;">Curb Ramp Only:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:55px;">
 						<select name="ss_curbramp" id="ss_curbramp" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
@@ -390,7 +381,7 @@ SELECT DISTINCT category FROM getType ORDER BY category
                         
                              
                            	<td style="width:2px;"></td>
-						<th class="left middle" style="width:45px;">Locked:</th>
+						<th class="left middle" style="width:88px;">Locked:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:53px;">
 						<select name="ss_locked" id="ss_locked" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
@@ -404,25 +395,6 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						
                         
                         <!--- end ---- joe hu 2019-4 multi change --->
-                        
-                        
-                        
-                        <!--- joe hu 2019-8 add dropdown --->
-                        
-                        <td style="width:2px;"></td>						
-						<th class="left middle" style="width:45px;">Trees:</th>
-						<td style="width:2px;"></td>
-						<td class="frm"  style="width:98px;">
-						<select name="ss_action" id="ss_action" class="roundedsmall" style="width:93px;height:20px;padding:0px 0px 0px 4px;">
-						<option value=""></option>
-						<cfloop query="getTreeAction">
-							<option value="#id#">#Value2#</option>
-						</cfloop>
-						</select>
-						</td>
-                        
-                        
-                        <!---   end  -----  joe hu 2019-8 add dropdown --->
                         
                         
                         
@@ -887,7 +859,7 @@ function submitForm() {
 	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
 		
 		
-		var sno; var ssfx; var sp; var sg; var sname; var saddr; var stype; var swo; var sid; var spid; var spry; var cd; var tc; var tcon; var eest; var ncurb; 
+		var sno; var ssfx; var sp; var sg; var sname; var saddr; var stype; var swo; var sid; var spid; var spry; var cd; var tc; var tcon; var eest; var ncurb
 		$.each(query.COLUMNS, function(i, item) {
 			switch (item) {
 			case "ID": sid = i; break;

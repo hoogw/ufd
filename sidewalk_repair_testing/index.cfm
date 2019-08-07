@@ -24,6 +24,9 @@ findNoCase('Touch', cgi.http_user_agent,1)>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+<link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+
+
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <cfif shellName is "Tablet">
 <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=2, minimum-scale=1, user-scalable=1.0">

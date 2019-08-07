@@ -50,7 +50,7 @@ findNoCase('Touch', cgi.http_user_agent,1)>
 <cfinclude template="../css/css.cfm">
 
 
-
+ <script language="JavaScript" src="../js/progressing_loading_sign.js" type="text/javascript"></script>
 
 </head>
 
@@ -73,61 +73,10 @@ SELECT * FROM tblPackageGroup ORDER BY package_group
 SELECT * FROM tblType ORDER BY type
 </cfquery>
 
-
-
-
-
-<!--- Get Specail Fund --->
-<cfquery name="getSpecialFund" datasource="#request.sqlconn#" dbtype="ODBC">
-SELECT * FROM tblSpecialFund ORDER BY id
-</cfquery>
-
-
-
-
-<!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
-
-  <!--- commnent out this section replace by below section 
-
 <!--- Get Category Type --->
 <cfquery name="getCategory" dbtype="query">
 SELECT DISTINCT category FROM getType ORDER BY category
 </cfquery>
-
-    --->
-
-
-        <!--- Get all Category --->
-        <cfquery name="getCategory" datasource="#request.sqlconn#" dbtype="ODBC">
-              SELECT * FROM vwCategory
-        </cfquery>
-        
-
-
-
-<!---  ----- end ------ joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
-
-
-
-
-
-
-<!--- joe hu 2019-8 add dropdown --->
-            <cfquery name="getTreeAction" datasource="#request.sqlconn#" dbtype="ODBC">
-            SELECT * FROM tblTreeActions where id <> 3 ORDER BY id
-            </cfquery>
- <!---   end  -----  joe hu 2019-8 add dropdown --->
-
-
-
-
-
-
-
-
-
-
-
 
 
 <cfset flw = "style='overflow:auto;'"><cfif shellName is "Handheld"><cfset flw="style='overflow:auto;'"></cfif>
@@ -222,24 +171,16 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						<td class="frm" style="width:55px;">
 						<input type="Text" name="ss_pno" id="ss_pno" value="" style="width:50px;height:20px;padding:0px 0px 0px 4px;" class="roundedsmall"></td>
 						<td style="width:2px;"></td>						
-						
-                        
-                        
-                        
-                        <th class="left middle" style="width:35px;">Type:</th>
+						<th class="left middle" style="width:35px;">Type:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:188px;">
-                            <select name="ss_category" id="ss_category" class="roundedsmall" style="width:183px;height:20px;padding:0px 0px 0px 4px;">
-                                    <option value=""></option>
-                                    <cfloop query="getCategory">
-                                        <option value="#category#">#category#</option>
-                                    </cfloop>
-                            </select>
+						<select name="ss_category" id="ss_category" class="roundedsmall" style="width:183px;height:20px;padding:0px 0px 0px 4px;">
+						<option value=""></option>
+						<cfloop query="getCategory">
+							<option value="#category#">#category#</option>
+						</cfloop>
+						</select>
 						</td>
-                        
-                        
-                        
-                        
 						
 						<td style="width:2px;"></td>
 						<th class="left middle" style="width:80px;">Council District:</th>
@@ -303,7 +244,7 @@ SELECT DISTINCT category FROM getType ORDER BY category
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
-						<th class="left middle" style="height:22px;width:80px;">Field Assessed:</th>
+						<th class="left middle" style="height:22px;width:81px;">Field Assessed:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:60px;">
 						<select name="ss_assessed" id="ss_assessed" class="roundedsmall" style="width:55px;height:20px;padding:0px 0px 0px 4px;">
@@ -321,8 +262,8 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						<td style="width:2px;"></td>
 						<th class="left middle" style="width:95px;">Repairs Required:</th>
 						<td style="width:2px;"></td>
-						<td class="frm"  style="width:45px;">
-						<select name="ss_repairs" id="ss_repairs" class="roundedsmall" style="width:43px;height:20px;padding:0px 0px 0px 4px;">
+						<td class="frm"  style="width:78px;">
+						<select name="ss_repairs" id="ss_repairs" class="roundedsmall" style="width:73px;height:20px;padding:0px 0px 0px 4px;">
 						<option value=""></option>
 						<cfloop query="getYesNo">
 							<option value="#id#">#value#</option>
@@ -334,13 +275,8 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						<td style="width:2px;"></td>
 						<td class="frm" style="width:50px;">
 						<input type="Text" name="ss_qc" id="ss_qc" value="" style="width:45px;" class="rounded"></td> --->
-                        
-                        
-                        
-                        <!---
 						<td style="width:2px;"></td>
 						<th class="left middle" style="width:85px;">Severity Index:</th>
-                        
 						<td style="width:2px;"></td>
 						<td class="frm" style="width:60px;">
 						<select name="ss_severity" id="ss_severity" class="roundedsmall" style="width:55px;height:20px;padding:0px 0px 0px 4px;">
@@ -349,18 +285,10 @@ SELECT DISTINCT category FROM getType ORDER BY category
 							<option value="#i#">#i#</option>
 						</cfloop>
 						</select>
-						</td>	
-                        
-                        --->
-                        		
-                           
-                                
-                                
-                                
-                                
+						</td>			
 						
 						<td style="width:2px;"></td>
-						<th class="left middle" style="width:70px;">Site Deleted:</th>
+						<th class="left middle" style="width:120px;">Site Deleted:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:55px;">
 						<select name="ss_removed" id="ss_removed" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
@@ -374,7 +302,7 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						</td>
 						
 						<td style="width:2px;"></td>
-						<th class="left middle" style="width:88px;">Curb Ramp Only:</th>
+						<th class="left middle" style="width:108px;">Curb Ramp Only:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:55px;">
 						<select name="ss_curbramp" id="ss_curbramp" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
@@ -384,48 +312,8 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						</cfloop>
 						</select>
 						</td>
-                        
-                        
-                         <!--- joe hu 2019-4 multi change --->
-                        
-                             
-                           	<td style="width:2px;"></td>
-						<th class="left middle" style="width:45px;">Locked:</th>
-						<td style="width:2px;"></td>
-						<td class="frm"  style="width:53px;">
-						<select name="ss_locked" id="ss_locked" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
-						<option value=""></option>
-						<cfloop query="getYesNo">
-							<option value="#id#">#value#</option>
-						</cfloop>
-						</select>
-						</td>     
 						
 						
-                        
-                        <!--- end ---- joe hu 2019-4 multi change --->
-                        
-                        
-                        
-                        <!--- joe hu 2019-8 add dropdown --->
-                        
-                        <td style="width:2px;"></td>						
-						<th class="left middle" style="width:45px;">Trees:</th>
-						<td style="width:2px;"></td>
-						<td class="frm"  style="width:98px;">
-						<select name="ss_action" id="ss_action" class="roundedsmall" style="width:93px;height:20px;padding:0px 0px 0px 4px;">
-						<option value=""></option>
-						<cfloop query="getTreeAction">
-							<option value="#id#">#Value2#</option>
-						</cfloop>
-						</select>
-						</td>
-                        
-                        
-                        <!---   end  -----  joe hu 2019-8 add dropdown --->
-                        
-                        
-                        
 						</tr>
 					</table>
 				</td>
@@ -437,21 +325,16 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						<tr>
 						
 						
-						<th class="left middle" style="height:22px;width:70px;">Work Order:</th>
+						<th class="left middle" style="height:22px;width:63px;">Work Order:</th>
 						<td style="width:2px;"></td>
-						<td class="frm" style="width:108px;">
-						<input type="Text" name="ss_wo" id="ss_wo" value="" style="width:103px;height:20px;padding:0px 0px 0px 4px;" class="roundedsmall"></td>
+						<td class="frm" style="width:78px;">
+						<input type="Text" name="ss_wo" id="ss_wo" value="" style="width:73px;height:20px;padding:0px 0px 0px 4px;" class="roundedsmall"></td>
 						<td style="width:2px;"></td>
-						<th class="left middle" style="width:50px;">Keyword:</th>
+						<th class="left middle" style="width:52px;">Keyword:</th>
 						<td style="width:2px;"></td>
-						<td class="frm" style="width:151px;">
-						<input type="Text" name="ss_keyword" id="ss_keyword" value="" style="width:146px;height:20px;padding:0px 0px 0px 4px;" class="roundedsmall"></td>
+						<td class="frm" style="width:121px;">
+						<input type="Text" name="ss_keyword" id="ss_keyword" value="" style="width:116px;height:20px;padding:0px 0px 0px 4px;" class="roundedsmall"></td>
 
-
-
-                    <!--- joe hu 2019-4 multi change --->
-
-                       <!---
 						<td style="width:2px;"></td>
 						<th class="left middle" style="width:99px;">Has Before Image:</th>
 						<td style="width:2px;"></td>
@@ -476,57 +359,8 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						</select>
 						</td>
 						
-                        --->
-                        
 						<td style="width:2px;"></td>
-						<th class="left middle" style="width:60px;">Grievance:</th>
-						<td style="width:2px;"></td>
-						<td class="frm"  style="width:55px;">
-						<select name="ss_grievance" id="ss_grievance" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
-						<option value=""></option>
-						<cfloop query="getYesNo">
-							<option value="#id#">#value#</option>
-						</cfloop>
-						</select>
-						</td>
-						
-					
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                  <!--- end ---- joe hu 2019-4 multi change --->
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        <td style="width:2px;"></td>
-						<th class="left middle" style="width:70px;">Special Fund:</th>
-						<td style="width:2px;"></td>
-						<td class="frm"  style="width:55px;">
-						<select name="ss_specialfund" id="ss_specialfund" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
-						<option value=""></option>  
-						   <cfloop query="getSpecialFund">
-                                        
-                                        <option value="#id#" #sel#>#value#</option>
-                                    </cfloop>
-						</select>
-						</td>
-                        
-                        
-                        
-                        
-                        
-                        
-						<td style="width:2px;"></td>
-						<th class="left middle" style="width:130px;">Certificate of Compliance:</th>
+						<th class="left middle" style="width:131px;">Certificate of Compliance:</th>
 						<td style="width:2px;"></td>
 						<td class="frm"  style="width:55px;">
 						<select name="ss_hascert" id="ss_hascert" class="roundedsmall" style="width:50px;height:20px;padding:0px 0px 0px 4px;">
@@ -536,13 +370,6 @@ SELECT DISTINCT category FROM getType ORDER BY category
 						</cfloop>
 						</select>
 						</td>
-
-
-
-
-
-
-
 
 						</tr>
 					</table>
@@ -668,11 +495,10 @@ SELECT DISTINCT category FROM getType ORDER BY category
 
 </div>
 
-
 <!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (1) --->
-<div class="overlay">
-    <div id="loading-img"></div>
-</div>
+<div id="processing_icon" align="center"></div>
+<div id="result_panel">
+
 
 
 
@@ -709,17 +535,7 @@ style="position:relative;top:10px;left:5px;height:25px;width:100%;border:2px #re
 			<th class="drk center middle" style="width:75px;" onClick="sortTable(11);return false;" onMouseOver="this.style.cursor='pointer';">Total Cost</th>
 			<th class="drk center middle" style="width:75px;" onClick="sortTable(12);return false;" onMouseOver="this.style.cursor='pointer';">Total Concrete</th>
 			<th class="drk center middle" style="width:80px;" onClick="sortTable(8);return false;" onMouseOver="this.style.cursor='pointer';">Subtype</th>
-			
-			<!--- joe hu 2019-4 multi change --->
-			<!--- <th id="fldWO" class="drk center middle" style="width:65px;" onClick="sortTable(9);return false;" onMouseOver="this.style.cursor='pointer';">Work Order</th> --->
-            
-             
-                  <th id="fldWO" class="drk center middle" style="width:65px;" onClick="sortTable(15);return false;" onMouseOver="this.style.cursor='pointer';">Curb Ramps</th>
-            <!--- end ---- joe hu 2019-4 multi change --->
-            
-            
-            
-            
+			<th id="fldWO" class="drk center middle" style="width:65px;" onClick="sortTable(9);return false;" onMouseOver="this.style.cursor='pointer';">Work Order</th>
 			<!--- <th class="drk center middle" style="width:25px;" onclick="sortTable(3);return false;" onmouseover="this.style.cursor='pointer';">CD</th> --->
 		</tr>
 		</table>
@@ -738,7 +554,9 @@ style="position:relative;top:8px;left:5px;height:100%;width:100%;border:2px #req
 <table id="tbl_results" border="0" cellpadding="0" cellspacing="0" ><tr><td></td></tr></table>
 </div>
 
-
+	
+</div> <!--- id="result_panel"   --->    
+    
     
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
 	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
@@ -815,14 +633,6 @@ function sortTable(idx) {
 	case 12: sort.id = idx; sort.dir = dir; sort.order = "total_concrete " + dir + ",location_no,location_suffix"; break;
 	case 13: sort.id = idx; sort.dir = dir; sort.order = "engineers_estimate " + dir + ",location_no,location_suffix"; break;
 	case 14: sort.id = idx; sort.dir = dir; sort.order = "Days_In_Queues " + dir + ",location_no,location_suffix"; break;
-	
-	
-	<!--- joe hu 2019-4 multi change --->
-	case 15: sort.id = idx; sort.dir = dir; sort.order = "number_curbramps " + dir + ",location_no,location_suffix"; break;
-	
-	
-	
-	
 	default: sort.id = 1; sort.dir = "ASC"; sort.order = "";
 	}
 	submitForm();
@@ -854,11 +664,10 @@ function submitForm() {
 	//console.log(frm);
 	//console.log(top.ssearch);
 	
-	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
+	<!---  ---- loading sign started ------  --->
+	 $("#result_panel").hide();
+	 show_loading_img_spinner('processing_icon', 'progressing_loading_sign')
 	
-	$(".overlay").show();
-	
-	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
 	
 	
 	
@@ -879,15 +688,12 @@ function submitForm() {
 		}
 		
 		
-		<!--- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
-	    
-	   
-	    $(".overlay").hide();	
-				
-	   <!--- End ---- joe hu  7/17/2018 ----- add progressing loading sign ------ (2) --->
+		<!---  ---- loading sign ended ------  --->
+		remove_loading_img_spinner('progressing_loading_sign');
+		$("#result_panel").show();
 		
 		
-		var sno; var ssfx; var sp; var sg; var sname; var saddr; var stype; var swo; var sid; var spid; var spry; var cd; var tc; var tcon; var eest; var ncurb; 
+		var sno; var ssfx; var sp; var sg; var sname; var saddr; var stype; var swo; var sid; var spid; var spry; var cd; var tc; var tcon; var eest;
 		$.each(query.COLUMNS, function(i, item) {
 			switch (item) {
 			case "ID": sid = i; break;
@@ -912,11 +718,6 @@ function submitForm() {
 			case "TOTAL_COST": tc = i; break;
 			case "TOTAL_CONCRETE": tcon = i; break;
 			case "ENGINEERS_ESTIMATE": eest = i; break;
-			
-			<!--- joe hu 2019-4 multi change --->
-			case "NUMBER_CURBRAMPS": ncurb = i; break;
-			
-			
 			}
 		});
 		
@@ -963,10 +764,6 @@ function submitForm() {
 				if (item[tcon] == null) {item[tcon] = 0;}
 				if (item[eest] == null) {item[eest] = 0;}
 				
-				<!--- joe hu 2019-4 multi change --->
-				if (item[ncurb] == null) {item[ncurb] = 0;}
-				
-				
 				if (item[scons] != "") {
 					var d = new Date(item[scons]);
 					var mm = d.getMonth() + 1; mm = (mm < 10) ? '0' + mm : mm;
@@ -1003,13 +800,7 @@ function submitForm() {
 				items.push("<td style='width:74px;' class='small center frm'>$" + item[tc].formatMoney(2) + "</td>");
 				items.push("<td style='width:74px;' class='small center frm'>" + item[tcon].toFixed(2).replace('.00','') + "</td>");
 				items.push("<td style='width:79px;' class='small center frm'>" + item[stype] + "</td>");
-				
-				
-				<!--- joe hu 2019-4 multi change --->
-				items.push("<td style='width:66px;' class='small center frm'>" + item[ncurb] + "</td>");
-				
-				
-				<!---items.push("<td style='width:64px;' class='small center frm'>" + item[swo] + "</td>");  --->
+				items.push("<td style='width:64px;' class='small center frm'>" + item[swo] + "</td>");
 				items.push("</tr>");
 			
 			});
@@ -1051,12 +842,9 @@ function trim(stringToTrim) {
 
 function goToSite(sid,spid) {
 	
-	<!--- joe hu  7/13/2018 ----- add progressing loading sign ------ (1) ---> 
-	
-	$(".overlay").show();
-	
-	<!--- End ----joe hu  7/13/2018 ----- add progressing loading sign ------ (1) --->
-	
+	//  ---- loading sign started ------  --->
+	 $("#result_panel").hide();
+	 show_loading_img_spinner('processing_icon', 'progressing_loading_sign')
 	 
 	location.replace(url + "forms/swSiteEdit.cfm?sid=" + sid + "&pid=" + spid + "&search=true");
 }
@@ -1069,141 +857,6 @@ $(function() {
 	$(document).keyup(function (e) { 
 		if (e.keyCode == 13) { submitForm(); }
 	});
-	
-	
-	
-	
-	
-	    
-
-
-<!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
- 
- 
- 
- 
-      
-						  <!--- -------  category on change event -------------  --->
-						  
-									   var _current_subtype =  $("#ss_type").val();
-									   console.log("_current_subtype --",_current_subtype)
-									   
-									   
-									   
-									   $('#ss_category').on('change', function() {
-													
-										console.log(" Category dropdown change to --",this.value)		  
-													  
-											
-									  
-											
-									  var ___url = url + "cfc/sw.cfc?method=getSubTypeByCategory&returnformat=json&queryformat=struct";
-									  
-									  
-									  // Bug fix --- for search only, if category is empty blank, should get all subTypes
-									  if (( this.value == '') || ( this.value == null)) {
-										  ___url = url + "cfc/sw.cfc?method=getAllSubType&returnformat=json&queryformat=struct";
-									  }
-									  
-									  
-									  
-									  var ___category = {"category":this.value};
-						  
-														fetch(___url, 
-															  {
-																 method: 'POST',
-																 body:JSON.stringify(___category)
-															  }
-															)
-															  .then(function (response) 
-																	   {
-																						  
-																			 // if js error here, likely it is coldfusion server output error message instead of valid json 
-																			 // so check coldfusion server response.
-																			   return response.json()
-																			   
-																		})
-																		  
-															   .then(function (result) {
-																				
-																				console.log('getSubTypeByCategory -:-  ', result)
-																			
-																			
-																			// --------rebuild subtype select options -----------------
-																			
-																			
-																			/*       
-																			var options = [
-																							  {text: "one", value: 1},
-																							  {text: "two", value: 2}
-																							];
-																			*/
-																			
-																			
-																			// bug fix, always add a new empty at the begining of array as first top empty option. 
-																			result.unshift({ID:'', TYPE:''});
-																			
-																			
-																			
-																			var options = 	result			
-																			$("#ss_type").replaceOptions(options);
-																			
-																			
-																			
-																			
-																			
-																		   // ----- end ----- rebuild subtype select options  -----------------
-											   
-																		 })
-													 
-													 .catch((err)=>console.error(err)) // fetch
-					 
-					 
-					 
-					 
-					
-											   });  // on change    
-											   
-											   
-											<!--- ------- end ---------  category on change event -------------  --->
-											   
-											   
-										
-										
-						 
-						 
-						 
-						 
-						 
-									// 	 ============= this is a helper function to rebuild select options based on a json  ================
-													(function($, window) {
-													  $.fn.replaceOptions = function(options) {
-														var self, $option;
-													
-														this.empty();
-														self = this;
-													
-														$.each(options, function(index, option) {
-														  $option = $("<option></option>")
-															.attr("value", option.ID)
-															.text(option.TYPE);
-														  self.append($option);
-														});
-													  };
-													})(jQuery, window);
-									// 	 =========   end   ==== this is a helper function to rebuild select options based on a json  ================
-					
-					
-					
-					
-					
-					
-					  <!--- joe hu 12/5/2018 ---------- do not count NON-SRP construction sites --------------- --->
-	
-	
-	
-	
-	
 });
 
 

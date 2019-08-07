@@ -53,7 +53,7 @@ SELECT max(location_no) as id FROM tblSites
 
 <!--- Get Facility Type --->
 <cfquery name="getType" datasource="#request.sqlconn#" dbtype="ODBC">
-SELECT * FROM tblType ORDER BY type
+SELECT * FROM tblType  Where (Deleted IS NULL) ORDER BY type
 </cfquery>
 
 
@@ -387,7 +387,7 @@ SELECT * FROM tblYesNo ORDER BY value
 	
 	
 <div id="msg" class="box" style="top:40px;left:1px;width:300px;height:144px;display:none;z-index:505;">
-	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onclick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
+	<a id="close" href="" class="close" style="z-index:505;top:3px;right:4px;" onClick="$('#chr(35)#msg').hide();return false;"><img src="../images/close_icon.png" height="8" width="8" title="Close Tools"  border="0" class="closex"></a>
 	<div class="box_header"><strong>The Following Error(s) Occured:</strong></div>
 	<div class="box_body" style="margin: 4px 0px 0px 0px;width:100%;">
 		<div id="msg_text" style="top:10px;left:0px;height:200px;padding:25px 0px 0px 5px;align:center;text-align:center;">

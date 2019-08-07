@@ -38,6 +38,8 @@
 
 <!--- <CFSET session.addtoken="cfid=#session.cfid#&cftoken=#session.cftoken#"> --->
 
+
+
 <cfset request.production=0><!--- 0:testing, 1:intranet, 2:internet --->
 <cfif cgi.server_name is "boemaps.eng.ci.la.ca.us">
 	<cfset request.production=1>
@@ -45,7 +47,7 @@
 	<cfset request.production=2>
 </cfif>
 
-<cfset request.dir="d:\sidewalk_repair">
+<cfset request.dir="d:\sidewalk_repair_testing">
 <cfset request.server="http://78boe99prod/">
 <cfset request.url="http://78boe99prod/sidewalk_repair_testing/">
 <cfset request.js_sfx="">
@@ -68,7 +70,11 @@
 	<cfset request.tree_server = replace(request.server,"http","https","ALL")>
 </cfif>
 
+
+
 <cfset request.PDFlocation="#request.dir#"&"\pdfs\">
+
+
 <cfset request.PDFRlocation="#request.dir#"&"\reports">
 <cfset request.PDFTemp="#request.dir#"&"\print\temp">
 <cfset request.pdfConverter="C:\Program Files\Easy Software Products\HTMLDOC\ghtmldoc.exe">

@@ -228,6 +228,10 @@
 	</cffunction>
 	
 	
+    
+    
+    
+    
 	
 	<cffunction name="addPackage" access="remote" returnType="any" returnFormat="plain" output="false">
 		<cfargument name="sw_pgroup" required="true">
@@ -798,6 +802,9 @@
 		<cfargument name="sw_pedestrian" required="true"> --->	
 		<cfargument name="sw_phase" required="true">
 		<cfargument name="sw_bic" required="true">	
+        
+        <cfargument name="sw_specialfund" required="true">	
+        
 		<cfargument name="sw_class" required="true">	
 		<cfargument name="sw_excptn" required="true">	
 		<cfargument name="sw_excptn_notes" required="true">
@@ -805,7 +812,19 @@
         
         <!--- joe hu ------- 9/19/2018 --------- add scheduled check box -----------  --->
         <cfargument name="sw_scheduled" required="true">
+        
+        
+        
         <!--- joe hu ------- 9/19/2018 --------- add scheduled check box -----------  --->
+        
+        
+        
+        
+        <!--- joe hu 2019-4 multi change --->
+        <cfargument name="sw_grievance" required="true">
+        <!--- end ---- joe hu 2019-4 multi change --->
+        
+        
         
         
 		
@@ -866,6 +885,10 @@
 		<cfif trim(sw_excptn_notes) is ""><cfset sw_excptn_notes = "NULL"></cfif>	
 		<cfif trim(sw_phase) is ""><cfset sw_phase = "NULL"></cfif>
 		<cfif trim(sw_bic) is ""><cfset sw_bic = "NULL"></cfif>	
+        
+        <cfif trim(sw_specialfund) is ""><cfset sw_specialfund = "NULL"></cfif>	
+        
+        
 		<cfif trim(sw_class) is ""><cfset sw_class = "NULL"></cfif>	
         
         
@@ -880,6 +903,20 @@
          
                 
          </cfif>
+         
+         
+         <!--- joe hu 2019-4 multi change --->
+				  <cfif trim(sw_grievance) is "">
+                        <cfset sw_grievance = "NULL">
+                 <cfelse>
+                 
+                        <cfset sw_grievance = 1 >
+                 
+                        
+                 </cfif>
+         <!--- end ---- joe hu 2019-4 multi change --->
+         
+         
         <!--- joe hu ------- 9/19/2018 --------- add scheduled check box -----------  --->
         
 		
@@ -991,6 +1028,10 @@
 		Design_Finish_Date = #sw_dsgnfinish#,
 		Phase = #sw_phase#,
 		StatusBIC = #sw_bic#,
+        
+        
+        SpecialFund = #sw_specialfund#,
+        
 		Classification = #sw_class#,
 		<!--- Access_Improvement = #sw_ait_type#,
 		Cost_Effective = #sw_costeffect#,
@@ -1004,8 +1045,21 @@
         
         <!--- joe hu ------- 9/19/2018 --------- add scheduled check box -----------  --->
         Scheduled = #sw_scheduled#,
+        
+        
+       
+        
         <!---  end ----- joe hu ------- 9/19/2018 --------- add scheduled check box -----------  --->
     
+        
+        
+        	<!--- joe hu 2019-4 multi change --->
+
+             Grievance = #sw_grievance#,
+            
+             <!--- end ---- joe hu 2019-4 multi change --->
+        
+        
         
         
 		User_ID = #session.user_num#
@@ -1350,7 +1404,48 @@
 		<cfargument name="ss_concfrm" required="true">
 		<cfargument name="ss_concto" required="true">
 		<cfargument name="ss_repairs" required="true">
-		<cfargument name="ss_severity" required="true">
+	<!---	<cfargument name="ss_severity" required="true">  --->
+    
+    
+    
+    
+     <!--- joe hu 2019-4 multi change --->
+    		<cfargument name="ss_grievance" required="true">
+    		<cfargument name="ss_locked" required="true">
+            <cfargument name="ss_specialfund" required="true">
+            
+           
+            
+     <!--- end ---- joe hu 2019-4 multi change --->
+     
+     
+     
+     
+     
+     
+     
+     
+     <!---  ---- joe hu 8-2-2019 search bar change --->
+    
+   
+         <cfargument name="ss_action" required="false">
+     
+     
+         
+           
+      
+     
+     <!---        ---- end ---- joe hu 8-2-2019 search bar change --->
+     
+     
+     
+     
+     
+     
+     
+     
+     
+    
 		<!--- <cfargument name="ss_qc" required="true"> --->
 		<cfargument name="ss_cd" required="true">
 		<cfargument name="ss_removed" required="true">
@@ -1358,8 +1453,10 @@
 		<cfargument name="ss_curbramp" required="true">
 		<!--- <cfargument name="ss_pn" required="true"> --->
 		<cfargument name="ss_keyword" required="true">
-		<cfargument name="ss_hasA" required="true">
-		<cfargument name="ss_hasB" required="true">
+        
+	<!---	<cfargument name="ss_hasA" required="true">    --->
+	<!---	<cfargument name="ss_hasB" required="true">    --->
+    
 		<cfargument name="ss_hascert" required="true">
 		<cfargument name="ss_assnull" required="false">
 		<cfargument name="ss_qcnull" required="false">
@@ -1372,6 +1469,24 @@
 		<cfif isdefined("ss_consnull")><cfset session.ss_consnull = 1><cfelse><cfset StructDelete(Session, "ss_consnull")></cfif>
 		<cfif isdefined("ss_concnull")><cfset session.ss_concnull = 1><cfelse><cfset StructDelete(Session, "ss_concnull")></cfif>
 		
+
+
+ <!---  ---- joe hu 8-2-2019 search bar change --->
+ 
+        <cfif ss_action is not "">
+ 
+						<cfif ss_action eq 0>
+                             <cfset tree_action_type = "Has_Removed_Trees" >
+                         <cfelseif ss_action eq 1>    
+                              <cfset tree_action_type = "Has_Planted_Trees" >
+                         <cfelseif ss_action eq 2>  
+                               <cfset tree_action_type = "Has_Preserved_Trees" >
+                               
+                          </cfif>     
+               
+         </cfif>
+ <!---        ---- end ---- joe hu 8-2-2019 search bar change --->
+
 
 		<cfset var data = {}>
 		
@@ -1706,7 +1821,15 @@
 		<cfif trim(ss_assessor) is not "">AND assessed_date = #preservesinglequotes(ss_assessor)#</cfif>
 		<cfif trim(assbtwn) is not "">#preservesinglequotes(assbtwn)#</cfif>
 		<cfif ss_repairs is not "">AND repairs_required = #ss_repairs#</cfif> 
-		<cfif ss_severity is not "">AND severity_index = #ss_severity#</cfif> 
+	<!---	<cfif ss_severity is not "">AND severity_index = #ss_severity#</cfif>  --->
+    
+    
+    
+   
+    
+    
+    
+        
 		<cfif trim(ss_qc) is not "">AND qc_date = #preservesinglequotes(ss_qc)#</cfif>
 		<cfif trim(qcbtwn) is not "">#preservesinglequotes(qcbtwn)#</cfif>
 		<cfif trim(ss_constart) is not "">AND construction_start_date = #preservesinglequotes(ss_constart)#</cfif>
@@ -1716,6 +1839,29 @@
 		<cfif ss_cd is not "">AND council_district = #ss_cd#</cfif> 
 		<cfif ss_zip is not "">AND zip_code = #ss_zip#</cfif>
 		<cfif ss_curbramp is not "">AND curb_ramp_only = #ss_curbramp#</cfif>
+        
+        
+        
+        
+         <!--- joe hu 2019-4 multi change --->
+    
+		<cfif ss_locked is not "">AND locked = #ss_locked#</cfif>
+        
+       
+        
+        
+        <cfif ss_grievance is not "">AND grievance = #ss_grievance#</cfif>
+         <cfif ss_specialfund is not "">AND specialfund = #ss_specialfund#</cfif>
+    <!--- end ---- joe hu 2019-4 multi change --->
+        
+        
+        
+        <!--- ---- joe hu 8-2-2019 search bar change --->
+          <cfif ss_action is not "">AND #tree_action_type# = 'True' </cfif>  
+        <!--- end ---- joe hu 8-2-2019 search bar change --->
+        
+        
+        
 		<!--- <cfif ss_pn is not "">AND priority_no = #ss_pn#</cfif>  --->
         
 		<!---  joe remove 2/14/2018 -------
@@ -1729,7 +1875,7 @@
 		tree_removal_notes #nt# LIKE '%#preservesinglequotes(ss_keyword)#%')	
 		</cfif> 
 		
-		--->
+		
 
 		<cfif ss_hasA is not "">
 			<cfif ss_hasA is 1>AND has_after = 1<cfelse>AND (has_after <> 1 OR has_after is NULL)</cfif>
@@ -1737,6 +1883,13 @@
 		<cfif ss_hasB is not "">
 			<cfif ss_hasB is 1>AND has_before = 1<cfelse>AND (has_before <> 1 OR has_before is NULL)</cfif>
 		</cfif> 
+        
+		--->
+        
+        
+        
+        
+        
 		<cfif ss_hascert is not "">AND has_certificate = '#ss_hascert#'</cfif> 
 		<cfif ss_removed is not "">AND removed = #ss_removed#<cfelse>AND removed is NULL</cfif> 
 		<cfif isdefined("ss_assnull")>AND assessed_date IS NULL</cfif>
@@ -3506,11 +3659,11 @@
 		
 			<cfset sfx = timeformat(now(),"HHmmss")>
 
-			<cfset columns = "Site,Council District,Package,Facility Name,Address,Construction Start Date,Construction Completed Date,Classification,Priority Score,Engineer's Estimate,Total Cost,Total Concrete,Type,Subtype,Work Order,Number of Curb Ramps,Has Certificate,Certificate Total">
+			<cfset columns = "Site,Council District,Package,Facility Name,Address,Construction Start Date,Construction Completed Date,Classification,Priority Score,Engineer's Estimate,Total Cost,Total Concrete,Type,Subtype,Work Order,Number of Curb Ramps,Has Certificate,Certificate Total,Has Before Photo,Has After Photo ">
 			
 			<cfquery name="setSearch" dbtype="query">
 			SELECT location_no as site,council_district as cd, package,name as facility_name,address,construction_start_date,
-			construction_completed_date,classification,priority_score,engineers_estimate,total_cost,total_concrete,type_desc,subtype_desc,work_order,number_curbramps,has_certificate,certificate_total FROM session.siteQuery
+			construction_completed_date,classification,priority_score,engineers_estimate,total_cost,total_concrete,type_desc,subtype_desc,work_order,number_curbramps,has_certificate,certificate_total,Has_Before,Has_After   FROM session.siteQuery
 			</cfquery>
 			
 			<cfset filename = expandPath("../downloads/SidewalkRepairSiteSearch_#sfx#.xls")>
@@ -3587,13 +3740,20 @@
 		
 			<cfset sfx = timeformat(now(),"HHmmss")>
 
-			<cfset columns = "Curb Ramp No,Council District,Site No,Intersection Corner,Primary Street,Secondary Street,Design Finish Date,Construction Completed Date,Designed By,Priority No,Type">
+
+        <!--- joe hu 4/30/2019 ---- add zip_code geocode  --->
+           
+           
+			<cfset columns = "Curb Ramp No,Council District,Site No,Intersection Corner,Primary Street,Secondary Street,Design Finish Date,Construction Completed Date,Designed By,Priority No,Type, Zip Code, Geocoded">
 			
 			<cfquery name="setSearch" dbtype="query">
 			SELECT ramp_no,council_district as cd, location_no as site,intersection_corner,primary_street,secondary_street,design_finish_date,construction_completed_date,
-			designed_by,priority_no,type_description FROM session.curbQuery
+			designed_by,priority_no,type_description, zip_code, Geocoded FROM session.curbQuery
 			</cfquery>
 			
+         <!---  ---- end ------  joe hu 4/30/2019 ---- add zip_code geocode  --->
+            
+            
 			<cfset filename = expandPath("../downloads/CurbRampRepairSearch_#sfx#.xls")>
 			<cfspreadsheet action="write" query="setSearch" filename="#filename#" overwrite="true">
 			<cfset s = spreadsheetNew("CurbRampSearchResults","no")>
@@ -3823,6 +3983,14 @@
 		<cfset tree_trc = replace(tree_trc,"'","''","ALL")>
 		<cfset tree_tpc = replace(tree_tpc,"'","''","ALL")>
         
+        
+        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+        <cfset tree_trc_type = replace(tree_trc_type,"'","''","ALL")>
+        <cfset tree_tpc_type = replace(tree_tpc_type,"'","''","ALL")>
+        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+        
+        
+        
         <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
         <!--- cfset tree_trpsc = replace(tree_trpsc,"'","''","ALL")   --->
         <!--- ----- End ------- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
@@ -3835,15 +4003,44 @@
 		<cfif tree_lock is not ""><cfset tree_lock = 1></cfif>
 		
 		<cfset tree_preinspby = replace(trim(tree_preinspby),"'","''","ALL")>
+        <cfset replant_tree_postinspby = replace(trim(replant_tree_postinspby),"'","''","ALL")>
+        
 		<cfset tree_postinspby = replace(trim(tree_postinspby),"'","''","ALL")>
 		<cfif tree_readytp is not ""><cfset tree_readytp = 1></cfif>
 		
+        
+        
 		<cfif trim(tree_preinspdt) is ""><cfset tree_preinspdt = "NULL"></cfif>
 		<cfif tree_preinspdt is not "NULL">
 			<cfset arrDT = listtoarray(tree_preinspdt,"/")>
 			<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
 			<cfset tree_preinspdt = createODBCDate(dt)>
 		</cfif>
+        
+        
+        <cfif trim(replant_tree_postinspdt) is ""><cfset replant_tree_postinspdt = "NULL"></cfif>
+		<cfif replant_tree_postinspdt is not "NULL">
+			<cfset arrDT = listtoarray(replant_tree_postinspdt,"/")>
+			<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
+			<cfset replant_tree_postinspdt = createODBCDate(dt)>
+		</cfif>
+        
+        
+        
+        
+        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+        <cfif trim(tree_tpc_dt) is ""><cfset tree_tpc_dt = "NULL"></cfif>
+		<cfif tree_tpc_dt is not "NULL">
+			<cfset arrDT = listtoarray(tree_tpc_dt,"/")>
+			<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
+			<cfset tree_tpc_dt = createODBCDate(dt)>
+		</cfif>
+        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+        
+        
+        
+        
+        
 		<cfif trim(tree_postinspdt) is ""><cfset tree_postinspdt = "NULL"></cfif>
 		<cfif tree_postinspdt is not "NULL">
 			<cfset arrDT = listtoarray(tree_postinspdt,"/")>
@@ -3862,6 +4059,14 @@
 			    <cfif trim(tree_tpc) is not "">Tree_Planting_Contractor,</cfif>
                 
                 
+                
+                <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                <cfif trim(tree_trc_type) is not "">Tree_removal_contractor_type,</cfif>
+			    <cfif trim(tree_tpc_type) is not "">Tree_planting_contractor_type,</cfif>
+                <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                
+                
+                
                 <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
                 <!--- <cfif trim(tree_trpsc) is not "">Root_Pruning_Contractor,</cfif>    --->
                 <!--- ------ end ------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
@@ -3873,6 +4078,15 @@
 				<cfif trim(tree_lock) is not "">Root_Barrier_Lock,</cfif>
 				<cfif trim(tree_preinspby) is not "">Pre_Inspection_By,</cfif>
 				<cfif trim(tree_preinspdt) is not "">Pre_Inspection_Date,</cfif>
+                <cfif trim(replant_tree_postinspby) is not "">Replant_Post_Inspection_By,</cfif>
+				<cfif trim(replant_tree_postinspdt) is not "">Replant_Post_Inspection_Date,</cfif>
+                
+                
+                <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                <cfif trim(tree_tpc_dt) is not "">Tree_planting_assigned_contractor_date,</cfif>
+                
+                
+                
 				<cfif trim(tree_postinspby) is not "">Post_Inspection_By,</cfif>
 				<cfif trim(tree_postinspdt) is not "">Post_Inspection_Date,</cfif>
 				<cfif trim(tree_readytp) is not "">Ready_To_Plant,</cfif>
@@ -3885,6 +4099,15 @@
 			    <cfif trim(tree_trc) is not "">'#PreserveSingleQuotes(tree_trc)#',</cfif>
 			    <cfif trim(tree_tpc) is not "">'#PreserveSingleQuotes(tree_tpc)#',</cfif>
                 
+                <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                <cfif trim(tree_trc_type) is not "">#tree_trc_type#,</cfif>
+			    <cfif trim(tree_tpc_type) is not "">#tree_tpc_type#,</cfif>
+                
+                
+                
+                
+                
+                
                 <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
                 <!--- <cfif trim(tree_trpsc) is not "">'#PreserveSingleQuotes(tree_trpsc)#',</cfif> --->
                 <!--- ------- End ----- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
@@ -3895,6 +4118,17 @@
 				<cfif trim(tree_lock) is not "">#tree_lock#,</cfif>
 				<cfif trim(tree_preinspby) is not "">'#PreserveSingleQuotes(tree_preinspby)#',</cfif>
 				<cfif trim(tree_preinspdt) is not "">#tree_preinspdt#,</cfif>
+                
+                
+                <cfif trim(replant_tree_postinspby) is not "">'#PreserveSingleQuotes(replant_tree_postinspby)#',</cfif>
+				<cfif trim(replant_tree_postinspdt) is not "">#replant_tree_postinspdt#,</cfif>
+                
+                 <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                <cfif trim(tree_tpc_dt) is not "">#tree_tpc_dt#,</cfif>
+                
+                
+                
+                
 				<cfif trim(tree_postinspby) is not "">'#PreserveSingleQuotes(tree_postinspby)#',</cfif>
 				<cfif trim(tree_postinspdt) is not "">#tree_postinspdt#,</cfif>
 				<cfif trim(tree_readytp) is not "">#tree_readytp#,</cfif>
@@ -3910,6 +4144,15 @@
 			Tree_Removal_Contractor = <cfif tree_trc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_trc)#'</cfif>,
 			Tree_Planting_Contractor = <cfif tree_tpc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_tpc)#'</cfif>,
             
+            
+            
+            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+            Tree_removal_contractor_type = <cfif tree_trc_type is "">NULL<cfelse>#tree_trc_type#</cfif>,
+			Tree_Planting_Contractor_type = <cfif tree_tpc_type is "">NULL<cfelse>#tree_tpc_type#</cfif>,
+            
+            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+            
+            
             <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
          <!---    Root_Pruning_Contractor = <cfif tree_trpsc is "">NULL<cfelse>'#PreserveSingleQuotes(tree_trpsc)#'</cfif>,   --->
             <!--- ------- End ----- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
@@ -3920,6 +4163,16 @@
 			Root_Barrier_Lock = <cfif tree_lock is "">NULL<cfelse>#tree_lock#</cfif>,
 			Pre_Inspection_By = <cfif tree_preinspby is "">NULL<cfelse>'#PreserveSingleQuotes(tree_preinspby)#'</cfif>,
 			Pre_Inspection_Date = <cfif tree_preinspdt is "">NULL<cfelse>#tree_preinspdt#</cfif>,
+            Replant_Post_Inspection_By = <cfif replant_tree_postinspby is "">NULL<cfelse>'#PreserveSingleQuotes(replant_tree_postinspby)#'</cfif>,
+			Replant_Post_Inspection_Date = <cfif replant_tree_postinspdt is "">NULL<cfelse>#replant_tree_postinspdt#</cfif>,
+            
+            
+            
+            
+             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+            Tree_planting_assigned_contractor_date = <cfif tree_tpc_dt is "">NULL<cfelse>#tree_tpc_dt#</cfif>,
+            
+            
 			Post_Inspection_By = <cfif tree_postinspby is "">NULL<cfelse>'#PreserveSingleQuotes(tree_postinspby)#'</cfif>,
 			Post_Inspection_Date = <cfif tree_postinspdt is "">NULL<cfelse>#tree_postinspdt#</cfif>,
 			Ready_To_Plant = <cfif tree_readytp is "">NULL<cfelse>#tree_readytp#</cfif>,
@@ -3951,17 +4204,40 @@
 		
 			<cfset sir = evaluate("sir_" & i)>
 			<cfset sirdt = evaluate("sirdt_" & i)>
+            
+            
+            
+            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+            <cfset sirBPWapprovalRequired = evaluate("sirBPWapprovalRequired_" & i)>
+            <cfset sirBPWapprovaldt = evaluate("sirBPWapprovaldt_" & i)>
+            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+            
+            
+            
+            
 			<cfset grp = i>
 			
 			<cfset add_cnt = evaluate("tr_add_cnt_" & i)>
 			<cfset rmv_cnt = evaluate("tr_rmv_cnt_" & i)>
-            
+            <cfset stumprmv_cnt = evaluate("tr_stumprmv_cnt_" & i)>
             <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
             <cfset root_cnt = evaluate("tr_root_cnt_" & i)>
             <!--- ------- End ----- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
 			
 			<cfif trim(sir) is ""><cfset sir = "NULL"></cfif>
 			<cfif trim(sirdt) is ""><cfset sirdt = "NULL"></cfif>
+            
+            
+            
+            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+            
+            <cfif trim(sirBPWapprovalRequired) is "on"><cfset sirBPWapprovalRequired = 1><cfelse><cfset sirBPWapprovalRequired = 0></cfif>
+            
+            <cfif trim(sirBPWapprovaldt) is ""><cfset sirBPWapprovaldt = "NULL"></cfif>
+            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+            
+            
+            
 			<cfset sir = replace(sir,"'","''","ALL")>
 			
 			<cfif sirdt is not "NULL">
@@ -3969,6 +4245,20 @@
 				<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
 				<cfset sirdt = createODBCDate(dt)>
 			</cfif>
+            
+            
+            
+            
+            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+            <cfif sirBPWapprovaldt is not "NULL">
+				<cfset arrDT = listtoarray(sirBPWapprovaldt,"/")>
+				<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
+				<cfset sirBPWapprovaldt = createODBCDate(dt)>
+			</cfif>
+            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+            
+            
+            
 			
 			<cfif rmv_cnt gt 0>
 				
@@ -3991,6 +4281,7 @@
                     
                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                     <cfset trExistingCondition = evaluate("trExistingCondition_" & i & "_" & j)>
+                    <cfset trAttemptedPreservation = evaluate("trAttemptedPreservation_" & i & "_" & j)>
                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                     
 					<cfset trnote = evaluate("trnote_" & i & "_" & j)>
@@ -4005,6 +4296,7 @@
                     
                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                     <cfif trim(trExistingCondition) is ""><cfset trExistingCondition = "NULL"></cfif>
+                    <cfif trim(trAttemptedPreservation) is ""><cfset trAttemptedPreservation = "NULL"></cfif>
                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                      
                      
@@ -4036,17 +4328,26 @@
 							Location_No,
 							Group_No,
 							Tree_No,
+                            
 						    <cfif trim(sir) is not "NULL">SIR_No,</cfif>
 						    <cfif trim(sirdt) is not "NULL">SIR_Date,</cfif>
+                            
+                            
+                            
+                            
+                            
+                            
 						    <cfif trim(trdia) is not "NULL">Tree_Size,</cfif>
 						    <cfif trim(trpidt) is not "NULL">Permit_Issuance_Date,</cfif>
 							<cfif trim(trtrdt) is not "NULL">Tree_Removal_Date,</cfif>
+                            
 						    <cfif trim(traddr) is not "NULL">Address,</cfif>
 						    <cfif trim(trspecies) is not "NULL">Species,</cfif>
 							<cfif trim(trtype) is not "NULL">Type,</cfif>
                             
                             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                             <cfif trim(trExistingCondition) is not "NULL">Removals_Existing_Tree_Condition,</cfif>
+                            <cfif trim(trAttemptedPreservation) is not "NULL">Attempted_Tree_Preservation,</cfif>
                             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                             
 							<cfif trim(trnote) is not "NULL">Note,</cfif>
@@ -4060,11 +4361,15 @@
 							#sw_id#,
 							#grp#,
 							#tree#,
+                            
 						    <cfif trim(sir) is not "NULL">'#PreserveSingleQuotes(sir)#',</cfif>
 						    <cfif trim(sirdt) is not "NULL">#sirdt#,</cfif>
+                            
+                            
 						    <cfif trim(trdia) is not "NULL">#trdia#,</cfif>
 						    <cfif trim(trpidt) is not "NULL">#trpidt#,</cfif>
 							<cfif trim(trtrdt) is not "NULL">#trtrdt#,</cfif>
+                            
 						    <cfif trim(traddr) is not "NULL">'#PreserveSingleQuotes(traddr)#',</cfif>
 						    <cfif trim(trspecies) is not "NULL">'#PreserveSingleQuotes(trspecies)#',</cfif>
 							<cfif trim(trtype) is not "NULL">#trtype#,</cfif>
@@ -4072,6 +4377,7 @@
                             
                             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                             <cfif trim(trExistingCondition) is not "NULL">#trExistingCondition#,</cfif>
+                            <cfif trim(trAttemptedPreservation) is not "NULL">#trAttemptedPreservation#,</cfif>
                             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                             
                             
@@ -4079,7 +4385,14 @@
 							0,
 							0,
 							#session.user_num#,
-							#CreateODBCDateTime(Now())#
+                            
+                            <!---   Joe hu,   2019 March 13,  both works cold fusion function works, native SQL server function works too 
+						 	#CreateODBCDateTime(Now())# 
+                           #Now()#   --->
+                           
+                           
+                           GETDATE()
+                            
 						)
 						</cfquery>
 
@@ -4099,6 +4412,7 @@
                         
                         <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                        Removals_Existing_Tree_Condition = <cfif trExistingCondition is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trExistingCondition)#'</cfif>,
+                        Attempted_Tree_Preservation = <cfif trAttemptedPreservation is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trAttemptedPreservation)#'</cfif>,
                         <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                         
                         
@@ -4115,6 +4429,199 @@
 				
 			</cfif>
 			
+            
+            
+            
+            
+            
+            <!--- --------------------------- joe hu 6/11/2019 ------------- add stump removals --------------------------  --->
+            
+            
+            	<cfif stumprmv_cnt gt 0>
+				
+				<cfloop index="j" from="1" to="#stumprmv_cnt#">
+				
+					<cfset tmp = evaluate("tsdia_" & i & "_" & j)>
+					<cfif tmp gt 24><cfset gt_total = gt_total + 1><cfelse><cfset lt_total = lt_total + 1></cfif>
+					
+					<cfquery name="chkTree" datasource="#request.sqlconn#">
+					SELECT * FROM dbo.#tbl# WHERE location_no = #sw_id# AND group_no = #i# AND tree_no = #j# AND action_type = 3 AND deleted <> 1
+					</cfquery>
+					
+					<cfset tree = j>
+					<cfset tsdia = evaluate("tsdia_" & i & "_" & j)>
+					<cfset tspidt = evaluate("tspidt_" & i & "_" & j)>
+					<cfset tssrdt = evaluate("tssrdt_" & i & "_" & j)>
+					<cfset tsaddr = evaluate("tsaddr_" & i & "_" & j)>
+					<cfset tsspecies = evaluate("tsspecies_" & i & "_" & j)>
+					<cfset tstype = evaluate("tstype_" & i & "_" & j)>
+                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <cfset tsExistingCondition = evaluate("tsExistingCondition_" & i & "_" & j)>
+                    <cfset tsAttemptedPreservation = evaluate("tsAttemptedPreservation_" & i & "_" & j)>
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+					<cfset tsnote = evaluate("tsnote_" & i & "_" & j)>
+					
+					<cfif trim(tspidt) is ""><cfset tspidt = "NULL"></cfif>
+					<cfif trim(tssrdt) is ""><cfset tssrdt = "NULL"></cfif>
+					<cfif trim(tsaddr) is ""><cfset tsaddr = "NULL"></cfif>
+					<cfif trim(tsspecies) is ""><cfset tsspecies = "NULL"></cfif>
+					<cfif trim(tstype) is ""><cfset tstype = "NULL"></cfif>
+                    
+                    
+                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <cfif trim(tsExistingCondition) is ""><cfset tsExistingCondition = "NULL"></cfif>
+                    <cfif trim(tsAttemptedPreservation) is ""><cfset tsAttemptedPreservation = "NULL"></cfif>
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                     
+                     
+                     
+                     
+                    
+					<cfif trim(tsnote) is ""><cfset tsnote = "NULL"></cfif>
+					
+					<cfset tsaddr = replace(tsaddr,"'","''","ALL")>
+					<cfset tsspecies = ucase(replace(tsspecies,"'","''","ALL"))>
+					<cfset tsnote = replace(tsnote,"'","''","ALL")>
+					
+					<cfif tspidt is not "NULL">
+						<cfset arrDT = listtoarray(tspidt,"/")>
+						<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
+						<cfset tspidt = createODBCDate(dt)>
+					</cfif>
+					<cfif tssrdt is not "NULL">
+						<cfset arrDT = listtoarray(tssrdt,"/")>
+						<cfset dt = createdate(arrDT[3],arrDT[1],arrDT[2])>
+						<cfset tssrdt = createODBCDate(dt)>
+					</cfif>
+					
+					<cfif chkTree.recordcount is 0>
+					
+						<cfquery name="addTreeList" datasource="#request.sqlconn#">
+						INSERT INTO dbo.#tbl#
+						( 
+							Location_No,
+							Group_No,
+							Tree_No,
+                            
+						    <cfif trim(sir) is not "NULL">SIR_No,</cfif>
+						    <cfif trim(sirdt) is not "NULL">SIR_Date,</cfif>
+                            
+                            
+                            
+                            
+                            
+                            
+						    <cfif trim(tsdia) is not "NULL">Tree_Size,</cfif>
+						    <cfif trim(tspidt) is not "NULL">Permit_Issuance_Date,</cfif>
+							<cfif trim(tssrdt) is not "NULL">Stump_Removal_Date,</cfif>
+                            
+						    <cfif trim(tsaddr) is not "NULL">Address,</cfif>
+						    <cfif trim(tsspecies) is not "NULL">Species,</cfif>
+							<cfif trim(tstype) is not "NULL">Type,</cfif>
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(tsExistingCondition) is not "NULL">Removals_Existing_Tree_Condition,</cfif>
+                            <cfif trim(tsAttemptedPreservation) is not "NULL">Attempted_Tree_Preservation,</cfif>
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            
+							<cfif trim(tsnote) is not "NULL">Note,</cfif>
+							Action_Type,
+							Deleted,
+							User_ID,
+							Creation_Date
+						) 
+						Values 
+						(
+							#sw_id#,
+							#grp#,
+							#tree#,
+                            
+						    <cfif trim(sir) is not "NULL">'#PreserveSingleQuotes(sir)#',</cfif>
+						    <cfif trim(sirdt) is not "NULL">#sirdt#,</cfif>
+                            
+                            
+						    <cfif trim(tsdia) is not "NULL">#tsdia#,</cfif>
+						    <cfif trim(tspidt) is not "NULL">#tspidt#,</cfif>
+							<cfif trim(tssrdt) is not "NULL">#tssrdt#,</cfif>
+                            
+						    <cfif trim(tsaddr) is not "NULL">'#PreserveSingleQuotes(tsaddr)#',</cfif>
+						    <cfif trim(tsspecies) is not "NULL">'#PreserveSingleQuotes(tsspecies)#',</cfif>
+							<cfif trim(tstype) is not "NULL">#tstype#,</cfif>
+                            
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(tsExistingCondition) is not "NULL">#tsExistingCondition#,</cfif>
+                            <cfif trim(tsAttemptedPreservation) is not "NULL">#tsAttemptedPreservation#,</cfif>
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            
+                            
+							<cfif trim(tsnote) is not "NULL">'#PreserveSingleQuotes(tsnote)#',</cfif>
+							3,
+							0,
+							#session.user_num#,
+                            
+                            <!---   Joe hu,   2019 March 13,  both works cold fusion function works, native SQL server function works too 
+						 	#CreateODBCDateTime(Now())# 
+                           #Now()#   --->
+                           
+                           
+                           GETDATE()
+                            
+						)
+						</cfquery>
+
+					<cfelse>
+					
+						<cfquery name="updateTreeInfo" datasource="#request.sqlconn#">
+						UPDATE dbo.#tbl# SET
+						SIR_No = <cfif sir is "NULL">NULL<cfelse>'#PreserveSingleQuotes(sir)#'</cfif>,
+						SIR_Date = <cfif sirdt is "NULL">NULL<cfelse>#sirdt#</cfif>,
+						Tree_Size = <cfif tsdia is "NULL">NULL<cfelse>#tsdia#</cfif>,
+						Permit_Issuance_Date = <cfif tspidt is "NULL">NULL<cfelse>#tspidt#</cfif>,
+						Stump_Removal_Date = <cfif tssrdt is "NULL">NULL<cfelse>#tssrdt#</cfif>,
+						Address = <cfif tsaddr is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tsaddr)#'</cfif>,
+						Species = <cfif tsspecies is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tsspecies)#'</cfif>,
+						Type = <cfif tstype is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tstype)#'</cfif>,
+                        
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                       Removals_Existing_Tree_Condition = <cfif tsExistingCondition is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tsExistingCondition)#'</cfif>,
+                        Attempted_Tree_Preservation = <cfif tsAttemptedPreservation is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tsAttemptedPreservation)#'</cfif>,
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        
+                        
+						Note = <cfif tsnote is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tsnote)#'</cfif>,
+						User_ID = #session.user_num#,
+						Modified_Date = #CreateODBCDateTime(Now())#
+						WHERE Location_No = #sw_id#	AND Group_No = #grp# AND Tree_No = #tree# AND Action_Type = 3 AND Deleted <> 1
+						</cfquery>
+					
+					</cfif>
+                    
+
+				</cfloop>
+				
+			</cfif>
+            
+            <!---  end --------------------------- joe hu 6/11/2019 ------------- add stump removals --------------------------  --->
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 			<cfif add_cnt gt 0>
 				
 				<cfloop index="j" from="1" to="#add_cnt#">
@@ -4132,6 +4639,9 @@
 					<cfset tpaddr = evaluate("tpaddr_" & i & "_" & j)>
 					<cfset tpspecies = evaluate("tpspecies_" & i & "_" & j)>
 					<cfset tpoffsite = evaluate("tpoffsite_" & i & "_" & j)>
+                    <cfset tpgatorbags = evaluate("tpgatorbags_" & i & "_" & j)>
+                    
+                    
 					<cfset tptype = evaluate("tptype_" & i & "_" & j)>
                     
             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->         
@@ -4147,6 +4657,19 @@
 					<cfset tpoverhead = evaluate("tpoverhead_" & i & "_" & j)>
 					<cfset tpsubpos = evaluate("tpsubpos_" & i & "_" & j)>
 					<cfset tppostinspect = evaluate("tppostinspect_" & i & "_" & j)>
+                    
+                   
+                    
+                    
+                    
+                    
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->    
+					<cfset tppassedpostinspection = evaluate("tppassedpostinspection_" & i & "_" & j)>
+                    
+                    
+                    
 					<cfset tpnote = evaluate("tpnote_" & i & "_" & j)>
 					
 					<cfif trim(tppidt) is ""><cfset tppidt = "NULL"></cfif>
@@ -4156,6 +4679,8 @@
 					<cfif trim(tpaddr) is ""><cfset tpaddr = "NULL"></cfif>
 					<cfif trim(tpspecies) is ""><cfset tpspecies = "NULL"></cfif>
 					<cfif trim(tpoffsite) is "on"><cfset tpoffsite = 1><cfelse><cfset tpoffsite = 0></cfif>
+                    <cfif trim(tpgatorbags) is "on"><cfset tpgatorbags = 1><cfelse><cfset tpgatorbags = 0></cfif>
+                    
 					<cfif trim(tptype) is ""><cfset tptype = "NULL"></cfif>
 					
                     
@@ -4169,6 +4694,14 @@
 					<cfif trim(tpoverhead) is "on"><cfset tpoverhead = 1><cfelse><cfset tpoverhead = 0></cfif>
 					<cfif trim(tpsubpos) is ""><cfset tpsubpos = "NULL"></cfif>
 					<cfif trim(tppostinspect) is "on"><cfset tppostinspect = 1><cfelse><cfset tppostinspect = 0></cfif>
+                    
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->   
+                    <cfif trim(tppassedpostinspection) is "on"><cfset tppassedpostinspection = 1><cfelse><cfset tppassedpostinspection = 0></cfif>
+                    
+                    
+                    
 					<cfif trim(tpnote) is ""><cfset tpnote = "NULL"></cfif>
 					
 					<cfset tpaddr = replace(tpaddr,"'","''","ALL")>
@@ -4216,6 +4749,9 @@
 						    <cfif trim(tpaddr) is not "NULL">Address,</cfif>
 						    <cfif trim(tpspecies) is not "NULL">Species,</cfif>
 							<cfif trim(tpoffsite) is not "NULL">Offsite,</cfif>
+                            <cfif trim(tpgatorbags) is not "NULL">Gator_Bags,</cfif>
+                            
+                            
 							<cfif trim(tptype) is not "NULL">Type,</cfif>
                             
                             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
@@ -4228,6 +4764,14 @@
 							<cfif trim(tpoverhead) is not "NULL">Overhead_Wires,</cfif>
 							<cfif trim(tpsubpos) is not "NULL">Sub_Position,</cfif>
 							<cfif trim(tppostinspect) is not "NULL">Post_Inspected,</cfif>
+                            
+                            
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(tppassedpostinspection) is not "NULL">Passed_Post_Inspection,</cfif>
+                            
+                            
+                            
 							<cfif trim(tpnote) is not "NULL">Note,</cfif>
 							Action_Type,
 							Deleted,
@@ -4249,6 +4793,8 @@
 						    <cfif trim(tpaddr) is not "NULL">'#PreserveSingleQuotes(tpaddr)#',</cfif>
 						    <cfif trim(tpspecies) is not "NULL">'#PreserveSingleQuotes(tpspecies)#',</cfif>
 							<cfif trim(tpoffsite) is not "NULL">#tpoffsite#,</cfif>
+                            <cfif trim(tpgatorbags) is not "NULL">#tpgatorbags#,</cfif>
+                            
 							<cfif trim(tptype) is not "NULL">#tptype#,</cfif>
                             
                             
@@ -4263,6 +4809,14 @@
 							<cfif trim(tpoverhead) is not "NULL">#tpoverhead#,</cfif>
 							<cfif trim(tpsubpos) is not "NULL">'#PreserveSingleQuotes(tpsubpos)#',</cfif>
 							<cfif trim(tppostinspect) is not "NULL">#tppostinspect#,</cfif>
+                            
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(tppassedpostinspection) is not "NULL">#tppassedpostinspection#,</cfif>
+                            
+                            
+                            
+                            
 							<cfif trim(tpnote) is not "NULL">'#PreserveSingleQuotes(tpnote)#',</cfif>
 							1,
 							0,
@@ -4284,7 +4838,8 @@
 						End_Watering_Date = <cfif tpewdt is "NULL">NULL<cfelse>#tpewdt#</cfif>,
 						Address = <cfif tpaddr is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpaddr)#'</cfif>,
 						Species = <cfif tpspecies is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpspecies)#'</cfif>,
-						Offsite = <cfif tpoffsite is "NULL">NULL<cfelse>#tpoffsite#</cfif>,
+						Gator_Bags = <cfif tpoffsite is "NULL">NULL<cfelse>#tpgatorbags#</cfif>,
+                        
 						Type = <cfif tptype is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tptype)#'</cfif>,
                         
                         
@@ -4297,6 +4852,16 @@
 						Overhead_Wires = <cfif tpoverhead is "NULL">NULL<cfelse>#tpoverhead#</cfif>,
 						Sub_Position = <cfif tpsubpos is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpsubpos)#'</cfif>,
 						Post_Inspected = <cfif tppostinspect is "NULL">NULL<cfelse>#tppostinspect#</cfif>,
+                        
+                        
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        Passed_Post_Inspection = <cfif tppassedpostinspection is "NULL">NULL<cfelse>#tppassedpostinspection#</cfif>,
+                        
+                        
+                        
+                        
+                        
 						Note = <cfif tpnote is "NULL">NULL<cfelse>'#PreserveSingleQuotes(tpnote)#'</cfif>,
 						User_ID = #session.user_num#,
 						Modified_Date = #CreateODBCDateTime(Now())#
@@ -4345,9 +4910,23 @@
 					<cfset tree = j>
 					<cfset trpsdia = evaluate("trpsdia_" & i & "_" & j)>
 					<cfset trpspidt = evaluate("trpspidt_" & i & "_" & j)>
-					<cfset trpstrdt = evaluate("trpstrdt_" & i & "_" & j)>
+				    <cfset trpstrdt = evaluate("trpstrdt_" & i & "_" & j)>   
 					<cfset trpsrpdt = evaluate("trpsrpdt_" & i & "_" & j)>
+					
+					<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->    
+					<cfset trpsfurpr = evaluate("trpsfurpr_" & i & "_" & j)>
+					
 					<cfset trpsfurpdt = evaluate("trpsfurpdt_" & i & "_" & j)>
+                    
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->    
+					<cfset trpsct = evaluate("trpsct_" & i & "_" & j)>
+                    
+                    
+                    
+                    
+                    
 					<cfset trpsaddr = evaluate("trpsaddr_" & i & "_" & j)>
 					<cfset trpsspecies = evaluate("trpsspecies_" & i & "_" & j)>
 					
@@ -4365,6 +4944,11 @@
                     
                     
 					<cfset trpsparkway = evaluate("trpsparkway_" & i & "_" & j)>
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <cfset trpslf = evaluate("trpslf_" & i & "_" & j)>
+                    
+                    
 					
 				 <!---	<cfset trpsoverhead = evaluate("trpsoverhead_" & i & "_" & j)>   --->
 					
@@ -4377,9 +4961,27 @@
 					<cfset trpsnote = evaluate("trpsnote_" & i & "_" & j)>
 					
 					<cfif trim(trpspidt) is ""><cfset trpspidt = "NULL"></cfif>
-					<cfif trim(trpstrdt) is ""><cfset trpstrdt = "NULL"></cfif>
+				    <cfif trim(trpstrdt) is ""><cfset trpstrdt = "NULL"></cfif> 
 					<cfif trim(trpsrpdt) is ""><cfset trpsrpdt = "NULL"></cfif>
+					
+					
+					
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->   
+                    <cfif trim(trpsfurpr) is "on"><cfset trpsfurpr = 1><cfelse><cfset trpsfurpr = 0></cfif>
+                    
+                    
+					
 					<cfif trim(trpsfurpdt) is ""><cfset trpsfurpdt = "NULL"></cfif>
+                    
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->   
+                    <cfif trim(trpsct) is "on"><cfset trpsct = 1><cfelse><cfset trpsct = 0></cfif>
+                    
+                    
+                    
+                    
 					<cfif trim(trpsaddr) is ""><cfset trpsaddr = "NULL"></cfif>
 					<cfif trim(trpsspecies) is ""><cfset trpsspecies = "NULL"></cfif>
 				<!---	<cfif trim(trpsoffsite) is "on"><cfset trpsoffsite = 1><cfelse><cfset trpsoffsite = 0></cfif>                       --->
@@ -4402,6 +5004,13 @@
                     
 					
 					<cfif trim(trpsparkway) is ""><cfset trpsparkway = "NULL"></cfif>
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <cfif trim(trpslf) is ""><cfset trpslf = "NULL"></cfif>
+                    
+                    
+                    
 				<!---	<cfif trim(trpsoverhead) is "on"><cfset trpsoverhead = 1><cfelse><cfset trpsoverhead = 0></cfif>                       --->
 					<cfif trim(trpssubpos) is ""><cfset trpssubpos = "NULL"></cfif>
 				<!---	<cfif trim(trpspostinspect) is "on"><cfset trpspostinspect = 1><cfelse><cfset trpspostinspect = 0></cfif>                  --->
@@ -4409,7 +5018,16 @@
 					
 					<cfset trpsaddr = replace(trpsaddr,"'","''","ALL")>
 					<cfset trpsspecies = ucase(replace(trpsspecies,"'","''","ALL"))>
+                    
+                    
 					<cfset trpsparkway = replace(trpsparkway,"'","''","ALL")>
+                    
+					<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+					<cfset trpslf = replace(trpslf,"'","''","ALL")>
+                    
+                    
+                    
+					
 					<cfset trpssubpos = ucase(replace(trpssubpos,"'","''","ALL"))>
 					<cfset trpsnote = replace(trpsnote,"'","''","ALL")>
 					
@@ -4448,8 +5066,25 @@
 						    <cfif trim(trpspidt) is not "NULL">Permit_Issuance_Date,</cfif>
 							<cfif trim(trpstrdt) is not "NULL">Tree_Planting_Date,</cfif>
 							<cfif trim(trpsrpdt) is not "NULL">Root_Pruning_Date,</cfif>
+                            
+							
+							
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(trpsfurpr) is not "NULL">Follow_Up_Root_Prune_Required,</cfif>
+                            
+                            
+							
 							<cfif trim(trpsfurpdt) is not "NULL">Follow_Up_Root_Pruning_Date,</cfif>
-						    <cfif trim(trpsaddr) is not "NULL">Address,</cfif>
+						    
+                            
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(trpsct) is not "NULL">Canopy_Trim,</cfif>
+                            
+                            
+							
+							
+							<cfif trim(trpsaddr) is not "NULL">Address,</cfif>
 						    <cfif trim(trpsspecies) is not "NULL">Species,</cfif>
 						<!---	<cfif trim(trpsoffsite) is not "NULL">Offsite,</cfif>   --->
 							<cfif trim(trpstype) is not "NULL">Type,</cfif>
@@ -4461,6 +5096,7 @@
                             <cfif trim(trpsExistingCondition) is not "NULL">Preservation_Existing_Tree_Condition,</cfif>
                             <cfif trim(trpsPreservationAlternative) is not "NULL">Preservation_Alternative,</cfif>
                             
+                            <cfif trim(trpslf) is not "NULL">Linear_Ft_of_Root_Pruning,</cfif>
                             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                             
                             
@@ -4470,6 +5106,12 @@
                             
                             
 							<cfif trim(trpsparkway) is not "NULL">Parkway_Treewell_Size,</cfif>
+                            
+                            
+                            
+                            
+                            
+                            
 						<!---	<cfif trim(trpsoverhead) is not "NULL">Overhead_Wires,</cfif>     --->
 							<cfif trim(trpssubpos) is not "NULL">Sub_Position,</cfif>
 						<!---	<cfif trim(trpspostinspect) is not "NULL">Post_Inspected,</cfif>    --->
@@ -4490,8 +5132,25 @@
 						    <cfif trim(trpspidt) is not "NULL">#trpspidt#,</cfif>
 							<cfif trim(trpstrdt) is not "NULL">#trpstrdt#,</cfif>
 							<cfif trim(trpsrpdt) is not "NULL">#trpsrpdt#,</cfif>
+                            
+                            
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(trpsfurpr) is not "NULL">#trpsfurpr#,</cfif>
+                            
+                            
+                            
 							<cfif trim(trpsfurpdt) is not "NULL">#trpsfurpdt#,</cfif>
-						    <cfif trim(trpsaddr) is not "NULL">'#PreserveSingleQuotes(trpsaddr)#',</cfif>
+						    
+							
+                            
+                            <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                            <cfif trim(trpsct) is not "NULL">#trpsct#,</cfif>
+                            
+                            
+							
+							
+							<cfif trim(trpsaddr) is not "NULL">'#PreserveSingleQuotes(trpsaddr)#',</cfif>
 						    <cfif trim(trpsspecies) is not "NULL">'#PreserveSingleQuotes(trpsspecies)#',</cfif>
 						<!---	<cfif trim(trpsoffsite) is not "NULL">#trpsoffsite#,</cfif>                               --->
 							<cfif trim(trpstype) is not "NULL">#trpstype#,</cfif>
@@ -4502,7 +5161,7 @@
                             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                             <cfif trim(trpsExistingCondition) is not "NULL">#trpsExistingCondition#,</cfif>
                             <cfif trim(trpsPreservationAlternative) is not "NULL">#trpsPreservationAlternative#,</cfif>
-                            
+                            <cfif trim(trpslf) is not "NULL">'#PreserveSingleQuotes(trpslf)#',</cfif>
                             <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                             
                             
@@ -4531,8 +5190,27 @@
 						Permit_Issuance_Date = <cfif trpspidt is "NULL">NULL<cfelse>#trpspidt#</cfif>,
 						Tree_Planting_Date = <cfif trpstrdt is "NULL">NULL<cfelse>#trpstrdt#</cfif>,
 						Root_Pruning_Date = <cfif trpsrpdt is "NULL">NULL<cfelse>#trpsrpdt#</cfif>,
+                        
+                        
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        Follow_Up_Root_Prune_Required = <cfif trpsfurpr is "NULL">NULL<cfelse>#trpsfurpr#</cfif>,
+                        
+                        
+                        
 						Follow_Up_Root_Pruning_Date = <cfif trpsfurpdt is "NULL">NULL<cfelse>#trpsfurpdt#</cfif>,
-						Address = <cfif trpsaddr is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsaddr)#'</cfif>,
+						
+                        
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        Canopy_Trim = <cfif trpsct is "NULL">NULL<cfelse>#trpsct#</cfif>,
+                        
+                        
+                        
+                        
+                        
+                        
+                        Address = <cfif trpsaddr is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsaddr)#'</cfif>,
 						Species = <cfif trpsspecies is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsspecies)#'</cfif>,
 					<!---	Offsite = <cfif trpsoffsite is "NULL">NULL<cfelse>#trpsoffsite#</cfif>,                                                --->
 						Type = <cfif trpstype is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpstype)#'</cfif>,
@@ -4545,7 +5223,7 @@
                         <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                         Preservation_Existing_Tree_Condition = <cfif trpsExistingCondition is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsExistingCondition)#'</cfif>,
                         Preservation_Alternative = <cfif trpsPreservationAlternative is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpsPreservationAlternative)#'</cfif>,
-                        
+                        Linear_Ft_of_Root_Pruning = <cfif trpslf is "NULL">NULL<cfelse>'#PreserveSingleQuotes(trpslf)#'</cfif>,
                         <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                         
                         
@@ -4609,6 +5287,18 @@
             
             
             
+            
+            <!--- ---- joe hu 6-19-2019 add stump removal --->
+            <cfquery name="delTree" datasource="#request.sqlconn#">
+			UPDATE dbo.#tbl# SET deleted = 1
+			WHERE location_no = #sw_id# AND group_no = #i# AND tree_no > #stumprmv_cnt# AND action_type = 3 AND Deleted <> 1
+			</cfquery>
+           <!--- end ---- joe hu 6-19-2019 add stump removal --->
+            
+            
+            
+            
+            
 			<cfquery name="delTree" datasource="#request.sqlconn#">
 			UPDATE dbo.#tbl# SET deleted = 1
 			WHERE location_no = #sw_id# AND group_no = #i# AND tree_no > #rmv_cnt# AND action_type = 0 AND Deleted <> 1
@@ -4628,7 +5318,23 @@
 					Location_No,
 					Group_No,
 				    <cfif trim(sir) is not "NULL">SIR_No,</cfif>
-				    <cfif trim(sirdt) is not "NULL">SIR_Date,</cfif>
+                    
+                    <cfif trim(sirdt) is not "NULL">SIR_Date,</cfif>
+                    
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                     <cfif trim(sirBPWapprovalRequired) is not "NULL">sir_BPWapprovalRequired,</cfif>
+				     <cfif trim(sirBPWapprovaldt) is not "NULL">sir_BPWapproval_date,</cfif>
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 					Deleted,
 					User_ID,
 					Creation_Date
@@ -4639,6 +5345,15 @@
 					#grp#,
 				    <cfif trim(sir) is not "NULL">'#PreserveSingleQuotes(sir)#',</cfif>
 				    <cfif trim(sirdt) is not "NULL">#sirdt#,</cfif>
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    <cfif trim(sirBPWapprovalRequired) is not "NULL">#sirBPWapprovalRequired#,</cfif>
+                    <cfif trim(sirBPWapprovaldt) is not "NULL">#sirBPWapprovaldt#,</cfif>
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
 					0,
 					#session.user_num#,
 					#CreateODBCDateTime(Now())#
@@ -4651,6 +5366,19 @@
 				UPDATE dbo.#tbl2# SET
 				SIR_No = <cfif sir is "NULL">NULL<cfelse>'#PreserveSingleQuotes(sir)#'</cfif>,
 				SIR_Date = <cfif sirdt is "NULL">NULL<cfelse>#sirdt#</cfif>,
+                
+                
+                
+                <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                
+                sir_BPWapprovalRequired = <cfif sirBPWapprovalRequired is "NULL">NULL<cfelse>#sirBPWapprovalRequired#</cfif>,
+                sir_BPWapproval_date = <cfif sirBPWapprovaldt is "NULL">NULL<cfelse>#sirBPWapprovaldt#</cfif>,
+                <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                
+                
+                
+                
+                
 				User_ID = #session.user_num#,
 				Modified_Date = #CreateODBCDateTime(Now())#
 				WHERE Location_No = #sw_id#	AND Group_No = #grp# AND Deleted <> 1
@@ -5369,6 +6097,10 @@
 			<cfset concbtwn = "AND construction_completed_date <= " & scr_ccdto> 
 		</cfif>
 	
+    
+    
+    
+    
 		
 		<cfquery name="getCurbRamps" datasource="#request.sqlconn#">
 		SELECT * FROM vwCurbRamps WHERE 1=1
@@ -7538,7 +8270,7 @@
                                                                             
                                                                   FROM tblType
                                                                   
-                                                                 WHERE Category  =  '#_category#'   
+                                                                 WHERE  ( Category  =  '#_category#'   ) AND (Deleted IS NULL) 
                                                               
                                                                                         
                                                        </cfquery>

@@ -75,7 +75,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
   </tr>
 </table>
 
-<table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:350px;">
+<table cellspacing="0" cellpadding="0" border="0" class="frame" align="center" style="width:300px;">
 	
     
     
@@ -86,7 +86,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<th class="drk left middle" colspan="4" style="height:30px;padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
-						<th class="drk center middle" style="width:344px;">Select Sidewalk Repair Report</th>
+						<th class="drk center middle" style="width:294px;">Select Sidewalk Repair Report</th>
 						</tr>
 					</table>
 			</th>
@@ -100,30 +100,21 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>					
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="right">
 						<tr>
-						<td><a id="ccr" href="../reports/CompletedCurbRamps.cfm" target="_blank" style="color:#request.color#"><span style="position:relative;top:-1px;">Completed Curb Ramps</span></a></td>
-						<td style="width:10px;"></td>
-						<td>
-						From:&nbsp;
-						<select name="yr1start" id="yr1start" class="rounded" style="position:relative;top:1px;width:55px;height:20px;" onChange="setURL11();">
-						<cfloop index="i" from="2017" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:5px;"></td>
+						<td><a id="ccr" href="../reports/CompletedCurbRamps.cfm" target="_blank" style="color:#request.color#">Completed Curb Ramps</a></td>
+						<td style="width:15px;"></td>
 						<td>
 						To:&nbsp;
-						<select name="yr1" id="yr1" class="rounded" style="position:relative;top:1px;width:60px;height:20px;" onChange="setURL11();">
+						<select name="yr1" id="yr1" class="rounded" style="position:relative;top:1px;width:60px;" onChange="setURL11();">
 						<option value="">Today</option>
 						<cfloop index="i" from="2018" to="2030">
 							<option value="#i#">#i#</option>
 						</cfloop>
 						</select>
 						</td>
-						<td style="width:3px;"></td>
+						<td style="width:15px;"></td>
 						</tr>
 					</table>
 					</th>
@@ -141,30 +132,21 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>					
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="right">
 						<tr>
-						<td><a id="ci" href="../reports/CompletedImprovements.cfm" target="_blank" style="color:#request.color#"><span style="position:relative;top:-1px;">Completed Improvements</span></a></td>
-						<td style="width:10px;"></td>
-						<td>
-						From:&nbsp;
-						<select name="yr2start" id="yr2start" class="rounded" style="position:relative;top:1px;width:55px;height:20px;" onChange="setURL12();">
-						<cfloop index="i" from="2017" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:5px;"></td>
+						<td><a id="ci" href="../reports/CompletedImprovements.cfm" target="_blank" style="color:#request.color#">Completed Improvements</a></td>
+						<td style="width:15px;"></td>
 						<td>
 						To:&nbsp;
-						<select name="yr2" id="yr2" class="rounded" style="position:relative;top:1px;width:60px;height:20px;" onChange="setURL12();">
+						<select name="yr2" id="yr2" class="rounded" style="position:relative;top:1px;width:60px;" onChange="setURL12();">
 						<option value="">Today</option>
 						<cfloop index="i" from="2018" to="2030">
 							<option value="#i#">#i#</option>
 						</cfloop>
 						</select>
 						</td>
-						<td style="width:3px;"></td>
+						<td style="width:15px;"></td>
 						</tr>
 					</table>
 					</th>
@@ -182,276 +164,21 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>					
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="right">
 						<tr>
-						<td><a id="car" href="../reports/CompletedAccessRequests.cfm" target="_blank" style="color:#request.color#"><span style="position:relative;top:-1px;">Completed Access Requests</span></a></td>
-						<td style="width:10px;"></td>
-						<td>
-						From:&nbsp;
-						<select name="yr3start" id="yr3start" class="rounded" style="position:relative;top:1px;width:55px;height:20px;" onChange="setURL13();">
-						<cfloop index="i" from="2017" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:5px;"></td>
+						<td><a id="car" href="../reports/CompletedAccessRequests.cfm" target="_blank" style="color:#request.color#">Completed Access Requests</a></td>
+						<td style="width:15px;"></td>
 						<td>
 						To:&nbsp;
-						<select name="yr3" id="yr3" class="rounded" style="position:relative;top:1px;width:60px;height:20px;" onChange="setURL13();">
+						<select name="yr3" id="yr3" class="rounded" style="position:relative;top:1px;width:60px;" onChange="setURL13();">
 						<option value="">Today</option>
 						<cfloop index="i" from="2018" to="2030">
 							<option value="#i#">#i#</option>
 						</cfloop>
 						</select>
 						</td>
-						<td style="width:3px;"></td>
-						</tr>
-					</table>
-					</th>
-					</tr>
-				</table>
-			</td>
-		</tr>
-
-        </cfif> 
-		
-		<!--- nathan neumann 4/22/19 report access --->
-	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",4,", session.user_report) gt 0))>
-
-		<tr>	
-			<td colspan="4" style="padding:0px 0px 0px 0px;">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>					
-					<th class="center middle" style="height:30px;width:344px;">
-					<table cellpadding="0" cellspacing="0" border="0" align="right">
-						<tr>
-						<td><a id="par" href="../reports/PendingAccessRequests.cfm" target="_blank" style="color:#request.color#"><span style="position:relative;top:-1px;">Pending Access Requests</span></a></td>
-						<td style="width:10px;"></td>
-						<td>
-						From:&nbsp;
-						<select name="yr4start" id="yr4start" class="rounded" style="position:relative;top:1px;width:55px;height:20px;" onChange="setURL14();">
-						<cfloop index="i" from="2017" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:5px;"></td>
-						<td>
-						To:&nbsp;
-						<select name="yr4" id="yr4" class="rounded" style="position:relative;top:1px;width:60px;height:20px;" onChange="setURL14();">
-						<option value="">Today</option>
-						<cfloop index="i" from="2018" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:3px;"></td>
-						</tr>
-					</table>
-					</th>
-					</tr>
-				</table>
-			</td>
-		</tr>
-
-        </cfif> 
-		
-		<!--- nathan neumann 4/25/19 report access --->
-	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",5,", session.user_report) gt 0))>
-
-		<tr>	
-			<td colspan="4" style="padding:0px 0px 0px 0px;">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>					
-					<th class="center middle" style="height:30px;width:344px;">
-					<table cellpadding="0" cellspacing="0" border="0" align="right">
-						<tr>
-						<td><a id="grv" href="../reports/Grievances.cfm" target="_blank" style="color:#request.color#"><span style="position:relative;top:-1px;">Grievances Report</span></a></td>
-						<td style="width:10px;"></td>
-						<td>
-						From:&nbsp;
-						<select name="yr5start" id="yr5start" class="rounded" style="position:relative;top:1px;width:55px;height:20px;" onChange="setURL15();">
-						<cfloop index="i" from="2017" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:5px;"></td>
-						<td>
-						To:&nbsp;
-						<select name="yr5" id="yr5" class="rounded" style="position:relative;top:1px;width:60px;height:20px;" onChange="setURL15();">
-						<option value="">Today</option>
-						<cfloop index="i" from="2018" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:3px;"></td>
-						</tr>
-					</table>
-					</th>
-					</tr>
-				</table>
-			</td>
-		</tr>
-
-        </cfif> 
-		
-		<!--- nathan neumann 4/25/19 report access --->
-	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",9,", session.user_report) gt 0))>
-
-		<tr>	
-			<td colspan="4" style="padding:0px 0px 0px 0px;">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>					
-					<th class="center middle" style="height:30px;width:344px;">
-					<table cellpadding="0" cellspacing="0" border="0" align="right">
-						<tr>
-						<td><a id="sar" href="../reports/ScheduledAccessRequests.cfm" target="_blank" style="color:#request.color#"><span style="position:relative;top:-1px;">Scheduled Access Requests</span></a></td>
-						<td style="width:10px;"></td>
-						<!--- <td>
-						From:&nbsp;
-						<select name="yr78start" id="yr8start" class="rounded" style="position:relative;top:1px;width:55px;height:20px;" onChange="setURL19();">
-						<cfloop index="i" from="2017" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:5px;"></td> --->
-						<td>
-						To:&nbsp;
-						<select name="yr9" id="yr9" class="rounded" style="position:relative;top:1px;width:60px;height:20px;" onChange="setURL19();">
-						<option value="">Today</option>
-						<cfloop index="i" from="2018" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:50px;"></td>
-						</tr>
-					</table>
-					</th>
-					</tr>
-				</table>
-			</td>
-		</tr>
-
-        </cfif> 
-		
-		<!--- nathan neumann 4/25/19 report access --->
-	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",6,", session.user_report) gt 0))>
-
-		<tr>	
-			<td colspan="4" style="padding:0px 0px 0px 0px;">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>					
-					<th class="center middle" style="height:30px;width:344px;">
-					<table cellpadding="0" cellspacing="0" border="0" align="right">
-						<tr>
-						<td><a id="cip" href="../reports/CapitalProjects.cfm" target="_blank" style="color:#request.color#"><span style="position:relative;top:-1px;">Capital Improvement Projects</span></a></td>
-						<td style="width:10px;"></td>
-						<!--- <td>
-						From:&nbsp;
-						<select name="yr6start" id="yr6start" class="rounded" style="position:relative;top:1px;width:55px;height:20px;" onChange="setURL16();">
-						<cfloop index="i" from="2017" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:5px;"></td> --->
-						<td>
-						To:&nbsp;
-						<select name="yr6" id="yr6" class="rounded" style="position:relative;top:1px;width:60px;height:20px;" onChange="setURL16();">
-						<option value="">Today</option>
-						<cfloop index="i" from="2018" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:50px;"></td>
-						</tr>
-					</table>
-					</th>
-					</tr>
-				</table>
-			</td>
-		</tr>
-
-        </cfif> 
-		
-		<!--- nathan neumann 4/25/19 report access --->
-	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",7,", session.user_report) gt 0))>
-
-		<tr>	
-			<td colspan="4" style="padding:0px 0px 0px 0px;">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>					
-					<th class="center middle" style="height:30px;width:344px;">
-					<table cellpadding="0" cellspacing="0" border="0" align="right">
-						<tr>
-						<td><a id="opp" href="../reports/OtherPermitted.cfm" target="_blank" style="color:#request.color#"><span style="position:relative;top:-1px;">Other Permitted Projects</span></a></td>
-						<td style="width:10px;"></td>
-						<!--- <td>
-						From:&nbsp;
-						<select name="yr7start" id="yr7start" class="rounded" style="position:relative;top:1px;width:55px;height:20px;" onChange="setURL17();">
-						<cfloop index="i" from="2017" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:5px;"></td> --->
-						<td>
-						To:&nbsp;
-						<select name="yr7" id="yr7" class="rounded" style="position:relative;top:1px;width:60px;height:20px;" onChange="setURL17();">
-						<option value="">Today</option>
-						<cfloop index="i" from="2018" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:50px;"></td>
-						</tr>
-					</table>
-					</th>
-					</tr>
-				</table>
-			</td>
-		</tr>
-
-        </cfif> 
-		
-		<!--- nathan neumann 4/25/19 report access --->
-	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",8,", session.user_report) gt 0))>
-
-		<tr>	
-			<td colspan="4" style="padding:0px 0px 0px 0px;">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>					
-					<th class="center middle" style="height:30px;width:344px;">
-					<table cellpadding="0" cellspacing="0" border="0" align="right">
-						<tr>
-						<td><a id="srp" href="../reports/Resurfacing.cfm" target="_blank" style="color:#request.color#"><span style="position:relative;top:-1px;">Street Resurfacing Projects</span></a></td>
-						<td style="width:10px;"></td>
-						<!--- <td>
-						From:&nbsp;
-						<select name="yr78start" id="yr8start" class="rounded" style="position:relative;top:1px;width:55px;height:20px;" onChange="setURL18();">
-						<cfloop index="i" from="2017" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:5px;"></td> --->
-						<td>
-						To:&nbsp;
-						<select name="yr8" id="yr8" class="rounded" style="position:relative;top:1px;width:60px;height:20px;" onChange="setURL18();">
-						<option value="">Today</option>
-						<cfloop index="i" from="2018" to="2030">
-							<option value="#i#">#i#</option>
-						</cfloop>
-						</select>
-						</td>
-						<td style="width:50px;"></td>
+						<td style="width:15px;"></td>
 						</tr>
 					</table>
 					</th>
@@ -471,7 +198,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<a href="../reports/ConstructionTracking.cfm" target="_blank" style="color:#request.color#">Construction Tracking Log</a>
 					</th>
 					</tr>
@@ -486,7 +213,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<a href="../reports/Council.cfm" target="_blank" style="color:#request.color#">Council Report</a>
 					</th>
 					</tr>
@@ -505,7 +232,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 						<td><a id="cdr" href="../reports/Council.cfm" target="_blank" style="color:#request.color#">Council Report</a></td>
@@ -535,7 +262,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 						<td><a id="eer" href="../reports/Estimating.cfm?my_package=#getGroups.pkg#" target="_blank" style="color:#request.color#">Engineer Estimates Report</a></td>
@@ -570,7 +297,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 						<td><a id="bf" href="../reports/Bidding.cfm?my_package=#getGroups.pkg#" target="_blank" style="color:#request.color#;position:relative;left:16px;">Contractor Bid Form</a></td>
@@ -603,7 +330,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 						<td><a id="cp" href="../reports/Pricing.cfm?my_package=#getGroups.pkg#" target="_blank" style="color:#request.color#;position:relative;left:3px;">Contractor Pricing Report</a></td>
@@ -635,7 +362,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 						<td><a id="fq" href="../reports/FinalQuantities.cfm?my_package=#getGroups.pkg#" target="_blank" style="color:#request.color#;position:relative;left:14px;">Final Quantites Form</a></td>
@@ -670,7 +397,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 						<td><a href="" style="color:#request.color#;position:relative;left:10px;"
@@ -706,7 +433,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 						<td><a id="tp" href="../reports/TreePermits.cfm?package=#getGroups.pkg#" target="_blank" style="color:#request.color#;position:relative;left:2px;">Bid Package Tree Permits</a></td>
@@ -739,7 +466,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 						<td><a id="eel" href="../reports/EstimatingByLocation.cfm?my_loc=#getLocations.loc#" target="_blank" style="color:#request.color#;">Engineer Estimate by Site</a></td>
@@ -771,7 +498,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr>
 						<td><a id="cpl" href="../reports/PricingByLocation.cfm?my_loc=#getLocations2.loc#" target="_blank" style="color:#request.color#;">Contractor Pricing by Site</a></td>
@@ -805,7 +532,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<a href="../reports/CurbRampTracking.cfm" target="_blank" style="color:#request.color#">Curb Ramp Tracking Report</a>
 					</th>
 					</tr>
@@ -821,45 +548,20 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
          <!--- joe hu 7/31/18 report access --->
 	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",120,", session.user_report) gt 0))>
         
-		<!--- <tr>	
+        
+        
+        
+		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<a href="../reports/TreeTracking.cfm" target="_blank" style="color:#request.color#">Tree Report</a>
 					</th>
 					</tr>
 				</table>
 			</td>
-		</tr> --->
-		
-		<tr>	
-			<td colspan="4" style="padding:0px 0px 0px 0px;">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>
-					<th class="center middle" style="height:50px;width:344px;">
-					<table cellpadding="0" cellspacing="0" border="0" align="center">
-						<tr><td style="height:3px;"></td></tr>
-						<tr>
-						<td><a id="trpcup" href="../reports/treeplanted_excel.cfm?planting_start=2015-07-01&planting_end=#dateFormat(Now(),"yyyy-mm-dd")#" target="_blank" style="color:#request.color#;">Tree Planted Excel File</a></td>
-						</tr>
-						<tr><td style="height:8px;"></td></tr>
-						<tr>
-						<td >
-						&nbsp;&nbsp;&nbsp;&nbsp;From:&nbsp;
-						<input type="Text" name="rpt_trpfrm" id="rpt_tpeffrm" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onChange="setURL120();">
-						&nbsp;&nbsp;&nbsp;&nbsp;To:&nbsp;
-						<input type="Text" name="rpt_trpto" id="rpt_tpefto" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onChange="setURL120();">
-						</td>
-						</tr>
-					</table>
-					</th>
-					</tr>
-				</table>
-			</td>
 		</tr>
-		
-		
         
         
          </cfif>  
@@ -867,45 +569,24 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
          <!--- joe hu 7/31/18 report access --->
 	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",130,", session.user_report) gt 0))>
         
-
-		<!--- <tr>
+        
+        
+        
+		
+		<tr>
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<a href="../reports/treetracking_excel.cfm" target="_blank" style="color:#request.color#">Tree Report Excel File</a>
 					</th>
 					</tr>
 				</table>
 			</td>
-		</tr> --->
-        
-		<tr>	
-			<td colspan="4" style="padding:0px 0px 0px 0px;">
-				<table cellpadding="0" cellspacing="0" border="0">
-					<tr>
-					<th class="center middle" style="height:50px;width:344px;">
-					<table cellpadding="0" cellspacing="0" border="0" align="center">
-						<tr><td style="height:3px;"></td></tr>
-						<tr>
-						<td><a id="trpcup" href="../reports/treetracking_excel.cfm?planting_start=2015-07-01&planting_end=#dateFormat(Now(),"yyyy-mm-dd")#" target="_blank" style="color:#request.color#;">Tree Report Excel File</a></td>
-						</tr>
-						<tr><td style="height:8px;"></td></tr>
-						<tr>
-						<td >
-						&nbsp;&nbsp;&nbsp;&nbsp;From:&nbsp;
-						<input type="Text" name="rpt_trpfrm" id="rpt_treffrm" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onChange="setURL130();">
-						&nbsp;&nbsp;&nbsp;&nbsp;To:&nbsp;
-						<input type="Text" name="rpt_trpto" id="rpt_trefto" value="" style="width:67px;height:20px;padding:0px;text-align:center;" class="roundedsmall" onChange="setURL130();">
-						</td>
-						</tr>
-					</table>
-					</th>
-					</tr>
-				</table>
-			</td>
 		</tr>
-
+        
+       
+        
         
          </cfif>  
          
@@ -913,15 +594,16 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",140,", session.user_report) gt 0))>
         
         
+		
 		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:50px;width:344px;">
+					<th class="center middle" style="height:50px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr><td style="height:3px;"></td></tr>
 						<tr>
-						<td><a id="trpcup" href="../reports/TreeMetrics_Excel.cfm?planting_start=2015-07-01&planting_end=#dateFormat(Now(),"yyyy-mm-dd")#" target="_blank" style="color:#request.color#;">City Plants Metrics Excel File
+						<td><a id="trpcup" href="../reports/TreeReadyToPlant_Excel.cfm?planting_start=2015-07-01&planting_end=#dateFormat(Now(),"yyyy-mm-dd")#" target="_blank" style="color:#request.color#;">Trees Ready To Plant Excel File
 </a></td>
 						</tr>
 						<tr><td style="height:8px;"></td></tr>
@@ -939,27 +621,32 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 				</table>
 			</td>
 		</tr>
- 
-
+        
+        
+        
         
          </cfif>  
          
          <!--- joe hu 7/31/18 report access --->
 	    <cfif ((len(session.user_report) eq 0) OR (FindNoCase(",150,", session.user_report) gt 0))>
         
-
-		<!--- <tr>	
+        
+        
+		
+		<tr>	
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<a href="../reports/TreeTracking_Planned.cfm" target="_blank" style="color:#request.color#">Planned Tree Report</a>
 					</th>
 					</tr>
 				</table>
 			</td>
-		</tr> --->
-
+		</tr>
+        
+        
+        
          </cfif>  
          
          <!--- joe hu 7/31/18 report access --->
@@ -971,7 +658,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<a href="../reports/PackageStatus.cfm" target="_blank" style="color:#request.color#">Package Status Report</a>
 					</th>
 					</tr>
@@ -994,7 +681,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:30px;width:344px;">
+					<th class="center middle" style="height:30px;width:294px;">
 					<a href="../reports/compliance2.cfm" target="_blank" style="color:#request.color#">Certificates of Compliance Excel File</a>
 					</th>
 					</tr>
@@ -1019,7 +706,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:50px;width:344px;">
+					<th class="center middle" style="height:50px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr><td style="height:3px;"></td></tr>
 						<tr>
@@ -1055,7 +742,7 @@ SELECT vwHDRContractorPricing.location_no as loc FROM vwHDRContractorPricing ORD
 			<td colspan="4" style="padding:0px 0px 0px 0px;">
 				<table cellpadding="0" cellspacing="0" border="0">
 					<tr>
-					<th class="center middle" style="height:50px;width:344px;">
+					<th class="center middle" style="height:50px;width:294px;">
 					<table cellpadding="0" cellspacing="0" border="0" align="center">
 						<tr><td style="height:3px;"></td></tr>
 						<tr>
@@ -1229,117 +916,25 @@ function setURL10() {
 	}
 	
 	if (sfx != "") { sfx = "?" + sfx; }
-	$("#trpcup").attr("href",'../reports/TreeMetrics_Excel.cfm' + sfx);
+	$("#trpcup").attr("href",'../reports/TreeReadyToPlant_Excel.cfm' + sfx);
 }
 
 function setURL11() {
-	var yrst = $("#yr1start").val();
 	var yr = $("#yr1").val();
-	$("#ccr").attr("href","../reports/CompletedCurbRamps.cfm?start_year=" + yrst + "&report_year=" + yr);
+	$("#ccr").attr("href",'../reports/CompletedCurbRamps.cfm?report_year=' + yr);
 }
 
 function setURL12() {
-	var yrst = $("#yr2start").val();
 	var yr = $("#yr2").val();
-	$("#ci").attr("href","../reports/CompletedImprovements.cfm?start_year=" + yrst + "&report_year=" + yr);
+	$("#ci").attr("href",'../reports/CompletedImprovements.cfm?report_year=' + yr);
 }
 
 function setURL13() {
-	var yrst = $("#yr3start").val();
 	var yr = $("#yr3").val();
-	$("#car").attr("href","../reports/CompletedAccessRequests.cfm?start_year=" + yrst + "&report_year=" + yr);
-}
-
-function setURL14() {
-	var yrst = $("#yr4start").val();
-	var yr = $("#yr4").val();
-	$("#par").attr("href","../reports/PendingAccessRequests.cfm?start_year=" + yrst + "&report_year=" + yr);
-}
-
-function setURL15() {
-	var yrst = $("#yr5start").val();
-	var yr = $("#yr5").val();
-	$("#grv").attr("href","../reports/Grievances.cfm?start_year=" + yrst + "&report_year=" + yr);
-}
-
-function setURL16() {
-	//var yrst = $("#yr6start").val();
-	var yr = $("#yr6").val();
-	$("#cip").attr("href","../reports/CapitalProjects.cfm?report_year=" + yr);
-}
-
-function setURL17() {
-	//var yrst = $("#yr7start").val();
-	var yr = $("#yr7").val();
-	$("#opp").attr("href","../reports/OtherPermitted.cfm?report_year=" + yr);
-}
-
-function setURL18() {
-	//var yrst = $("#yr8start").val();
-	var yr = $("#yr8").val();
-	$("#srp").attr("href","../reports/Resurfacing.cfm?report_year=" + yr);
-}
-
-function setURL19() {
-	//var yrst = $("#yr9start").val();
-	var yr = $("#yr9").val();
-	$("#sar").attr("href","../reports/ScheduledAccessRequests.cfm?report_year=" + yr);
-}
-
-function setURL120() {
-	
-	var frm = ""; var too = "";
-	var sfx = "";
-	if ($.trim($("#rpt_tpeffrm").val()) != "") {
-		var arr = $("#rpt_tpeffrm").val().split("/");
-		frm = arr[2] + "-" + arr[0] + "-" + arr[1];
-		sfx = sfx + "planting_start=" + frm;
-	}
-	else {
-		sfx = sfx + "planting_start=" + "2015-07-01";
-	}
-	if ($.trim($("#rpt_tpefto").val()) != "") {
-		var arr = $("#rpt_tpefto").val().split("/");
-		too = arr[2] + "-" + arr[0] + "-" + arr[1];
-		if (sfx != "") { sfx = sfx + "&"; }
-		sfx = sfx + "planting_end=" + too;
-	}
-	else {
-		if (sfx != "") { sfx = sfx + "&"; }
-		<cfoutput>sfx = sfx + "planting_end=" + "#dateFormat(Now(),"yyyy-mm-dd")#";</cfoutput>
-	}
-	
-	if (sfx != "") { sfx = "?" + sfx; }
-	$("#trpcup").attr("href",'../reports/treeplanted_excel.cfm' + sfx);
+	$("#car").attr("href",'../reports/CompletedAccessRequests.cfm?report_year=' + yr);
 }
 
 
-function setURL130() {
-	
-	var frm = ""; var too = "";
-	var sfx = "";
-	if ($.trim($("#rpt_treffrm").val()) != "") {
-		var arr = $("#rpt_treffrm").val().split("/");
-		frm = arr[2] + "-" + arr[0] + "-" + arr[1];
-		sfx = sfx + "planting_start=" + frm;
-	}
-	else {
-		sfx = sfx + "planting_start=" + "2015-07-01";
-	}
-	if ($.trim($("#rpt_trefto").val()) != "") {
-		var arr = $("#rpt_trefto").val().split("/");
-		too = arr[2] + "-" + arr[0] + "-" + arr[1];
-		if (sfx != "") { sfx = sfx + "&"; }
-		sfx = sfx + "planting_end=" + too;
-	}
-	else {
-		if (sfx != "") { sfx = sfx + "&"; }
-		<cfoutput>sfx = sfx + "planting_end=" + "#dateFormat(Now(),"yyyy-mm-dd")#";</cfoutput>
-	}
-	
-	if (sfx != "") { sfx = "?" + sfx; }
-	$("#trpcup").attr("href",'../reports/treetracking_excel.cfm' + sfx);
-}
 
 
 function showFilter() {
@@ -1409,10 +1004,6 @@ $( "#rpt_acfrm" ).datepicker();
 $( "#rpt_acto" ).datepicker();
 $( "#rpt_trpfrm" ).datepicker();
 $( "#rpt_trpto" ).datepicker();
-$( "#rpt_tpeffrm" ).datepicker();
-$( "#rpt_tpefto" ).datepicker();
-$( "#rpt_treffrm" ).datepicker();
-$( "#rpt_trefto" ).datepicker();
 
 </script>
 

@@ -32,9 +32,11 @@
 <cfset doCert = "false">
 <cfset doCurb = "false">
 <cfset doMemo = "false">
+<cfset doField_Assess = "false">
 <cfset doRoe = "false">
 <cfset doPrn = "false">
 <cfset doRCurb = "false">
+
 
 <cftry>
 
@@ -58,6 +60,12 @@
 			<cfelseif right(arrFlds[i],4) is "MEMO">
 				<cfset fname = "Memos." & dir>
 				<cfset doMemo = "true">
+                
+             <cfelseif right(arrFlds[i],12) is "FIELD_ASSESS">
+				<cfset fname = "Field_Assess." & dir>
+				<cfset doField_Assess = "true">   
+                
+                
 			<cfelseif right(arrFlds[i],3) is "ROE">
 				<cfset fname = "ROE_Form." & dir>
 				<cfset doRoe = "true">
@@ -86,6 +94,10 @@
 <div id="doCERT">#doCert#</div>
 <div id="doCURB">#doCurb#</div>
 <div id="doMEMO">#doMemo#</div>
+
+
+<div id="doFIELD_ASSESS">#doField_Assess#</div>
+
 <div id="doROE">#doRoe#</div>
 <div id="doPRN">#doPrn#</div>
 <div id="doRCURB">#doRCurb#</div>

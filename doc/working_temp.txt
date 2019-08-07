@@ -1,0 +1,176 @@
+
+
+
+
+
+
+
+ 
+
+
+
+
+<!---   --->
+
+
+<!--- end ---- joe hu 2019-5-7 pdf request --->
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+
+
+
+
+   <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+
+       <!---   --->
+
+<!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+
+
+
+
+<cfquery name="getTreePlantedCondition" datasource="#request.sqlconn#" dbtype="ODBC">
+SELECT * FROM tblTreeTypes ORDER BY id
+</cfquery>
+
+
+
+
+
+
+
+++++++++++++++++++++++++++++++   dropdown ++++++++++++++++++++++++++++++
+
+
+
+                 <th class="center middle" style="width:60px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Planted Tree Condition:</span></th>	
+
+
+
+
+
+ 
+                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                            <td style="width:2px;"></td>
+                            <td class="frm left middle">
+                            <select name="tpPlantedCondition_#scnt#_#trcnt#" id="tpPlantedCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:60px;height:20px;font-size:9px;" #trdis#>
+                            <!--- <option value=""></option> --->
+                            <cfloop query="getTreePlantedCondition">
+                                       <cfset sel = "">
+								       <cfif getList.Planted_Tree_Condition is id>
+									       <cfset sel = "selected">
+                                       </cfif>
+                                <option value="#id#" #sel#>#value#</option>
+                            </cfloop>
+                            </select>
+                            </td>
+                    
+                    
+                    
+                    
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+
+
+
+					
+					
+
+
+
+					
+					
+++++++++++++++++++++++++++++++   dropdown ++++++++++++++++++++++++++++++
+					
+					
+					
+					
+					
+
+
+.......................
+
+
+update   ----  submitForm7()
+
+$.ajax({
+	  type: "POST",
+	  url: url + "cfc/sw.cfc?method=updateTrees2&callback=",
+	  
+	  
+	  
+..................................................................	  
+	  
+
+
+
+3385
+
+<td style="width:2px;"></td>
+					<td class="frm left middle" style="width:28px;">
+					<div style="position:relative;left:7px;top:-1px">
+					<a href="" onClick="$('#chr(35)#tpnotediv_#scnt#_#trcnt#').toggle();return false;"><img src="../images/rep.gif" width="12" height="14" alt="Note" title="Note"></a>
+					</div>
+					</td>
+
+
+
+
+
+
+
+
+<cfif sw_pid is not "">		
+						
+							<cfset x = url.pid>
+							<cfif x is 0>
+							<cfquery name="getPackageNo" datasource="#request.sqlconn#" dbtype="ODBC">
+							SELECT id FROM tblPackages WHERE package_no = #sw_pid# AND package_group = '#sw_grp#'
+							</cfquery>
+							<cfset x = getPackageNo.id>
+							</cfif>
+										
+						<th class="drk left middle" style="width:55px;">Package:</th>
+						<td class="left middle pagetitle" style="width:190px;padding:1px 3px 0px 0px;"><span onMouseOver="this.style.cursor='pointer';" onClick="goToPackage(#x#);return false;">#sw_grp# - #sw_pid#</span>
+						</td>
+						<cfelse>
+						<th class="drk left middle" style="width:270px;"></th>
+						</td>
+						</cfif>
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						<input type="Text" name="sw_address" id="sw_address" value="#v#" style="width:305px;" class="rounded" #dis#></td>
+							<td style="width:2px;"></td>
+							<th class="left middle" style="width:94px;">Council District:</th>
+							<td style="width:2px;"></td>
+							<td class="frm" style="width:60px;">
+							<select name="sw_cd" id="sw_cd" class="rounded" style="width:55px;" #dis#>
+							<option value=""></option>
+							<cfloop index="i" from="1" to="15">
+								<cfset sel = ""><cfif getSite.council_district is i><cfset sel = "selected"></cfif>
+								<option value="#i#" #sel#>#i#</option>
+							</cfloop>
+							</select>

@@ -23,6 +23,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
+
+
+<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+
+
 <cfoutput>
 <script language="JavaScript1.2" src="../js/fw_menu.js"></script>
 <script language="JavaScript" src="../js/isDate.js" type="text/javascript"></script>
@@ -33,6 +38,9 @@
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <!--- <link href="#request.stylesheet#" rel="stylesheet" type="text/css"> --->
 <cfinclude template="../css/css.cfm">
+
+
+
 
 
 
@@ -61,6 +69,28 @@ SELECT * FROM tblSites WHERE id = #url.sid#
 
 <cfif url.search is true><cfset url.pid = 0></cfif>
 
+
+
+ <!--- -------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu ------------ ---> 
+
+				<!--- 1 means locked,    0 means unlocked  ---> 
+                <cfif getSite.Locked eq 1>
+            
+                       <cfset lock = 1>
+                       <cfset dis="disabled">
+                  <cfelse>
+                         <cfset lock = 0>
+                      
+                       
+                </cfif>
+
+
+    <!--- -------- End ---------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+    
+
+
+
+
 <!--- Get Package --->
 <cfset isBSS = false>
 <cfset isCert = false>
@@ -73,7 +103,15 @@ SELECT * FROM tblSites WHERE id = #url.sid#
 	</cfquery>
 	<cfset sw_pid = getPackage.package_no>
 	<cfset sw_grp = getPackage.package_group>
-	<cfif ucase(getPackage.contractor) is "BSS"><cfset isBSS = true></cfif>
+    
+    
+     <!--- if locked, do not evaluate package is/not BSS --->
+        <!--- 1 means locked,    0 means unlocked  ---> 
+        <cfif lock neq 1> 
+				
+							<cfif ucase(getPackage.contractor) is "BSS"><cfset isBSS = true></cfif>
+          </cfif>  
+    
 <cfelse>
 	<cfset sw_pid = getSite.package_no>
 	<cfset sw_grp = getSite.package_group>
@@ -81,12 +119,36 @@ SELECT * FROM tblSites WHERE id = #url.sid#
 		<cfquery name="getPackage" datasource="#request.sqlconn#" dbtype="ODBC">
 		SELECT * FROM tblPackages WHERE package_no = #sw_pid# AND package_group = '#sw_grp#'
 		</cfquery>
-		<cfif getPackage.recordcount gt 0>
-			<cfif ucase(getPackage.contractor) is "BSS"><cfset isBSS = true></cfif>
-		</cfif>
+        
+        
+        <!--- if locked, do not evaluate package is/not BSS --->
+        <!--- 1 means locked,    0 means unlocked  ---> 
+        <cfif lock neq 1> 
+				<cfif getPackage.recordcount gt 0>
+                    
+                    
+                    <cfif ucase(getPackage.contractor) is "BSS"><cfset isBSS = true></cfif>
+                </cfif>
+        </cfif>
+        
+        
+        
+        
+        
 	</cfif>
 </cfif>
-<cfif getSite.package_group is "BSS"><cfset isBSS = true></cfif>
+
+
+		<!--- if locked, do not evaluate package is/not BSS --->
+        <!--- 1 means locked,    0 means unlocked  ---> 
+        <cfif lock neq 1> 
+				<cfif getSite.package_group is "BSS"><cfset isBSS = true></cfif>
+         </cfif>
+
+
+
+
+
 <cfif isdefined("session.user_cert")>
 	<cfif session.user_cert is 1><cfset isCert = true></cfif>
 </cfif>
@@ -133,7 +195,7 @@ SELECT id FROM getType WHERE iscity = 1 ORDER BY id
         
         <!--- Get available subtype by current selected Category --->
         <cfquery name="getCurrentAvailableSubtype" datasource="#request.sqlconn#" dbtype="ODBC">
-                SELECT * from tblType where category = '#_current_selected_category#'  ORDER BY type
+                SELECT * from tblType where (category = '#_current_selected_category#' ) AND (Deleted IS NULL) ORDER BY type
         
         </cfquery>
         
@@ -174,6 +236,17 @@ SELECT * FROM tblPhaseType ORDER BY id
 <cfquery name="getStatusBIC" datasource="#request.sqlconn#" dbtype="ODBC">
 SELECT * FROM tblStatusBICType ORDER BY id
 </cfquery>
+
+
+
+<!--- ---- joe hu 6-19-2019 special fund --->
+<!--- Get Specail Fund --->
+<cfquery name="getSpecialFund" datasource="#request.sqlconn#" dbtype="ODBC">
+SELECT * FROM tblSpecialFund ORDER BY id
+</cfquery>
+
+
+
 
 <!--- Get Classification Type --->
 <cfquery name="getClassification" datasource="#request.sqlconn#" dbtype="ODBC">
@@ -365,25 +438,15 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 
 
 
-   <!--- -------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu ------------ ---> 
-
-				
-                <cfif getSite.Locked eq 1>
-            
-                       <cfset lock = 1>
-                       <cfset dis="disabled">
-                  <cfelse>
-                         <cfset lock = 0>
-                      
-                       
-                </cfif>
-
-
-    <!--- -------- End ---------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
-    
+  
     
 
 
+    
+    
+    
+    
+  
     
     
     
@@ -959,8 +1022,8 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						<tr>
 						<th class="left middle" style="height:30px;width:45px;">Phase:</th>
 						<td style="width:2px;"></td>
-						<td class="frm"  style="width:135px;">
-						<select name="sw_phase" id="sw_phase" class="rounded" style="width:130px;" #dis#>
+						<td class="frm"  style="width:102px;">
+						<select name="sw_phase" id="sw_phase" class="rounded" style="width:100px;" #dis#>
 						<option value=""></option>
 						<cfloop query="getPhase">
 							<cfset sel = ""><cfif getSite.phase is id><cfset sel = "selected"></cfif>
@@ -970,10 +1033,10 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						</td>
 						
 						<td style="width:2px;"></td>
-						<th class="left middle" style="height:30px;width:74px;">Status / BIC:</th>
+						<th class="left middle" style="height:30px;width:54px;">Status / BIC:</th>
 						<td style="width:2px;"></td>
-						<td class="frm"  style="width:125px;">
-						<select name="sw_bic" id="sw_bic" class="rounded" style="width:120px;" #dis#>
+						<td class="frm"  style="width:92px;">
+						<select name="sw_bic" id="sw_bic" class="rounded" style="width:90px;" #dis#>
 						<option value=""></option>
 						<cfloop query="getStatusBIC">
 							<cfset sel = ""><cfif getSite.statusbic is id><cfset sel = "selected"></cfif>
@@ -982,11 +1045,31 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 						</select>
 						</td>
 						
+                        
+                        
+                        
+                        <!--- ---- joe hu 6-19-2019 special fund --->
+                        <td style="width:2px;"></td>
+						<th class="left middle" style="height:30px;width:54px;">Special Fund:</th>
+						<td style="width:2px;"></td>
+						<td class="frm"  style="width:62px;">
+						<select name="sw_specialfund" id="sw_specialfund" class="rounded" style="width:60px;" #dis#>
+									<option value=""></option> 
+                        
+                                    <cfloop query="getSpecialFund">
+                                        <cfset sel = ""><cfif getSite.specialfund is id><cfset sel = "selected"></cfif>
+                                        <option value="#id#" #sel#>#value#</option>
+                                    </cfloop>
+						
+						</select>
+						</td>
+                        
+                        
 						<td style="width:2px;"></td>
 						<th class="left middle" style="height:30px;width:75px;">Classification:</th>
 						<td style="width:2px;"></td>
-						<td class="frm"  style="width:198px;">
-						<select name="sw_class" id="sw_class" class="rounded" style="width:193px;" #dis#>
+						<td class="frm"  style="width:168px;">
+						<select name="sw_class" id="sw_class" class="rounded" style="width:163px;" #dis#>
 						<option value=""></option>
 						<cfloop query="getClassification">
 							<cfset sel = ""><cfif getSite.classification is id><cfset sel = "selected"></cfif>
@@ -1155,7 +1238,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 				<td colspan="4" style="padding:0px 0px 0px 0px;">
 					<table cellpadding="0" cellspacing="0" border="0">
 						<tr>
-						<th class="left middle" style="width:185px;">No. of Trees to Remove per Arborist:</th>
+						<th class="left middle" style="width:145px;">No. of Trees to Remove per Arborist:</th>
 						<td style="width:2px;"></td>
 						<cfset v = "">
 						<cfif getTreeListInfo.recordcount gt 0>
@@ -1174,7 +1257,14 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 							<table cellpadding="0" cellspacing="0" border="0" style="height:100%;">
 								<tr>
 								<th style="width:0px;"></th>
-								<th class="middle">ADA Compliance Exceptions (See Notes):</th>
+                                
+                               <!--- joe hu 2019-5-7 pdf request --->
+                                 
+								<!---<th class="middle">ADA Compliance Exceptions (See Notes):</th>--->
+                                <th class="middle">Exemptions or Out of SRP Scope:</th>
+                                
+                                
+                                
 								<cfset v = ""><cfif getSite.ada_exception is 1><cfset v = "checked"></cfif>
 								<th class="middle">
 								<div style="position:relative;top:1px;"><input id="sw_excptn" name="sw_excptn" type="checkbox" #v# #dis# onClick="toggleADANotes();"></div></th>
@@ -1182,7 +1272,7 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 							</table>
 						</th>
 						<td style="width:2px;"></td>
-						<th class="left middle" style="width:165px;">
+						<th class="left middle" style="width:125px;">
 							<table cellpadding="0" cellspacing="0" border="0" style="height:100%;">
 								<tr>
 								<th style="width:0px;"></th>
@@ -1194,6 +1284,35 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 							</table>
 						
 						</th>
+                        
+                        
+                        
+                        
+                        
+                        <!--- joe hu 2019-4 multi change --->
+                        
+                        
+                        <td style="width:2px;"></td>
+						<th class="left middle" style="width:85px;">
+							<table cellpadding="0" cellspacing="0" border="0" style="height:100%;">
+								<tr>
+								<th style="width:0px;"></th>
+								<th class="middle">Grievance:</th>
+								<cfset v = ""><cfif getSite.grievance eq 1><cfset v = "checked"></cfif> 
+								<th class="middle">
+								<div style="position:relative;top:1px;"><input id="sw_grievance" name="sw_grievance" type="checkbox" #v# #dis# ></div></th>
+								</tr>
+							</table>
+						
+						</th>
+                        
+                        
+                        
+                        <!--- end ---- joe hu 2019-4 multi change --->
+                        
+                        
+                        
+                        
 						<cfset dis = distmp>
 						</tr>
 					</table>
@@ -1264,7 +1383,12 @@ SELECT * FROM tblChangeOrders WHERE location_no = #getSite.location_no#
 			
 			<tr><th class="left middle" colspan="4" style="height:16px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
-					<tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">ADA Compliance Exception Notes:</th>
+					
+                     <!--- joe hu 2019-5-7 pdf request --->
+                                
+                  <!---   <tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">ADA Compliance Exception Notes:</th>  --->
+                     <tr><th class="left middle" style="padding:0px 0px 0px 0px;height:14px;">Exemptions or Out of SRP Scope:</th>
+                    
 					<td class="right" style="padding:0px;"><a href="" onClick="expandTextArea('sw_excptn_notes',2,13);return false;" style="position:relative;top:1px;right:8px;"><img src="../images/fit.png" width="13" height="13"  title="Expand to View All Text"></a></td></tr>
 				</table></th></tr>
 			<tr>
@@ -2828,8 +2952,18 @@ SELECT DISTINCT common FROM dbo.ags_bss_tree_inventory WHERE common is not null 
 
 <!--- Get ChangeOrder Values --->
 <cfquery name="getTreeTypes" datasource="#request.sqlconn#" dbtype="ODBC">
-SELECT * FROM tblTreeTypes ORDER BY id
+
+ 
+<!--- SELECT * FROM tblTreeTypes ORDER BY id --->
+<!--- joe hu 2019-5-7 pdf request --->
+      SELECT * FROM tblTreeTypes ORDER BY Value
+
 </cfquery>
+
+
+
+
+
 
 
 
@@ -2848,19 +2982,39 @@ SELECT * FROM tblTreeTypes ORDER BY id
 
 
         <cfquery name="getTreePlantedCondition" datasource="#request.sqlconn#" dbtype="ODBC">
-        		SELECT * FROM tblTreePlantedCondition ORDER BY id
+        		SELECT * FROM tblTreePlantedCondition ORDER BY Value
         </cfquery>
 
 
       <cfquery name="getTreeExistingCondition" datasource="#request.sqlconn#" dbtype="ODBC">
-        		SELECT * FROM tblTreeExistingCondition ORDER BY id
+        		SELECT * FROM tblTreeExistingCondition ORDER BY Value
         </cfquery>
 
+
+
+         <cfquery name="getTreeAttemptedPreservation" datasource="#request.sqlconn#" dbtype="ODBC">
+        		SELECT * FROM tblTreeAttemptedPreservation ORDER BY Value
+        </cfquery>
 
 
  		<cfquery name="getTreePreservationAlternative" datasource="#request.sqlconn#" dbtype="ODBC">
-        		SELECT * FROM tblTreePreservationAlternative ORDER BY id
+        		SELECT * FROM tblTreePreservationAlternative ORDER BY Value
         </cfquery>
+
+
+
+
+			
+            <cfquery name="getTreeRemovalContractorTypes" datasource="#request.sqlconn#" dbtype="ODBC">
+            		SELECT * FROM tblContractorType where removal = 1 ORDER BY Value
+            </cfquery>
+
+
+
+			<cfquery name="getTreePlantingContractorTypes" datasource="#request.sqlconn#" dbtype="ODBC">
+            			SELECT * FROM tblContractorType where planting = 1 ORDER BY Value
+            </cfquery>
+
 
 
 
@@ -2923,15 +3077,24 @@ SELECT * FROM tblContractorType ORDER BY id
 					<th class="drk left middle" style="width:312px;">Tree Information</th>
 					<td align="right" style="width:662px;">
                     
-                    <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
-                     <!--- --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
-						<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>
-                        <!--- cfif session.user_level gte 0 AND session.user_power gte 0 --->
+                    
+                    <!--- cfif session.user_level gte 0 AND session.user_power gte 0 --->
+                    
+                    
+                    
+                    	<!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+                     	<!--- --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
+                     
+						 <!--- <cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>--->
                         
                         
                         
-						<a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
-						onclick="submitForm7();return false;">Update</a>
+                         <!--- joe hu 2019-5-7 pdf request --->
+                            <cfif session.user_level gte 0 AND session.user_power gte 0>
+                        
+                        
+                                <a href="" class="button buttonText" style="height:17px;width:80px;padding:3px 0px 0px 0px;" 
+                                onclick="submitForm7();return false;">Update</a>
 						</cfif>
 					</td>
 					<td style="width:10px;"></td>
@@ -3107,6 +3270,10 @@ SELECT * FROM tblContractorType ORDER BY id
 			<tr><td style="height:2px;"></td></tr>
 			<tr>
 				
+                
+                 <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                 
+                 
 				<td colspan="2" style="padding:0px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 			
@@ -3115,32 +3282,139 @@ SELECT * FROM tblContractorType ORDER BY id
 					</cfquery>
 					<cfset v = ""><cfif trim(getSIRs.sir_no) is not "">
 					<cfset v = trim(getSIRs.sir_no)></cfif>
-					<th class="left middle" style="height:22px;width:48px;">SIR #chr(35)#:</th>
+					<th class="left middle" style="height:22px;width:38px;">SIR #chr(35)#:</th>
 					<td style="width:2px;"></td>
                     
                     
-                      <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                     
                     
                       	<!---  allow 18 digital  --->
                     
-                        <td class="frm left middle" style="width:150px;">
+                        <td class="frm left middle" style="width:120px;">
                               <input type="Text" name="sir_#scnt#" id="sir_#scnt#" value="#v#" 
-                                style="width:145px;height:20px;padding:0px 0px 0px 4px;" maxlength="18" class="roundedsmall" #sirdis#>
+                                style="width:118px;height:20px;padding:0px 0px 0px 4px;" maxlength="18" class="roundedsmall" #sirdis#>
                         </td>
                     
-                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                   
                     
                     
 					<td style="width:2px;"></td>
 					<cfset v = ""><cfif trim(getSIRs.sir_date) is not "">
 					<cfset v = dateformat(trim(getSIRs.sir_date),"mm/dd/yyyy")></cfif>
                     
-					<th class="left middle" style="width:70px;">&nbsp;SIR Date:</th>
+					<th class="left middle" style="width:60px;">&nbsp;SIR Date:</th>
 					<td style="width:2px;"></td>
-					<td class="frm left middle" style="width:100px;"><input type="Text" name="sirdt_#scnt#" id="sirdt_#scnt#" value="#v#" 
-					style="width:95px;height:20px;padding:0px;" class="center roundedsmall" #sirdis#></td>
+					<td class="frm left middle" style="width:70px;"><input type="Text" name="sirdt_#scnt#" id="sirdt_#scnt#" value="#v#" 
+					style="width:65px;height:20px;padding:0px;" class="center roundedsmall" #sirdis#></td>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                     <td style="width:2px;"></td>
+                     
+                     
+                     <cfset v = ""><cfif trim(getSIRs.sir_BPWapprovalRequired) is not "">
+					 <cfset v = trim(getSIRs.sir_BPWapprovalRequired)></cfif>
+                     
+                     <!---
+                     <cfset v = 0>
+					 --->
+                     
+                     <cfset _checked = "">
+                     <cfset _disabled = "disabled">
+                     <cfif v eq 1>
+                        <cfset _checked = "checked">
+                         <cfset _disabled = "">
+                     </cfif>
+                     
+					<th class="left middle" style="width:210px;">&nbsp;BPW Tree Removal Approval Required:</th>
 					<td style="width:2px;"></td>
-					<th class="left middle"></th>			
+					<td class="frm left middle" style="width:32px;">
+                                 <div style="position:relative;left:5px;">
+                                                                 
+                                     <input type="checkbox" name="sirBPWapprovalRequired_#scnt#" id="sirBPWapprovalRequired_#scnt#"  #_checked# #sirdis#>
+                                                
+                                 </div>         
+                    
+                    </td>
+                    
+                    
+                    
+                    
+                    
+                              <!---  --------- dynamically add jquery script attache to individual checkbox,  handle checked event,  ------------------     --->
+                                 
+                                     <script>
+                                               $( '#chr(35)#sirBPWapprovalRequired_#scnt#').change(function() {
+																													
+														if(this.checked) 
+														{
+																													
+																													
+																													
+																$( '#chr(35)#sirBPWapprovaldt_#scnt#').prop('disabled', false)													
+																													
+																													
+																													
+														} else {
+														
+														          $( '#chr(35)#sirBPWapprovaldt_#scnt#').prop('disabled', true)
+																  // empty the date field
+																   $( '#chr(35)#sirBPWapprovaldt_#scnt#').prop('value', '')
+																  
+														}
+													 
+													 
+													 
+											 })
+									          
+                                    
+                                    
+                                     </script>
+                    
+                                 <!---  --------- end ------------ dynamically add jquery script attache to individual checkbox,  handle checked event,  ------------------     --->
+                                    
+                                    
+                           
+                    
+                    
+                    
+                    
+                    <td style="width:2px;"></td>
+                    
+                    <cfset v = ""><cfif trim(getSIRs.sir_BPWapproval_date) is not "">
+					<cfset v = dateformat(trim(getSIRs.sir_BPWapproval_date),"mm/dd/yyyy")></cfif>
+                    
+					
+					<th class="left middle" style="width:110px;">&nbsp;BPW Approval Date:</th>
+					<td style="width:2px;"></td>
+					<td class="frm left middle" style="width:70px;">
+                                
+                                     <input type="Text" name="sirBPWapprovaldt_#scnt#" id="sirBPWapprovaldt_#scnt#" value="#v#" 
+					style="width:65px;height:20px;padding:0px;" class="center roundedsmall" #_disabled# #sirdis#>
+                    
+                    </td>
+                    
+                    
+                    
+                    
+                     <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+					<td style="width:2px;"></td>
+					<th class="left middle"></th>	
+                    
+                    
+                    
+                    
+                    
+                    
+                    		
 				</table>
 				</td>
 				
@@ -3153,6 +3427,8 @@ SELECT * FROM tblContractorType ORDER BY id
 				
 				<cfset max_trcnt = 0><cfif chkList.recordcount gt 0><cfset max_trcnt = chkList.mx></cfif>
 			
+            
+            
 			<tr><th class="drk left middle" colspan="2" style="height:20px;padding:0px;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
 					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Tree Removals</span>
@@ -3163,8 +3439,11 @@ SELECT * FROM tblContractorType ORDER BY id
                     
                      <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
                      <!---  --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
-						<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>
-                        <!--- cfif session.user_level gte 0 AND session.user_power gte 0 --->
+                     
+					<!---	<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>  ---> 
+                    
+                      <!--- back to original by remove:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 7/25/2019 joe hu------------ ---> 
+                        <cfif session.user_level gte 0 AND session.user_power gte 0>
 					
                     
                     
@@ -3212,18 +3491,24 @@ SELECT * FROM tblContractorType ORDER BY id
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:70px;"><span style="font-size:10px;">Tree Removal<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="left middle" style="width:240px;">Address:</th>
+					<th class="left middle" style="width:200px;">Address:</th>
 					<td style="width:2px;"></td>
-					<th class="left middle" style="width:189px;">Species:</th>	
+					<th class="left middle" style="width:186px;">Species:</th>	
 					<td style="width:2px;"></td>
-					<th class="left middle" style="width:112px;">Type:</th>	
+					<th class="left middle" style="width:120px;">Type:</th>	
 					<td style="width:2px;"></td>
                     
               
               
                    
-                     <th class="center middle" style="width:60px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Existing Tree Condition:</span></th>
+                     <th class="center middle" style="width:120px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Existing Tree Condition:</span></th>
                      <td style="width:2px;"></td>
+                     
+                     
+                      <th class="center middle" style="width:120px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Attempted Tree Preservation:</span></th>
+                     <td style="width:2px;"></td>
+                     
+                     
                     <th class="left middle" style="">Note:</th>   
 				 <!---	<th class="center middle" style="width:28px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Note:</span></th>   --->
                     
@@ -3244,6 +3529,7 @@ SELECT * FROM tblContractorType ORDER BY id
 				<cfset max_trcnt = 0><cfif chkList.recordcount gt 0><cfset max_trcnt = chkList.mx></cfif>
 				
 				<cfset vis = "block"><cfset trdis = ""><cfif i gt max_trcnt><cfset vis = "none"><cfset trdis = "disabled"></cfif>
+                
 				<div id="tr_rmv_div_#scnt#_#trcnt#" style="display:#vis#;">
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;"><tr><td height="2px;"></td></tr></table>
 				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
@@ -3278,25 +3564,39 @@ SELECT * FROM tblContractorType ORDER BY id
 					<cfset v = "">
 					<cfif trim(getList.address) is not ""><cfset v = trim(getList.address)></cfif>
 					<cfif getList.recordcount is 0><cfset v = getSite.address></cfif>
-					<td class="frm left middle" style="width:241px;"><input type="Text" name="traddr_#scnt#_#trcnt#" id="traddr_#scnt#_#trcnt#" value="#v#" 
-					style="width:238px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#></td>
+					<td class="frm left middle" style="width:200px;"><input type="Text" name="traddr_#scnt#_#trcnt#" id="traddr_#scnt#_#trcnt#" value="#v#" 
+					style="width:198px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#></td>
 					<td style="width:2px;"></td>
-					<td class="frm left middle" style="width:190px;">
+                    
+					<td class="frm left middle" style="width:186px;">
 					<div class="ui-widget">
 					<cfset v = ""><cfif trim(getList.species) is not ""><cfset v = trim(getList.species)></cfif>
   					<label for="tr_species_#scnt#_#trcnt#"></label>
 					<input type="Text" name="trspecies_#scnt#_#trcnt#" id="trspecies_#scnt#_#trcnt#" value="#v#" 
-					style="width:187px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#>
+					style="width:184px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#>
 					</div>
 					</td>	
 					<td style="width:2px;"></td>
-					<td class="frm left middle" style="width:113px;">
-					<select name="trtype_#scnt#_#trcnt#" id="trtype_#scnt#_#trcnt#" class="roundedsmall" style="width:110px;height:20px;" #trdis#>
+					<td class="frm left middle" style="width:120px;">
+					<select name="trtype_#scnt#_#trcnt#" id="trtype_#scnt#_#trcnt#" class="roundedsmall" style="width:118px;height:20px;" #trdis#>
 					<!--- <option value=""></option> --->
 					<cfloop query="getTreeTypes">
 						<cfset sel = ""><cfif getList.type is id><cfset sel = "selected"></cfif>
-						<option value="#id#" #sel#>#value#</option>
-					</cfloop>
+                        
+                        
+						
+					
+                          <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->     
+                                
+                                <cfif getTreeTypes.Removals NEQ 1>
+                                   
+                                     <option value="#id#" #sel#>#value#</option>
+                            
+                                </cfif> 
+                                
+                           <!--- ------ end ---- joe hu  Feb 2019 multiple update --------------------  --->  
+                    
+                    </cfloop>
 					</select>
 					</td>
                     
@@ -3308,15 +3608,20 @@ SELECT * FROM tblContractorType ORDER BY id
                      								<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                     
                                                             <td style="width:2px;"></td>
-                                                            <td class="frm left middle">
-                                                            <select name="trExistingCondition_#scnt#_#trcnt#" id="trExistingCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:60px;height:20px;font-size:9px;" #trdis#>
-                                                            <!--- <option value=""></option> --->
+                                                            <td class="frm left middle" style="width:120px;">
+                                                            <select name="trExistingCondition_#scnt#_#trcnt#" id="trExistingCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:118px;height:20px;font-size:9px;" #trdis#>
+                                                            <option value=""></option> 
                                                             <cfloop query="getTreeExistingCondition">
                                                                        <cfset sel = "">
                                                                        <cfif getList.Removals_Existing_Tree_Condition is id>
                                                                            <cfset sel = "selected">
                                                                        </cfif>
-                                                                <option value="#id#" #sel#>#value#</option>
+                                                                       
+                                                                         <cfif getTreeExistingCondition.Removals NEQ 1>
+                                                                				<option value="#id#" #sel#>#value#</option>
+                                                                          </cfif>      
+                                                                                
+                                                                                
                                                             </cfloop>
                                                             </select>
                                                             </td>
@@ -3331,7 +3636,27 @@ SELECT * FROM tblContractorType ORDER BY id
                     
                     
                     
+                                                      <!--- joe hu 2019-5-7 pdf request --->
                     
+                    
+                                                        <td style="width:2px;"></td>
+                                                            <td class="frm left middle" style="width:120px;">
+                                                            
+                                                         <select name="trAttemptedPreservation_#scnt#_#trcnt#" id="trAttemptedPreservation_#scnt#_#trcnt#" class="roundedsmall" style="width:118px;height:20px;font-size:9px;" #trdis#>  
+                                                            
+                                                            
+                                                            <option value=""></option>  
+                                                            <cfloop query="getTreeAttemptedPreservation">
+                                                                       <cfset sel = "">
+                                                                       <cfif getList.Attempted_Tree_Preservation is id>
+                                                                           <cfset sel = "selected">
+                                                                       </cfif>
+                                                                <option value="#id#" #sel#>#value#</option>
+                                                            </cfloop>
+                                                            </select>
+                                                            </td>
+                    
+                                                        <!--- end ---- joe hu 2019-5-7 pdf request --->
                     
                     
 					
@@ -3475,10 +3800,15 @@ SELECT * FROM tblContractorType ORDER BY id
 					<th class="drk right middle"><span style="position:relative;top:1px;">
                     
 					
+                    
                      <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
-                    <!---   --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
-						<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>
-                        <!--- cfif session.user_level gte 0 AND session.user_power gte 0 --->
+                     <!---  --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
+                     
+					<!---	<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>  ---> 
+                    
+                      <!--- back to original by remove:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 7/25/2019 joe hu------------ ---> 
+                        <cfif session.user_level gte 0 AND session.user_power gte 0>
+                    
                     
                     
                     
@@ -3506,23 +3836,23 @@ SELECT * FROM tblContractorType ORDER BY id
                               <!--- >Box<br>Size:  to  DBH  --->
                     
 					          <!--- th class="center middle" style="width:47px;"><span style="font-size:10px;">Box<br>Size:</span></th --->
-                               <th class="center middle" style="width:44px;"><span style="font-size:10px;">DBH:</span></th>
+                               <th class="center middle" style="width:49px;"><span style="font-size:10px;">DBH:</span></th>
 					
                    
                     
                     
                     <td style="width:2px;"></td>
-					<th class="center middle" style="width:60px;"><span style="font-size:10px;">Permit<br>Issuance<br>Date:</span></th>
+					<th class="center middle" style="width:65px;"><span style="font-size:10px;">Permit<br>Issuance<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:60px;"><span style="font-size:10px;">Tree<br>Planting<br>Date:</span></th>
+					<th class="center middle" style="width:65px;"><span style="font-size:10px;">Tree<br>Planting<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:60px;"><span style="font-size:10px;">Start<br>Watering<br>Date:</span></th>
+					<th class="center middle" style="width:65px;"><span style="font-size:10px;">Start<br>Watering<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="center middle" style="width:60px;"><span style="font-size:10px;">End<br>Watering<br>Date:</span></th>
+					<th class="center middle" style="width:65px;"><span style="font-size:10px;">End<br>Watering<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="left middle" style="width:128px;"><span style="font-size:10px;">Address:</span></th>
+					<th class="left middle" style="width:120px;"><span style="font-size:10px;">Address:</span></th>
 					<td style="width:2px;"></td>
-					<th class="left middle" style="width:95px;"><span style="font-size:10px;">Species:</span></th>		
+					<th class="left middle" style="width:92px;"><span style="font-size:10px;">Species:</span></th>		
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:53px;"><span style="font-size:10px;">Parkway or<br>Tree Well<br>Size:</span></th>
 					<td style="width:2px;"></td>
@@ -3533,6 +3863,11 @@ SELECT * FROM tblContractorType ORDER BY id
 					<th class="center middle" style="width:48px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Post<br>Inspected:</span></th>	
 					<td style="width:2px;"></td>
                     
+                  
+                  
+                  
+					<th class="center middle" style="width:48px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Passed Post<br>Inspection:</span></th>	
+					<td style="width:2px;"></td>
                   
                     
 							<!---   <th class="left middle" ><span style="font-size:10px;">Type:</span></th>	--->
@@ -3549,7 +3884,15 @@ SELECT * FROM tblContractorType ORDER BY id
                             <th class="center middle" style="width:60px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Planted Tree Condition:</span></th>	
                     
                     
-                   
+                    
+                    
+                   <!--- joe hu 2019-5-7 pdf request --->
+                    
+                    <td style="width:2px;"></td>
+					<th class="center middle" style="width:32px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Gator Bags:</span></th>	
+					<td style="width:2px;"></td>
+                    
+                    <!--- end ---- joe hu 2019-5-7 pdf request --->
                     
                     
                     
@@ -3602,22 +3945,22 @@ SELECT * FROM tblContractorType ORDER BY id
 					<td style="width:2px;"></td>
 					<cfset v = ""><cfif trim(getList.permit_issuance_date) is not "">
 					<cfset v = dateformat(trim(getList.permit_issuance_date),"mm/dd/yyyy")></cfif>
-					<td class="frm left middle" style="width:60px;"><input type="Text" name="tppidt_#scnt#_#trcnt#" id="tppidt_#scnt#_#trcnt#" value="#v#" 
+					<td class="frm left middle" style="width:58px;"><input type="Text" name="tppidt_#scnt#_#trcnt#" id="tppidt_#scnt#_#trcnt#" value="#v#" 
 					style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#></td>
 					<td style="width:2px;"></td>
 					<cfset v = ""><cfif trim(getList.tree_planting_date) is not "">
 					<cfset v = dateformat(trim(getList.tree_planting_date),"mm/dd/yyyy")></cfif>
-					<td class="frm left middle" style="width:60px;"><input type="Text" name="tptrdt_#scnt#_#trcnt#" id="tptrdt_#scnt#_#trcnt#" value="#v#" 
+					<td class="frm left middle" style="width:58px;"><input type="Text" name="tptrdt_#scnt#_#trcnt#" id="tptrdt_#scnt#_#trcnt#" value="#v#" 
 					style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#></td>
 					<td style="width:2px;"></td>
 					<cfset v = ""><cfif trim(getList.start_watering_date) is not "">
 					<cfset v = dateformat(trim(getList.start_watering_date),"mm/dd/yyyy")></cfif>
-					<td class="frm left middle" style="width:60px;"><input type="Text" name="tpswdt_#scnt#_#trcnt#" id="tpswdt_#scnt#_#trcnt#" value="#v#" 
+					<td class="frm left middle" style="width:58px;"><input type="Text" name="tpswdt_#scnt#_#trcnt#" id="tpswdt_#scnt#_#trcnt#" value="#v#" 
 					style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#></td>
 					<td style="width:2px;"></td>
 					<cfset v = ""><cfif trim(getList.end_watering_date) is not "">
 					<cfset v = dateformat(trim(getList.end_watering_date),"mm/dd/yyyy")></cfif>
-					<td class="frm left middle" style="width:60px;"><input type="Text" name="tpewdt_#scnt#_#trcnt#" id="tpewdt_#scnt#_#trcnt#" value="#v#" 
+					<td class="frm left middle" style="width:58px;"><input type="Text" name="tpewdt_#scnt#_#trcnt#" id="tpewdt_#scnt#_#trcnt#" value="#v#" 
 					style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#></td>
 					<td style="width:2px;"></td>
 					<cfset v = "">
@@ -3626,22 +3969,24 @@ SELECT * FROM tblContractorType ORDER BY id
                     
                     
                     
-					<td class="frm left middle" style="width:132px;">
+					<td class="frm left middle" style="width:106px;">
                              <input type="Text" name="tpaddr_#scnt#_#trcnt#" id="tpaddr_#scnt#_#trcnt#" value="#v#" 
-									style="width:131px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" class="roundedsmall" #trdis#>
+									style="width:104px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" class="roundedsmall" #trdis#>
                     </td>
                     
                     
                     
 					<td style="width:2px;"></td>
-					<td class="frm left middle" style="width:101px;">
+					<td class="frm left middle" style="width:80px;">
                         <div class="ui-widget">
 							<cfset v = ""><cfif trim(getList.species) is not ""><cfset v = trim(getList.species)></cfif>
                             <label for="tp_species_#scnt#_#trcnt#"></label>
                             <input type="Text" name="tpspecies_#scnt#_#trcnt#" id="tpspecies_#scnt#_#trcnt#" value="#v#" 
-                            style="width:99px;height:20px;padding:0px 2px 0px 4px;font-size:9px;" class="roundedsmall" #trdis#>
+                            style="width:78px;height:20px;padding:0px 2px 0px 4px;font-size:9px;" class="roundedsmall" #trdis#>
                         </div>
 					</td>	
+
+
 
 
 
@@ -3663,19 +4008,50 @@ SELECT * FROM tblContractorType ORDER BY id
 					
 					<td style="width:2px;"></td>
 					<cfset v = ""><cfif getList.post_inspected is 1><cfset v = "checked"></cfif>
-					<td class="frm left middle" style="width:48px;">
+					<td class="frm left middle" style="width:52px;">
 					<div style="position:relative;left:12px;"><input id="tppostinspect_#scnt#_#trcnt#" name="tppostinspect_#scnt#_#trcnt#" type="checkbox" #v# #trdis#></div>
 					</td>
+                    
+                    
+                    
+                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    <td style="width:2px;"></td>
+					<cfset v = ""><cfif getList.passed_post_inspection is 1><cfset v = "checked"></cfif>
+					<td class="frm left middle" style="width:48px;">
+					<div style="position:relative;left:12px;"><input id="tppassedpostinspection_#scnt#_#trcnt#" name="tppassedpostinspection_#scnt#_#trcnt#" type="checkbox" #v# #trdis#></div>
+					</td>
+                    
+                    <!--- ------ end ---- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
 					
 					<td style="width:2px;"></td>
-					<td class="frm left middle">
-					<select name="tptype_#scnt#_#trcnt#" id="tptype_#scnt#_#trcnt#" class="roundedsmall" style="width:95px;height:20px;font-size:9px;" #trdis#>
-					<!--- <option value=""></option> --->
-					<cfloop query="getTreeTypes">
-						<cfset sel = ""><cfif getList.type is id><cfset sel = "selected"></cfif>
-						<option value="#id#" #sel#>#value#</option>
-					</cfloop>
-					</select>
+					<td class="frm left middle" style="width:82px;">
+                    
+                        <select name="tptype_#scnt#_#trcnt#" id="tptype_#scnt#_#trcnt#" class="roundedsmall" style="width:81px;height:20px;font-size:9px;" #trdis#>
+                            <!--- <option value=""></option> --->
+                            <cfloop query="getTreeTypes">
+                                <cfset sel = "">
+                                <cfif getList.type is id>
+                                     <cfset sel = "selected">
+                                </cfif>
+                            
+                          <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->     
+                                
+                                 <cfif getTreeTypes.Plantings NEQ 1>    
+                                   
+                                     <option value="#id#" #sel#>#value#</option>
+                            
+                                </cfif> 
+                                
+                           <!--- ------ end ---- joe hu  Feb 2019 multiple update --------------------  --->     
+                            
+                            </cfloop>
+                        </select>
+                        
+                        
+                        
 					</td>
 					
                     
@@ -3693,7 +4069,7 @@ SELECT * FROM tblContractorType ORDER BY id
                             <td style="width:2px;"></td>
                             <td class="frm left middle">
                             <select name="tpPlantedCondition_#scnt#_#trcnt#" id="tpPlantedCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:60px;height:20px;font-size:9px;" #trdis#>
-                            <!--- <option value=""></option> --->
+                            <option value=""></option>
                             <cfloop query="getTreePlantedCondition">
                                        <cfset sel = "">
 								       <cfif getList.Planted_Tree_Condition is id>
@@ -3710,7 +4086,22 @@ SELECT * FROM tblContractorType ORDER BY id
                     <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
                     
                     
-					
+                    
+                    
+                    
+                    <!--- joe hu 2019-5-7 pdf request --->
+                    
+                     <td style="width:2px;"></td>
+                     
+						<cfset v = ""><cfif getList.gator_bags is 1><cfset v = "checked"></cfif>
+                        <td class="frm left middle" style="width:32px;">
+                        <div style="position:relative;left:5px;"><input id="tpgatorbags_#scnt#_#trcnt#" name="tpgatorbags_#scnt#_#trcnt#" type="checkbox" #v# #trdis#></div>
+					</td>
+                    
+					<!--- end ---- joe hu 2019-5-7 pdf request --->
+                    
+                    
+                    
 					
 					<td style="width:2px;"></td>
 					<td class="frm left middle" style="width:28px;">
@@ -3922,9 +4313,12 @@ SELECT * FROM tblContractorType ORDER BY id
                     
 					
                      <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
-                     <!---   --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
-						<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>
-                        <!--- cfif session.user_level gte 0 AND session.user_power gte 0 --->
+                     <!---  --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
+                     
+					<!---	<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>  ---> 
+                    
+                      <!--- back to original by remove:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 7/25/2019 joe hu------------ ---> 
+                        <cfif session.user_level gte 0 AND session.user_power gte 0>
                     
                     
                     
@@ -3954,7 +4348,7 @@ SELECT * FROM tblContractorType ORDER BY id
                               <!--- >Box<br>Size:  to  DBH  --->
                     
 					          <!--- th class="center middle" style="width:47px;"><span style="font-size:10px;">Box<br>Size:</span></th --->
-                               <th class="center middle" style="width:47px;"><span style="font-size:10px;">DBH:</span></th>
+                               <th class="center middle" style="width:43px;"><span style="font-size:10px;">DBH:</span></th>
 					
                     <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
                     
@@ -3972,13 +4366,45 @@ SELECT * FROM tblContractorType ORDER BY id
 					<td style="width:2px;"></td>
                     --->
                     
+                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+                   
+					<th class="center middle" style="width:53px;"><span style="font-size:10px;">Linear Ft<br>of Root<br>Pruning:</span></th>
+					<td style="width:2px;"></td>
+                    
+                    
+                    
+                    
+                    
 					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Root<br>Prune<br>Date:</span></th>
 					<td style="width:2px;"></td>
+                    
+                    
+                   
+                    
+                    
+                    
+                    <th class="center middle" style="width:48px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Follow Up<br>Root Prune<br>Required:</span></th>	
+					<td style="width:2px;"></td>
+                    
+                    
 					<th class="center middle" style="width:61px;"><span style="font-size:10px;">Follow Up<br>Root Prune<br>Date:</span></th>
 					<td style="width:2px;"></td>
-					<th class="left middle" style="width:190px;"><span style="font-size:10px;">Address:</span></th>
+                    
+                    
+                     <th class="center middle" style="width:48px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Canopy<br>Trim:</span></th>
 					<td style="width:2px;"></td>
-					<th class="left middle" style="width:118px;"><span style="font-size:10px;">Species:</span></th>		
+                    
+                    <!--- ------- end --- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+					<th class="left middle" style="width:130px;"><span style="font-size:10px;">Address:</span></th>
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:72px;"><span style="font-size:10px;">Species:</span></th>		
 					<td style="width:2px;"></td>
 					<th class="center middle" style="width:53px;"><span style="font-size:10px;">Parkway or<br>Tree Well<br>Size:</span></th>
 					<td style="width:2px;"></td>
@@ -4000,19 +4426,20 @@ SELECT * FROM tblContractorType ORDER BY id
                     
                     
                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
-                    <th class="center middle" style="width:60px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Preservation Alternative:</span></th>
+                    <th class="center middle" style="width:66px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Preservation Alternative:</span></th>
                     <td style="width:2px;"></td>
                     <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
                     
                     
                     
-                    <th class="left middle" style="width:95px;padding: 1px 1px 1px 3px;" ><span style="font-size:10px;">Type:</span></th>	
+                    <th class="left middle" style="width:86px;padding: 1px 1px 1px 3px;" ><span style="font-size:10px;">Type:</span></th>	
 					<td style="width:2px;"></td>
                     
                     
                     
                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
-                    <th class="center middle" style="width:60px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Existing Tree Condition:</span></th>
+                    <th class="center middle" style="width:86px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Existing Tree Condition:</span></th>
+                    <td style="width:2px;"></td>
                     <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
                     
                     
@@ -4161,9 +4588,7 @@ SELECT * FROM tblContractorType ORDER BY id
                                                     
                                                     
                                                     
-                                                   
-                                                    
-                                                    <cfset v = "">
+                                                     <cfset v = "">
                                                     <cfif trim(getList.tree_planting_date) is not "">
                                                        <cfset v = dateformat(trim(getList.tree_planting_date),"mm/dd/yyyy")>
                                                     </cfif>
@@ -4178,6 +4603,41 @@ SELECT * FROM tblContractorType ORDER BY id
                                                     <td style="width:2px;"></td>
                                                     
 													--->
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                   
+                                                   <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                                                   
+                                                    <cfset v = "">
+                                                    <cfif trim(getList.Linear_Ft_of_Root_Pruning) is not "">
+                                                        <cfset v = trim(getList.Linear_Ft_of_Root_Pruning)>
+                                                    </cfif>
+                                                    
+                                                    
+                                                    
+                                                    <td class="frm left middle" style="width:52px;">
+                                                                <input type="Text" name="trpslf_#scnt#_#trcnt#" id="trpslf_#scnt#_#trcnt#" value="#v#" 
+                                                            style="width:49px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" maxlength="20" class="roundedsmall" #trdis#>
+                                                    </td>
+                                                    
+                                                    <td style="width:2px;"></td>
+                                                   
+                                                   
+                                                   
+                                                   
+                                                   <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                                                   
+                                                   
+                                                   
+                                                   
 													
                                                     
                                                     
@@ -4195,20 +4655,60 @@ SELECT * FROM tblContractorType ORDER BY id
                                                     </td>
                                                     
                                                     
-                                                    <td style="width:2px;"></td>
                                                     
+                                                    
+                                                    
+                                                    
+                                                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                                                     
+                                                    
+                                                    
+                                                    
+                                                    <td style="width:2px;"></td>
+													<cfset v = ""><cfif getList.follow_up_root_prune_required is 1><cfset v = "checked"></cfif>
+                                                    <td class="frm left middle" style="width:48px;">
+                                                    <div style="position:relative;left:12px;"><input id="trpsfurpr_#scnt#_#trcnt#" name="trpsfurpr_#scnt#_#trcnt#" type="checkbox" #v# #trdis#></div>
+                                                    </td>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    <td style="width:2px;"></td>
                                                     <cfset v = "">
                                                     <cfif trim(getList.follow_up_root_pruning_date) is not "">
                                                             <cfset v = dateformat(trim(getList.follow_up_root_pruning_date),"mm/dd/yyyy")>
                                                     </cfif>
-                                                    
-                                                    
-                                                    
-                                                    
-                                                    <td class="frm left middle" style="width:60px;">
+                                                     <td class="frm left middle" style="width:60px;">
                                                         <input type="Text" name="trpsfurpdt_#scnt#_#trcnt#" id="trpsfurpdt_#scnt#_#trcnt#" value="#v#" 
                                                     style="width:57px;height:20px;padding:0px;font-size:10px;" class="center roundedsmall" #trdis#>
                                                     </td>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
+                                                     <td style="width:2px;"></td>
+													<cfset v = ""><cfif getList.canopy_trim is 1><cfset v = "checked"></cfif>
+                                                    <td class="frm left middle" style="width:48px;">
+                                                    <div style="position:relative;left:12px;"><input id="trpsct_#scnt#_#trcnt#" name="trpsct_#scnt#_#trcnt#" type="checkbox" #v# #trdis#></div>
+                                                    </td>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    
                                                     
                                                     <td style="width:2px;"></td>
                                                     
@@ -4221,16 +4721,16 @@ SELECT * FROM tblContractorType ORDER BY id
                                                     </cfif>
                                                     
                                                     
-                                                    <td class="frm left middle" style="width:191px;">
+                                                    <td class="frm left middle" style="width:128px;">
                                                             <input type="Text" name="trpsaddr_#scnt#_#trcnt#" id="trpsaddr_#scnt#_#trcnt#" value="#v#" 
-                                                    style="width:188px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" class="roundedsmall" #trdis#>
+                                                    style="width:126px;height:20px;padding:0px 2px 0px 4px;font-size:10px;" class="roundedsmall" #trdis#>
                                                     
                                                     </td>
                                                     
                                                     <td style="width:2px;">
                                                     </td>
                                                     
-                                                    <td class="frm left middle" style="width:119px;">
+                                                    <td class="frm left middle" style="width:74px;">
                                                     
                                                                 <div class="ui-widget">
                                                                         <cfset v = "">
@@ -4242,7 +4742,7 @@ SELECT * FROM tblContractorType ORDER BY id
                                                                         </label>
                                                                         
                                                                         <input type="Text" name="trpsspecies_#scnt#_#trcnt#" id="trpsspecies_#scnt#_#trcnt#" value="#v#" 
-                                                                        style="width:116px;height:20px;padding:0px 2px 0px 4px;font-size:9px;" class="roundedsmall" #trdis#>
+                                                                        style="width:72px;height:20px;padding:0px 2px 0px 4px;font-size:9px;" class="roundedsmall" #trdis#>
                                                                 </div>
                                                     
                                                     </td>	
@@ -4330,9 +4830,9 @@ SELECT * FROM tblContractorType ORDER BY id
                                                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                     
                                                           <td style="width:2px;"></td>
-                                                            <td class="frm left middle">
-                                                            <select name="trpsPreservationAlternative_#scnt#_#trcnt#" id="trpsPreservationAlternative_#scnt#_#trcnt#" class="roundedsmall" style="width:60px;height:20px;font-size:9px;" #trdis#>
-                                                            <!--- <option value=""></option> --->
+                                                            <td class="frm left middle" style="width:66px;">
+                                                            <select name="trpsPreservationAlternative_#scnt#_#trcnt#" id="trpsPreservationAlternative_#scnt#_#trcnt#" class="roundedsmall" style="width:64px;height:20px;font-size:9px;" #trdis#>
+                                                                  <option value=""></option> 
                                                             <cfloop query="getTreePreservationAlternative">
                                                                        <cfset sel = "">
                                                                        <cfif getList.Preservation_Alternative is id>
@@ -4352,8 +4852,8 @@ SELECT * FROM tblContractorType ORDER BY id
                                                     
                                                     
                                                     
-                                                    <td class="frm left middle">
-                                                        <select name="trpstype_#scnt#_#trcnt#" id="trpstype_#scnt#_#trcnt#" class="roundedsmall" style="width:95px;height:20px;font-size:9px;" #trdis#>
+                                                    <td class="frm left middle" style="width:86px;">
+                                                        <select name="trpstype_#scnt#_#trcnt#" id="trpstype_#scnt#_#trcnt#" class="roundedsmall" style="width:84px;height:20px;font-size:9px;" #trdis#>
                                                         <!--- <option value=""></option> --->
                                                             <cfloop query="getTreeTypes">
                                                                 <cfset sel = "">
@@ -4361,7 +4861,23 @@ SELECT * FROM tblContractorType ORDER BY id
                                                                         <cfset sel = "selected">
                                                                 </cfif>
                                                                 
-                                                                <option value="#id#" #sel#>#value#</option>
+                                                                
+                                                                
+                                                                
+                                                               
+                                                                    
+                                                                
+															  <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->     
+                                                                    <cfif getTreeTypes.Preservation NEQ 1>
+                                                                         
+                                                                       
+                                                                         <option value="#id#" #sel#>#value#</option>
+                                                                
+                                                                    </cfif> 
+                                                                    
+                                                               <!--- ------ end ---- joe hu  Feb 2019 multiple update --------------------  --->      
+                                                                    
+                                                                    
                                                                     
                                                             </cfloop>
                                                         </select>
@@ -4408,15 +4924,18 @@ SELECT * FROM tblContractorType ORDER BY id
                                                       <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
                     
                                                           
-                                                            <td class="frm left middle">
-                                                            <select name="trpsExistingCondition_#scnt#_#trcnt#" id="trpsExistingCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:60px;height:20px;font-size:9px;" #trdis#>
-                                                            <!--- <option value=""></option> --->
+                                                            <td class="frm left middle" style="width:86px;">
+                                                            <select name="trpsExistingCondition_#scnt#_#trcnt#" id="trpsExistingCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:84px;height:20px;font-size:9px;" #trdis#>
+                                                           <option value=""></option> 
                                                             <cfloop query="getTreeExistingCondition">
                                                                        <cfset sel = "">
                                                                        <cfif getList.Preservation_Existing_Tree_Condition is id>
                                                                            <cfset sel = "selected">
                                                                        </cfif>
-                                                                <option value="#id#" #sel#>#value#</option>
+                                                                       
+                                                                        <cfif getTreeExistingCondition.Removals NEQ 1>
+                                                               					 <option value="#id#" #sel#>#value#</option>
+                                                                        </cfif>
                                                             </cfloop>
                                                             </select>
                                                             </td>
@@ -4659,6 +5178,412 @@ SELECT * FROM tblContractorType ORDER BY id
     
     
     
+    
+    
+    
+    
+    
+    
+    
+         <!--- --------------------------- joe hu 6/11/2019 ------------- add stump removals --------------------------  --->
+         
+         
+    <tr><td style="height:2px;"></td></tr>
+			
+				<cfquery name="chkList" dbtype="query">
+				SELECT max(tree_no) as mx FROM getTreeListInfo WHERE action_type = 3 AND group_no = #scnt#
+				</cfquery>
+				
+				<cfset max_trcnt = 0><cfif chkList.recordcount gt 0><cfset max_trcnt = chkList.mx></cfif>
+			
+            
+            
+			<tr><th class="drk left middle" colspan="2" style="height:20px;padding:0px;">
+				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+					<tr><th class="drk left middle"><span style="position:relative;top:0px;">Stump Removals</span>
+					<span style="position:relative;top:0px;left:20px;">(Total: <strong><span id="tr_tot_#scnt#" style="color:red;">#max_trcnt#</span></strong> )</span></th>
+					<th class="drk right middle"><span style="position:relative;top:1px;">
+                    
+                    
+                    
+                     <!--- append:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 12/31/2018 joe hu------------ ---> 
+                     <!---  --------------- when site locked,  except "tree info" for BSS user only ------------ 1/24/2019 joe hu------------ ---> 
+                     
+					<!---	<cfif session.user_level gte 0 AND session.user_power gte 0 AND ( (lock neq 1) OR ( isBSS) )>  ---> 
+                    
+                      <!--- back to original by remove:  "AND lock neq 1"  --------------- super admin lock/unlock toggle for site editing ------------ 7/25/2019 joe hu------------ ---> 
+                        <cfif session.user_level gte 0 AND session.user_power gte 0>
+					
+                    
+                    
+                    
+					<a href="" onClick="addTree('stumprmv',#scnt#);return false;"><img src="../images/add.png" width="16" height="16" title="Add Stump Removal" style="position:relative;right:4px;"></a>
+					<a href="" onClick="delTree('stumprmv',#scnt#);return false;"><img src="../images/delete.png" width="16" height="16" title="Delete Stump Removal" style="position:relative;right:2px;"></a>
+					</cfif>
+					</span>
+					</th></tr>
+				</table>
+			</th></tr>
+			<tr><td style="height:2px;"></td></tr>
+			<tr>
+				<td colspan="2" style="padding:0px;">
+				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+                
+                 <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->  
+                
+                
+                  <!---
+					<th class="left middle" style="height:22px;width:48px;">Tree No:</th>
+					<td style="width:2px;"></td>
+					<th class="center middle" style="width:57px;"><span style="font-size:10px;">Size<br>(Diameter):</span></th>
+					<td style="width:2px;"></td>
+					<th class="center middle" style="width:75px;"><span style="font-size:10px;">Permit Issuance<br>Date:</span></th>
+					<td style="width:2px;"></td>
+					<th class="center middle" style="width:70px;"><span style="font-size:10px;">Tree Removal<br>Date:</span></th>
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:240px;">Address:</th>
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:189px;">Species:</th>	
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:112px;">Type:</th>	
+					<td style="width:2px;"></td>
+					<th class="left middle" style="">Note:</th>   
+                    
+					--->
+                    
+                    
+					<th class="left middle" style="height:22px;width:48px;">Tree No:</th>
+					<td style="width:2px;"></td>
+					<th class="center middle" style="width:57px;"><span style="font-size:10px;">Size<br>(Diameter):</span></th>
+					<td style="width:2px;"></td>
+					<th class="center middle" style="width:75px;"><span style="font-size:10px;">Permit Issuance<br>Date:</span></th>
+					<td style="width:2px;"></td>
+					<th class="center middle" style="width:70px;"><span style="font-size:10px;">Stump Removal<br>Date:</span></th>
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:200px;">Address:</th>
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:186px;">Species:</th>	
+					<td style="width:2px;"></td>
+					<th class="left middle" style="width:120px;">Type:</th>	
+					<td style="width:2px;"></td>
+                    
+              
+              
+                   
+                     <th class="center middle" style="width:120px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Existing Tree Condition:</span></th>
+                     <td style="width:2px;"></td>
+                     
+                     
+                      <th class="center middle" style="width:120px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Attempted Tree Preservation:</span></th>
+                     <td style="width:2px;"></td>
+                     
+                     
+                    <th class="left middle" style="">Note:</th>   
+				 <!---	<th class="center middle" style="width:28px;padding: 1px 1px 1px 3px;"><span style="font-size:10px;">Note:</span></th>   --->
+                    
+               <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+               
+               
+               
+                    
+				</table>
+				
+				<cfloop index="i" from="1" to="#lngth2#">
+				<cfset trcnt = i>
+				
+				<cfquery name="chkList" dbtype="query">
+				SELECT max(tree_no) as mx FROM getTreeListInfo WHERE action_type = 3 AND group_no = #scnt#
+				</cfquery>
+				
+				<cfset max_trcnt = 0><cfif chkList.recordcount gt 0><cfset max_trcnt = chkList.mx></cfif>
+				
+				<cfset vis = "block"><cfset trdis = ""><cfif i gt max_trcnt><cfset vis = "none"><cfset trdis = "disabled"></cfif>
+                
+		<div id="tr_stumprmv_div_#scnt#_#trcnt#" style="display:#vis#;">
+        
+				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;"><tr><td height="2px;"></td></tr></table>
+				<table cellpadding="0" cellspacing="0" border="0" style="width:100%;">
+					
+                    
+                    
+                    <cfquery name="getList" datasource="#request.sqlconn#" dbtype="ODBC">
+                                SELECT * FROM tblTreeList WHERE location_no = #getSite.location_no# AND deleted <> 1 and action_type = 3 AND group_no = #scnt# AND tree_no = #trcnt#
+                    </cfquery>
+                    
+                    
+                    <!---  failed to get v value, not sure why, adobe' bug?
+						<cfquery name="getList" dbtype="query">
+						SELECT * FROM getTreeListInfo WHERE action_type = 3 AND group_no = #scnt# AND tree_no = #trcnt#
+						</cfquery>
+                    
+                    --->
+                    
+					<td class="frm left middle" style="width:49px;height:26px;">
+							<cfset v = 24><cfif trim(getList.tree_size) is not "">
+                            <cfset v = trim(getList.tree_size)></cfif>
+                            
+                            <input type="Text" name="tscnt_#scnt#_#trcnt#" id="tscnt_#scnt#_#trcnt#" value="#trcnt#" 
+                            style="width:46px;height:20px;padding:0px;" class="center roundedsmall" disabled>
+                    </td>
+                    
+                    
+                    
+                    
+					<td style="width:2px;"></td>
+					<td class="frm left middle" style="width:56px;">
+					<select name="tsdia_#scnt#_#trcnt#" id="tsdia_#scnt#_#trcnt#" class="roundedsmall" style="width:54px;height:20px;" #trdis#>
+					<cfloop index="i" from="1" to="#arrayLen(arrDia)#">
+						<cfset sel = ""><cfif arrDia[i] is v><cfset sel = "selected"></cfif>
+						<option value="#arrDia[i]#" #sel#>#arrDia[i]# In.</option>
+					</cfloop>
+					</select>
+					</td>
+					<td style="width:2px;"></td>
+					<cfset v = ""><cfif trim(getList.permit_issuance_date) is not "">
+					<cfset v = dateformat(trim(getList.permit_issuance_date),"mm/dd/yyyy")></cfif>
+					<td class="frm left middle" style="width:74px;"><input type="Text" name="tspidt_#scnt#_#trcnt#" id="tspidt_#scnt#_#trcnt#" value="#v#" 
+					style="width:71px;height:20px;padding:0px;" class="center roundedsmall" #trdis#></td>
+					<td style="width:2px;"></td>
+					<cfset v = ""><cfif trim(getList.stump_removal_date) is not "">
+					<cfset v = dateformat(trim(getList.stump_removal_date),"mm/dd/yyyy")></cfif>
+					<td class="frm left middle" style="width:69px;"><input type="Text" name="tssrdt_#scnt#_#trcnt#" id="tssrdt_#scnt#_#trcnt#" value="#v#" 
+					style="width:66px;height:20px;padding:0px;" class="center roundedsmall" #trdis#></td>
+					<td style="width:2px;"></td>
+					<cfset v = "">
+					<cfif trim(getList.address) is not ""><cfset v = trim(getList.address)></cfif>
+					<cfif getList.recordcount is 0><cfset v = getSite.address></cfif>
+					<td class="frm left middle" style="width:200px;"><input type="Text" name="tsaddr_#scnt#_#trcnt#" id="tsaddr_#scnt#_#trcnt#" value="#v#" 
+					style="width:198px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#></td>
+					<td style="width:2px;"></td>
+                    
+					<td class="frm left middle" style="width:186px;">
+					<div class="ui-widget">
+					<cfset v = ""><cfif trim(getList.species) is not ""><cfset v = trim(getList.species)></cfif>
+  					<label for="ts_species_#scnt#_#trcnt#"></label>
+					<input type="Text" name="tsspecies_#scnt#_#trcnt#" id="tsspecies_#scnt#_#trcnt#" value="#v#" 
+					style="width:184px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#>
+					</div>
+					</td>	
+					<td style="width:2px;"></td>
+					<td class="frm left middle" style="width:120px;">
+					<select name="tstype_#scnt#_#trcnt#" id="tstype_#scnt#_#trcnt#" class="roundedsmall" style="width:118px;height:20px;" #trdis#>
+					<!--- <option value=""></option> --->
+					<cfloop query="getTreeTypes">
+						<cfset sel = ""><cfif getList.type is id><cfset sel = "selected"></cfif>
+                        
+                        
+						
+					
+                          <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->     
+                                
+                                <cfif getTreeTypes.StumpRemovals NEQ 1>
+                                   
+                                     <option value="#id#" #sel#>#value#</option>
+                            
+                                </cfif> 
+                                
+                           <!--- ------ end ---- joe hu  Feb 2019 multiple update --------------------  --->  
+                    
+                    </cfloop>
+					</select>
+					</td>
+                    
+                    
+                    
+                    
+                    
+                    
+                     								<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                                                            <td style="width:2px;"></td>
+                                                            <td class="frm left middle" style="width:120px;">
+                                                            <select name="tsExistingCondition_#scnt#_#trcnt#" id="tsExistingCondition_#scnt#_#trcnt#" class="roundedsmall" style="width:118px;height:20px;font-size:9px;" #trdis#>
+                                                            <option value=""></option> 
+                                                            <cfloop query="getTreeExistingCondition">
+                                                                       <cfset sel = "">
+                                                                       <cfif getList.Removals_Existing_Tree_Condition is id>
+                                                                           <cfset sel = "selected">
+                                                                       </cfif>
+                                                                       
+                                                                         <cfif getTreeExistingCondition.Removals NEQ 1>
+                                                                				<option value="#id#" #sel#>#value#</option>
+                                                                          </cfif>      
+                                                                                
+                                                                                
+                                                            </cfloop>
+                                                            </select>
+                                                            </td>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+                    
+                    
+                    
+                                                      <!--- joe hu 2019-5-7 pdf request --->
+                    
+                    
+                                                        <td style="width:2px;"></td>
+                                                            <td class="frm left middle" style="width:120px;">
+                                                            
+                                                         <select name="tsAttemptedPreservation_#scnt#_#trcnt#" id="tsAttemptedPreservation_#scnt#_#trcnt#" class="roundedsmall" style="width:118px;height:20px;font-size:9px;" #trdis#>  
+                                                            
+                                                            
+                                                            <option value=""></option>  
+                                                            <cfloop query="getTreeAttemptedPreservation">
+                                                                       <cfset sel = "">
+                                                                       <cfif getList.Attempted_Tree_Preservation is id>
+                                                                           <cfset sel = "selected">
+                                                                       </cfif>
+                                                                <option value="#id#" #sel#>#value#</option>
+                                                            </cfloop>
+                                                            </select>
+                                                            </td>
+                    
+                                                        <!--- end ---- joe hu 2019-5-7 pdf request --->
+                    
+                    
+					
+                    
+                     <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                             <!--- popup text input  --->
+                             
+                             
+                    
+                    
+                    <td style="width:2px;"></td>
+                    
+					   <cfset v = "">
+					   <cfif trim(getList.note) is not "">
+					       <cfset v = trim(getList.note)>
+                       </cfif>
+                     
+                     
+                    <!---   
+					<td class="frm left middle">
+                          <input type="Text" name="trnote_#scnt#_#trcnt#" id="trnote_#scnt#_#trcnt#" value="#v#" 
+					          style="width:237px;height:20px;padding:0px 2px 0px 4px;" class="roundedsmall" #trdis#>
+                    </td>
+                    --->
+                    
+                    
+                    
+					<td class="frm left middle" style="width:28px;">
+                        <div style="position:relative;left:7px;top:-1px">
+                            <a href="" onClick="$('#chr(35)#tsnotediv_#scnt#_#trcnt#').toggle();return false;">
+                            
+                            
+                                      						<cfif len(trim(v)) EQ 0>
+                                                                 <img id="tsnoteicon_#scnt#_#trcnt#"  src="../images/rep.gif" width="12" height="14" alt="Note" title="Note">
+                                                              <cfelse>
+                                                              
+                                                                  <img id="tsnoteicon_#scnt#_#trcnt#" src="../images/rep3.gif" width="12" height="14" alt="Note" title="Note">
+                                                               </cfif> 
+                                       
+                            </a>
+                        </div>
+					</td>
+                    
+                    
+                    
+                    
+                    
+                    <td style="width:0px;position:absolute;">
+                            <div id="tsnotediv_#scnt#_#trcnt#" style="position:absolute;height:30px;width:400px;top:-2px;left:-456px;border:0px red solid;background:white;display:none;">
+                                <table cellpadding="0" cellspacing="0" border="0" class="frame" style="width:100%;position:relative;top:0px;border-width:1px;">
+                                <tr><td colspan="2" style="height:1px;"></td></tr>
+                                <tr>
+                                <td style="width:1px;"></td>
+                                <th class="left middle" style="width:28px;height:24px;"><span style="font-size:10px;">Note:</span></th>
+                                <td style="width:2px;"></td>
+                                <cfset v = ""><cfif trim(getList.note) is not ""><cfset v = trim(getList.note)></cfif>
+                                <td class="frm left middle" style=""><input type="Text" name="tsnote_#scnt#_#trcnt#" id="tsnote_#scnt#_#trcnt#" value="#v#" 
+                            style="width:354px;height:20px;padding:0px 2px 0px 4px;font-size:10px;top:-1px;position:relative;" class="roundedsmall" #trdis#></td>
+                                <td style="width:1px;"></td>
+                                </tr>
+                                <tr><td colspan="2" style="height:1px;"></td></tr>
+                                </table>
+                            </div>
+					</td>
+                    
+                 
+								 <!---  --------- dynamically add jquery script attache to individual note input,  handle note keyup event, change icon ------------------     --->
+                                 
+                                     <script>
+                                               $( '#chr(35)#tsnote_#scnt#_#trcnt#').keyup(function( event ) {
+													 
+													  // console.log('key up -->',$( '#chr(35)#trnote_#scnt#_#trcnt#').val() )
+													  var  _note_val = $( '#chr(35)#tsnote_#scnt#_#trcnt#').val();
+													 
+													     if (_note_val.length > 0) {
+															
+															   $( '#chr(35)#tsnoteicon_#scnt#_#trcnt#').attr('src', '../images/rep3.gif')
+															     
+																 
+														 }else {
+															
+															   $( '#chr(35)#tsnoteicon_#scnt#_#trcnt#').attr('src', '../images/rep.gif')
+														 }
+													 
+													 
+																								   })
+									          
+                                    
+                                    
+                                     </script>
+                    
+                                 <!---  --------- end ------------ dynamically add jquery script attache to individual note input,  handle note keyup event, change icon ------------------     --->
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                    
+                    <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                    
+                    
+                    
+                    
+                    
+                    
+				</table>
+				</div>
+				</cfloop>
+                
+               
+				<cfset tr_stumprmv_cnt = max_trcnt>
+				<input type="Hidden" id="tr_stumprmv_cnt_#scnt#" name="tr_stumprmv_cnt_#scnt#" value="#tr_stumprmv_cnt#" #sirdis#>
+				 
+                
+                
+                </td>
+			</tr>
+			<tr><td style="height:2px;"></td></tr>
+			
+            
+            
+    
+    
+    
+    
+          <!--- --------------------  end   -------------------- joe hu 6/11/2019 ------------- add stump removals --------------------------  --->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     		<tr><td style="height:2px;"></td></tr>
 			<tr><th class="drk" style="height:0px;"></th></tr>
 			</table>
@@ -4760,8 +5685,35 @@ SELECT * FROM tblContractorType ORDER BY id
 					<td></td>
 					<cfset v = 0><cfif evaluate("getEst.#arrTrees[4]#QUANTITY") is not "">
 					<cfset v = evaluate("getEst.#arrTrees[4]#QUANTITY")></cfif>
-					<td class="frm left middle" style="width:135px;"><input type="Text" name="tree_#tr_fld#QUANTITY" id="tree_#tr_fld#QUANTITY" value="#v#" 
-					style="width:130px;text-align:center;" class="center rounded"></td>
+					<td class="frm left middle" style="width:135px;">
+                          <input type="Text" name="tree_#tr_fld#QUANTITY" id="tree_#tr_fld#QUANTITY" value="#v#" 
+                          
+                          <!--- bug fix -------- 6-27-2019 ------- joe hu ----------  --->
+                          
+                              <!---  
+							  
+							      if you do disabled>  the input-element won't be transmitted if the user submits the form.
+								  
+								  which cause  sw.cfc error out.  
+							  
+							      instead use:  readonly>  
+								  
+								  however, readonly , user can not edit, but not grey color, still white color,
+								  
+								  if use disabled here, when submitForm7(), you must manually push/add this tree_EXISTING_STUMP_REMOVALE_QUANTITY
+								   
+							  
+							     http://jkorpela.fi/forms/readonly.html
+							  
+							     https://stackoverflow.com/questions/3789844/how-to-make-a-greyed-out-html-form
+							  
+							   --->
+                          
+					style="width:130px;text-align:center;" class="center rounded" disabled>
+                    
+                            <!--- end ---------- bug fix -------- 6-27-2019 ------- joe hu ----------  --->
+                    
+                    </td>
 					
 				</tr>
 				<tr><td style="height:2px;"></td></tr>
@@ -4870,20 +5822,64 @@ SELECT * FROM tblContractorType ORDER BY id
 					<td colspan="11">
 						<table cellpadding="0" cellspacing="0" border="0">
 							<tr>
-								<th class="left middle" style="height:30px;width:220px;">Arborist Name:&nbsp;</th>
+								<th class="left middle" style="height:30px;width:120px;">Arborist Name:&nbsp;</th>
 								<td style="width:2px;"></td>
 								<cfset v = ""><cfif trim(getTreeInfo.arborist_name) is not "">
 								<cfset v = trim(getTreeInfo.arborist_name)></cfif>
-								<td class="frm left middle" style="width:375px;"><input type="Text" name="tree_arbname" id="tree_arbname" value="#v#" 
-								style="width:370px;" class="rounded"></td>
+								<td class="frm left middle" style="width:205px;"><input type="Text" name="tree_arbname" id="tree_arbname" value="#v#" 
+								style="width:202px;" class="rounded"></td>
+                                
+                                
 								<td style="width:2px;"></td>
-								<th class="left middle" style="height:30px;width:120px;">Pre-Inspection By:&nbsp;</th>
+								
+                                
+                                <th class="left middle" style="height:30px;width:120px;">Replant Pre-Insp By:&nbsp;</th>
+                                
 								<td style="width:2px;"></td>
-								<cfset v = ""><cfif trim(getTreeInfo.pre_inspection_by) is not "">
-								<cfset v = trim(getTreeInfo.pre_inspection_by)></cfif>
-								<td class="frm left middle" style="width:149px;"><input type="Text" name="tree_preinspby" id="tree_preinspby" value="#v#" 
-								style="width:144px;" class="rounded"></td>
+                                
+								  <cfset v = "">
+								  <cfif trim(getTreeInfo.pre_inspection_by) is not "">
+								          <cfset v = trim(getTreeInfo.pre_inspection_by)>
+                                  </cfif>
+								<td class="frm left middle" style="width:140px;"><input type="Text" name="tree_preinspby" id="tree_preinspby" value="#v#" 
+										style="width:136px;" class="rounded">
+                                </td>
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+								
+                                
+                                
+                                
+                                <td style="width:2px;"></td>
+                                
+								     <cfset v = "">
+								     <cfif getTreeInfo.pre_inspection_date is not "">
+									      <cfset v = dateformat(getTreeInfo.pre_inspection_date,"MM/DD/YYYY")>
+                                     </cfif>
+                                     
+                                     
+								<th class="left middle" style="height:30px;width:120px;">Replant Pre-Insp Date:&nbsp;</th>
 								<td style="width:2px;"></td>
+                                
+                                
+								<td class="frm left middle" style="width:150px;">
+                                     <input type="Text" name="tree_preinspdt" id="tree_preinspdt" value="#v#" 	style="width:146px;text-align:center;" class="rounded">
+                                </td>
+                                     
+								<td style="width:2px;"></td>
+                                
+                                
+                                
+                                
+                                
+                                
 								<th class="left middle" style="height:30px;width:183px;">
 									<table cellpadding="0" cellspacing="0" border="0">
 									<tr>
@@ -4904,93 +5900,145 @@ SELECT * FROM tblContractorType ORDER BY id
 				<tr>
 					<td colspan="11">
 						<table cellpadding="0" cellspacing="0" border="0">
+                        
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        
 							<tr>
-								<th class="left middle" style="height:30px;width:220px;">Tree Removal Contractor:&nbsp;</th>
-								<td style="width:2px;"></td>
+								<th class="left middle" style="height:30px;width:90px;">Tree Removal Contractor:&nbsp;</th>
                                 
-								<cfset v = "">
+                                
+                                
+                                
+								<td style="width:2px;"></td>
+                                <cfset v = "">
 								<cfif trim(getTreeInfo.tree_removal_contractor) is not "">
 								   <cfset v = trim(getTreeInfo.tree_removal_contractor)>
                                 </cfif>
+								
                                 
-                                
-                                
-                               
-                                
-                                
-								<td class="frm left middle" style="width:375px;">
-                                    <input type="Text" name="tree_trc" id="tree_trc" value="#v#" 	style="width:370px;" class="rounded">
-                                
+								<td class="frm left middle" style="width:124px;">
+                                    <!--- input type="Text" name="tree_trc" id="tree_trc" value="#v#" 	style="width:122px;" class="rounded" --->
+                                    
+                                    <select name="tree_trc_type" id="tree_trc_type" class="roundedsmall" style="width:122px;height:20px;">
+                                        
+										<!--- <option value=""></option>   --->
+                                         
+                                         <cfset _disabled = "disabled">
+                                         
+                                            <cfloop query="getTreeRemovalContractorTypes">
+                                                
+                                               
+												<cfset sel = "">
+                                                <cfif getTreeInfo.Tree_removal_contractor_type is id>
+                                                    <cfset sel = "selected">
+                                                </cfif>
+                                                
+                                                 
+                                                 <cfif ((getTreeInfo.Tree_removal_contractor_type EQ 4) or (getTreeInfo.Tree_removal_contractor_type EQ 5) )and ((id EQ 5) or (id EQ 4))> 
+                                                   
+                                                    <cfset _disabled = "">
+                                                </cfif>
+                                                 
+                                               
+												
+                                                <option value="#id#" #sel#>#value#</option>
+                                                    
+                                            </cfloop>
+											
+											
+                                    </select>
+                                    
                                  </td>
                                 
                                 
+                                <!---  --------- dynamically add jquery script  handle  event,  ------------------     --->
+                                 
+                                     <script>
+                                               $( '#chr(35)#tree_trc_type').change(function() {
+															
+														if ((this.value == 5 ) || (this.value == 4 )) 
+														{
+																											
+																$( '#chr(35)#tree_trc').prop('disabled', false)													
+																												
+														} else {
+														
+														          $( '#chr(35)#tree_trc').prop('disabled', true)
+																  // empty the field
+																   $( '#chr(35)#tree_trc').prop('value', '')
+																  
+														}
+													 
+											 })// on.change 
+									          
+                                    
+                                    
+                                     </script>
+                    
+                                 <!---  --------- end ------------ dynamically add jquery script attache to individual   handle event  ------------------     --->
+                                    
                                 
                                 
-                               <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
-                                      
-                                      <!---  11, 12 pending
-									  
-									  
-									     11, 12 :  existing text value are not possible converted to drop down list.
-											The possible way is to add a completely new field " Tree Contractor Type"
-											Editable dropdown list is more complex. (pending)
-									        
-                                      
-                                      <select name="tree_trc" id="tree_trc" class="roundedsmall" style="width:370px;height:20px;font-size:9px;">
-											<!--- <option value=""></option> --->
-                                            <cfloop query="getContractorType">
-                                                     
-                                                     
-                                                      <cfset sel = "">
-                                                      <cfif v eq type>
-                                                            <cfset sel = "selected">
-                                                      </cfif>
-                                                
-                                                
-                                                
-                                                
-                                                 <cfif v eq 'other'>
-                                                 
-                                                        <option class="editable" value="#id#" #sel#>#type#</option>
-                                                 
-                                                 
-                                                 <cfelse>
-                                                      
-                                                    <option value="#id#" #sel#>#type#</option>
-                                                
-                                                </cfif>
-                                                
-                                            </cfloop>
-                                        </select>
-                                        <input class="editOption" style="display:none;" placeholder="user input"></input>
-                                      
-                                      
-                                      --->
-                                      
-                               
                                 
                                 
-                                <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                                <td style="width:2px;"></td>
+                                
+                                
+                                <td class="frm left middle" style="width:103px;">
+                                
+                                    <input type="Text" name="tree_trc" id="tree_trc" value="#v#" 	style="width:100px;" class="rounded"  #_disabled#>
+                                    
+                                 </td>
+                                
+                                
+                                <td style="width:2px;"></td>
+                                
+                                
+                            <!---     <th class="left middle" style="height:30px;width:209px;">&nbsp;</th> --->
+								
+                                
+                          <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                          
+                          
+                          
+                          
+                                  
+                                
+                                
+                               <th class="left middle" style="height:30px;width:120px;">Replant Post-Insp By:&nbsp;</th>
+                                
+								<td style="width:2px;"></td>
+                                
+								  <cfset v = "">
+								  <cfif trim(getTreeInfo.replant_post_inspection_by) is not "">
+								          <cfset v = trim(getTreeInfo.replant_post_inspection_by)>
+                                  </cfif>
+								<td class="frm left middle" style="width:140px;"><input type="Text" name="replant_tree_postinspby" id="replant_tree_postinspby" value="#v#" 
+										style="width:136px;" class="rounded">
+                                </td>
 
                                 
                                 
                                 
-								<td></td>
+								
                                 
 								<td style="width:2px;"></td>
                                 
 								     <cfset v = "">
-								     <cfif getTreeInfo.pre_inspection_date is not "">
-									      <cfset v = dateformat(getTreeInfo.pre_inspection_date,"MM/DD/YYYY")>
+								     <cfif getTreeInfo.replant_post_inspection_date is not "">
+									      <cfset v = dateformat(getTreeInfo.replant_post_inspection_date,"MM/DD/YYYY")>
                                      </cfif>
                                      
                                      
-								<th class="left middle" style="height:30px;width:120px;">Pre-Inspection Date:&nbsp;</th>
+								<th class="left middle" style="height:30px;width:120px;">Replant Post-Insp Date:&nbsp;</th>
 								<td style="width:2px;"></td>
                                 
                                 
 								<td class="frm left middle" style="width:149px;">
-                                     <input type="Text" name="tree_preinspdt" id="tree_preinspdt" value="#v#" 	style="width:144px;text-align:center;" class="rounded"></td>
+                                     <input type="Text" name="replant_tree_postinspdt" id="replant_tree_postinspdt" value="#v#" 	style="width:144px;text-align:center;" class="rounded">
+                                </td>
+                                     
 								<td style="width:2px;"></td>
                                 
 								<th class="left middle" style="height:30px;width:183px;"></th>
@@ -5003,13 +6051,134 @@ SELECT * FROM tblContractorType ORDER BY id
 				<tr>
 					<td colspan="11">
 						<table cellpadding="0" cellspacing="0" border="0">
+                        
+                        
+                        <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+                        
 							<tr>
-								<th class="left middle" style="height:30px;width:220px;">Tree Planting Contractor:&nbsp;</th>
+								<th class="left middle" style="height:30px;width:90px;">Tree Planting Contractor:&nbsp;</th>
 								<td style="width:2px;"></td>
 								<cfset v = ""><cfif trim(getTreeInfo.tree_planting_contractor) is not "">
 								<cfset v = trim(getTreeInfo.tree_planting_contractor)></cfif>
-								<td class="frm left middle" style="width:375px;"><input type="Text" name="tree_tpc" id="tree_tpc" value="#v#" 
-								style="width:370px;" class="rounded"></td>
+                                
+                                
+                                
+								<td class="frm left middle" style="width:124px;">
+                                
+                                  <!---  <input type="Text" name="tree_tpc" id="tree_tpc" value="#v#" 	style="width:122px;" class="rounded"> --->
+                                
+                                
+                                
+                                             <select name="tree_tpc_type" id="tree_tpc_type" class="roundedsmall" style="width:122px;height:20px;">
+                                                
+                                             <!---     	<option value=""></option>  --->
+                                                 
+                                                 
+                                                 <cfset _disabled = "disabled">
+                                                 
+                                                    <cfloop query="getTreePlantingContractorTypes">
+                                                        
+                                                       
+                                                        <cfset sel = "">
+                                                        <cfif getTreeInfo.Tree_planting_contractor_type is id>
+                                                            <cfset sel = "selected">
+                                                        </cfif>
+                                                        
+                                                         
+                                                    <!---       <cfif (trim(getTreeInfo.tree_planting_contractor) is not "") and ((id EQ 5) or (id EQ 4))>  --->
+                                                        <cfif ((getTreeInfo.Tree_planting_contractor_type EQ 4) or (getTreeInfo.Tree_planting_contractor_type EQ 5) )and ((id EQ 5) or (id EQ 4))> 
+                                                           
+                                                            <cfset _disabled = "">
+                                                        </cfif>
+                                                         
+                                                       
+                                                        
+                                                        <option value="#id#" #sel#>#value#</option>
+                                                            
+                                                    </cfloop>
+                                                    
+                                                    
+                                            </select>
+                                    
+                                 </td>
+                                
+                                
+                                <!---  --------- dynamically add jquery script  handle  event,  ------------------     --->
+                                 
+                                     <script>
+                                               $( '#chr(35)#tree_tpc_type').change(function() {
+															
+														if ((this.value == 5 ) || (this.value == 4 )) 
+														{
+																											
+																   $( '#chr(35)#tree_tpc').prop('disabled', false)													
+																												
+														} else {
+														
+														          	$( '#chr(35)#tree_tpc').prop('disabled', true)
+																  // empty the field
+																    $( '#chr(35)#tree_tpc').prop('value', '')
+																  
+														}
+													 
+											 })// on.change 
+									          
+                                    
+                                    
+                                     </script>
+                    
+                                 <!---  --------- end ------------ dynamically add jquery script attache to individual   handle event  ------------------     --->
+                                    
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                <td style="width:2px;"></td>
+                                
+                                
+                                 <cfset v = "">
+								<cfif trim(getTreeInfo.tree_planting_contractor) is not "">
+								   <cfset v = trim(getTreeInfo.tree_planting_contractor)>
+                                </cfif>
+                                
+                                <td class="frm left middle" style="width:163px;">
+                                
+                                		<input type="Text" name="tree_tpc" id="tree_tpc" value="#v#"  style="width:161px;" class="rounded" #_disabled#>
+                                </td>
+                                
+                                
+                                
+                                
+                                <td style="width:2px;"></td>
+                                <th class="left middle" style="height:30px;width:120px;">Tree Planting Assigned <br> to Contractor:&nbsp;</th>
+								<td style="width:2px;"></td>
+                                
+                                
+                                 <td style="width:2px;"></td>
+                                
+                                
+                                
+                                  <cfset v = "">
+								     <cfif getTreeInfo.Tree_planting_assigned_contractor_date is not "">
+									      <cfset v = dateformat(getTreeInfo.Tree_planting_assigned_contractor_date,"MM/DD/YYYY")>
+                                     </cfif>
+                                
+                                <td class="frm left middle" style="width:80px;"><input type="Text" name="tree_tpc_dt" id="tree_tpc_dt" value="#v#" 
+								style="width:77px;" class="rounded"></td>
+                                
+                                
+                                  <!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+                                
+                                
+                                
 								<td style="width:2px;"></td>
 								<cfset v = ""><cfif trim(getTreeInfo.post_inspection_by) is not "">
 								<cfset v = trim(getTreeInfo.post_inspection_by)></cfif>
@@ -5202,6 +6371,11 @@ SELECT * FROM tblContractorType ORDER BY id
 			<cfset src_cert = "../images/pdf_icon_trans.gif"><cfset href_cert = "">
 			<cfset src_curb = "../images/pdf_icon_trans.gif"><cfset href_curb = "">
 			<cfset src_memo = "../images/pdf_icon_trans.gif"><cfset href_memo = "">
+            
+            <cfset src_field_assess = "../images/pdf_icon_trans.gif"><cfset href_field_assess = "">
+            
+            
+            
 			<cfset src_roe = "../images/pdf_icon_trans.gif"><cfset href_roe = "">
 			<cfset src_prn = "../images/pdf_icon_trans.gif"><cfset href_prn = "">
 			<cfset src_rcurb = "../images/pdf_icon_trans.gif"><cfset href_rcurb = "">
@@ -5230,6 +6404,20 @@ SELECT * FROM tblContractorType ORDER BY id
 					<cfset src_memo = "../images/pdf_icon.gif">
 					<cfset href_memo = "href = '" & request.url & "pdfs/" & dir2 & "/memos." & dir2 & ".pdf' title='View Memos PDF'">
 				</cfif>
+                
+                
+                
+                
+                
+                <cfif lcase(pdfdir.name) is "field_assess." & dir2 & ".pdf">
+					<cfset src_field_assess = "../images/pdf_icon.gif">
+					<cfset href_field_assess = "href = '" & request.url & "pdfs/" & dir2 & "/field_assess." & dir2 & ".pdf' title='View Field Assessment Data PDF'">
+				</cfif>
+                
+                
+                
+                
+                
 				<cfif lcase(pdfdir.name) is "roe_form." & dir2 & ".pdf">
 					<cfset src_roe = "../images/pdf_icon.gif">
 					<cfset href_roe = "href = '" & request.url & "pdfs/" & dir2 & "/roe_form." & dir2 & ".pdf' title='View ROE Form PDF'">
@@ -5276,13 +6464,36 @@ SELECT * FROM tblContractorType ORDER BY id
 					<span id="rmv_memo" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(4);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Memos" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
+                
+                <tr><td class="vspacer" height="5px;"></td></tr>
+                
+                <tr>
+					<cfset attvis = "hidden"><cfif href_field_assess is not ""><cfset attvis = "visible"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
+					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
+					<th class="left" style="width:170px;"><a id="a_field_assess" #href_field_assess# target="_blank"><img id="img_field_assess" src="#src_field_assess#" width="17" height="17" style="position:relative;top:2px;">
+					<span style="position:relative;top:-3px;">Field Assessment Data</span></a>
+					<span id="rmv_field_assess" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(8);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Field Assessment Data" style="position:relative;top:-2px;left:7px;"></a></span>
+					</th>
+				</tr>
+                
+                
+                
+                
+                
+                
 				<tr><td class="vspacer" height="5px;"></td></tr>
 				<tr>
 					<cfset attvis = "hidden"><cfif href_curb is not ""><cfset attvis = "visible"></cfif>
 					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_curb" #href_curb# target="_blank"><img id="img_curb" src="#src_curb#" width="17" height="17" style="position:relative;top:2px;">
-					<span style="position:relative;top:-3px;">Curb Ramp Plans</span></a>
+					
+                    <!--- joe hu 2019-5-7 pdf request --->
+                    <!---<span style="position:relative;top:-3px;">Curb Ramp Plans</span></a> --->
+                    <span style="position:relative;top:-3px;">Design Plans</span></a>
+                    
+                    
 					<span id="rmv_curb" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(5);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Curb Ramp Plans" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
@@ -5292,8 +6503,12 @@ SELECT * FROM tblContractorType ORDER BY id
 					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<cfif session.user_power lt 0 OR lock eq 1><cfset attvis = "hidden"></cfif>
 					<th class="left" style="width:170px;"><a id="a_rcurb" #href_rcurb# target="_blank"><img id="img_rcurb" src="#src_rcurb#" width="17" height="17" style="position:relative;top:2px;">
-					<span style="position:relative;top:-3px;">Revised Curb Ramp Plans</span></a>
-					<span id="rmv_rcurb" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(7);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Revised Curb Ramp Plans" style="position:relative;top:-2px;left:7px;"></a></span>
+					
+                    <!--- joe hu 2019-5-7 pdf request --->
+                    <!--- <span style="position:relative;top:-3px;">Revised Curb Ramp Plans</span></a>  --->
+					 <span style="position:relative;top:-3px;">As-Built Plans</span></a>
+                    
+                    <span id="rmv_rcurb" style="visibility:#attvis#;"><a href="" onClick="showRemoveAttach(7);return false;"><img src="../images/grey_x.png" width="8" height="8" title="Revised Curb Ramp Plans" style="position:relative;top:-2px;left:7px;"></a></span>
 					</th>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -5324,7 +6539,12 @@ SELECT * FROM tblContractorType ORDER BY id
 					</th>
 				</tr>
 				<tr>
-					<th><cfif session.user_power gte 0 AND lock neq 1><a href="" onClick="showAttach();return false;"><img src="../images/attach.png" width="9" height="15" title="Attach Files" style="position:relative;top:3px;right:5px;">
+					<th>
+                    <!--- joe hu 2019-5-7 pdf request --->
+                       <cfif session.user_power gte 0 >
+					<!---   <cfif session.user_power gte 0 AND lock neq 1>  --->
+                    
+                    <a href="" onClick="showAttach();return false;"><img src="../images/attach.png" width="9" height="15" title="Attach Files" style="position:relative;top:3px;right:5px;">
 					<span style="position:relative;top:0px;right:5px;" title="Attach Files">Attach Files</span></a></cfif></td>
 				</tr>
 				<tr><td class="vspacer" height="5px;"></td></tr>
@@ -5339,7 +6559,7 @@ SELECT * FROM tblContractorType ORDER BY id
 </table>
 
 <cfset w_box = 590>
-	<cfset w_msg = 515><cfset h_msg = 425> <!--- 775 for testing --->
+	<cfset w_msg = 515><cfset h_msg = 485> <!--- 775 for testing --->
 	<cfif session.user_level is 0><cfset h_msg = 215></cfif> <!--- added for BSS adding uploads --->
 	<cfset l_msg = (w_box - w_msg)/2>
 	<div id="attachments" class="box" style="top:1px;left:#l_msg-5#px;width:#w_msg#px;height:#h_msg#px;display:none;z-index:910;">
@@ -5415,65 +6635,96 @@ SELECT * FROM tblContractorType ORDER BY id
 					<a id="fi_btn_memo" href="" class="button buttonText" tabindex="3"
 					style="position:absolute;top:#15+2*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
 					</td></tr>
-					
-					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-18px;">Curb Ramp Plans PDF:</strong></th></tr>
+                    
+                    
+                    
+                    
+                    <tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-13px;">Field Assessment Data PDF:</strong></th></tr>
 					<tr><td align="center">
-					<div id="fi_header_curb" class="file_header" style="position:absolute;top:#15+3*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
-					<div id="fi_mask_curb" class="fileinputs" style="position:absolute;top:#16+3*dt#px;left:#lft+90#px;display:block;">
+					<div id="fi_header_field_assess" class="file_header" style="position:absolute;top:#15+3*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
+					<div id="fi_mask_field_assess" class="fileinputs" style="position:absolute;top:#16+3*dt#px;left:#lft+90#px;display:block;">
+					<div id="fi_field_assess" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
+					</div>
+					<div id="fi_div_field_assess" style="display:block;">
+					<input id="file_field_assess" name="file_field_assess" type="file" class="file" style="top:#15+3*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('field_assess');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<a id="fi_btn_field_assess" href="" class="button buttonText" tabindex="3"
+					style="position:absolute;top:#15+3*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					</td></tr>
+                    
+                    
+                    
+                    
+					
+                    <!--- joe hu 2019-5-7 pdf request --->
+                   <!--- <tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-18px;">Curb Ramp Plans PDF:</strong></th></tr> --->
+					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-18px;">Design Plans PDF:</strong></th></tr>
+                    
+                    
+					<tr><td align="center">
+					<div id="fi_header_curb" class="file_header" style="position:absolute;top:#15+4*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
+					<div id="fi_mask_curb" class="fileinputs" style="position:absolute;top:#16+4*dt#px;left:#lft+90#px;display:block;">
 					<div id="fi_curb" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_curb" style="display:block;">
-					<input id="file_curb" name="file_curb" type="file" class="file" style="top:#15+3*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('curb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_curb" name="file_curb" type="file" class="file" style="top:#15+4*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('curb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_curb" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+3*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+4*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
 					</td></tr>
 					
-					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-23px;">Revised Curb Ramp Plans PDF:</strong></th></tr>
+					
+                    
+                     <!--- joe hu 2019-5-7 pdf request --->
+                   <!--- <tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-23px;">Revised Curb Ramp Plans PDF:</strong></th></tr>  --->
+                    <tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-23px;">As-Built Plans PDF:</strong></th></tr>
+                    
+                    
+                    
+                    
 					<tr><td align="center">
-					<div id="fi_header_rcurb" class="file_header" style="position:absolute;top:#15+4*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
-					<div id="fi_mask_rcurb" class="fileinputs" style="position:absolute;top:#16+4*dt#px;left:#lft+90#px;display:block;">
+					<div id="fi_header_rcurb" class="file_header" style="position:absolute;top:#15+5*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
+					<div id="fi_mask_rcurb" class="fileinputs" style="position:absolute;top:#16+5*dt#px;left:#lft+90#px;display:block;">
 					<div id="fi_rcurb" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_rcurb" style="display:block;">
-					<input id="file_rcurb" name="file_rcurb" type="file" class="file" style="top:#15+4*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('rcurb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_rcurb" name="file_rcurb" type="file" class="file" style="top:#15+5*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('rcurb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_rcurb" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+4*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+5*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-28px;">Tree Removal Permit PDF:</strong></th></tr>
 					<tr><td align="center">
-					<div id="fi_header_rmvl" class="file_header" style="position:absolute;top:#15+5*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
-					<div id="fi_mask_rmvl" class="fileinputs" style="top:#16+5*dt#px;left:#lft+90#px;display:block;">
+					<div id="fi_header_rmvl" class="file_header" style="position:absolute;top:#15+6*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
+					<div id="fi_mask_rmvl" class="fileinputs" style="top:#16+6*dt#px;left:#lft+90#px;display:block;">
 					<div id="fi_rmvl" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_rmvl" style="display:block;">
-					<input id="file_rmvl" name="file_rmvl" type="file" class="file" style="top:#15+5*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('rmvl');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_rmvl" name="file_rmvl" type="file" class="file" style="top:#15+6*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('rmvl');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_rmvl" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+5*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+6*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-33px;">Tree Prune Permit PDF:</strong></th></tr>
 					<tr><td align="center">
-					<div id="fi_header_prn" class="file_header" style="position:absolute;top:#15+6*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
-					<div id="fi_mask_prn" class="fileinputs" style="top:#16+6*dt#px;left:#lft+90#px;display:block;">
+					<div id="fi_header_prn" class="file_header" style="position:absolute;top:#15+7*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
+					<div id="fi_mask_prn" class="fileinputs" style="top:#16+7*dt#px;left:#lft+90#px;display:block;">
 					<div id="fi_prn" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_prn" style="display:block;">
-					<input id="file_prn" name="file_prn" type="file" class="file" style="top:#15+6*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('prn');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_prn" name="file_prn" type="file" class="file" style="top:#15+7*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('prn');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_prn" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+6*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+7*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
 					</td></tr>
 					
 					<tr><th class="left" style="padding:#pd#px 0px 0px 17px"><strong style="position:relative;top:-38px;">Arborist Report PDF:</strong></th></tr>
 					<tr><td align="center">
-					<div id="fi_header_arb" class="file_header" style="position:absolute;top:#15+7*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
-					<div id="fi_mask_arb" class="fileinputs" style="position:absolute;top:#16+7*dt#px;left:#lft+90#px;display:block;">
+					<div id="fi_header_arb" class="file_header" style="position:absolute;top:#15+8*dt#px;left:#lft#px;width:80px;display:block;">File to Upload:</div>
+					<div id="fi_mask_arb" class="fileinputs" style="position:absolute;top:#16+8*dt#px;left:#lft+90#px;display:block;">
 					<div id="fi_arb" style="position:relative;top:1px;width:800px;display:block;text-align:left;"></div>
 					</div>
 					<div id="fi_div_arb" style="display:block;">
-					<input id="file_arb" name="file_arb" type="file" class="file" style="top:#15+7*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('arb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
+					<input id="file_arb" name="file_arb" type="file" class="file" style="top:#15+8*dt#px;left:#lft+90#px;display:block;" onChange="setFileName('arb');return false;" onClick="$('#chr(35)#attach_msg').hide();" /></div>
 					<a id="fi_btn_arb" href="" class="button buttonText" tabindex="3"
-					style="position:absolute;top:#15+7*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
+					style="position:absolute;top:#15+8*dt#px;left:#lft+408#px;padding:#p#px 0px 2px 0px;height:#ht#px;width:80px;font: 10px Arial, Verdana, Helvetica, sans-serif;z-index:1;display:block;" onClick="return false;">Browse</a>
 					</td></tr>
 					
 					<cfelse> <!--- Added for just BSS adding data  --->
@@ -6648,7 +7899,16 @@ function submitForm7() {
 		<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
 		
 		  frm.push({"name" : "tree_#arrTrees[1]#QUANTITY", "value" : trim($('#chr(35)#tree_#arrTrees[1]#QUANTITY').val()) }); 
+		 
 		<!--- ---------- End -- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+		
+		
+		
+<!------- joe hu 6-19-2019 add stump removal --->
+
+		 frm.push({"name" : "tree_#arrTrees[4]#QUANTITY", "value" : trim($('#chr(35)#tree_#arrTrees[4]#QUANTITY').val()) });   
+
+<!--- end ---- joe hu 6-19-2019 add stump removal --->
 		
 		
 	</cfoutput>
@@ -6664,21 +7924,57 @@ function submitForm7() {
 	<cfoutput>
 	<cfloop index="i" from="1" to="#lngth1#">
 		<cfloop index="j" from="1" to="#lngth2#">
+		
 		if ($("#chr(35)#tpoffsite_#i#_#j#").is(':visible')) {	
 			if ($('#chr(35)#tpoffsite_#i#_#j#').is(':checked') == false) {	
 				frm.push({"name" : "tpoffsite_#i#_#j#", "value" : "off"});
+				
+				
+				
 			}
 		}
+		
+		
+		
+		
+		if ($("#chr(35)#tpgatorbags_#i#_#j#").is(':visible')) {	
+		
+		    
+		
+			if ($('#chr(35)#tpgatorbags_#i#_#j#').is(':checked') == false) {	
+				frm.push({"name" : "tpgatorbags_#i#_#j#", "value" : "off"});
+				
+				
+			}
+		}
+		
+		
+		
 		if ($("#chr(35)#tpoverhead_#i#_#j#").is(':visible')) {	
 			if ($('#chr(35)#tpoverhead_#i#_#j#').is(':checked') == false) {	
 				frm.push({"name" : "tpoverhead_#i#_#j#", "value" : "off"});
 			}
 		}
+		
+		
 		if ($("#chr(35)#tppostinspect_#i#_#j#").is(':visible')) {	
 			if ($('#chr(35)#tppostinspect_#i#_#j#').is(':checked') == false) {	
 				frm.push({"name" : "tppostinspect_#i#_#j#", "value" : "off"});
 			}
 		}
+		
+		
+		<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+		if ($("#chr(35)#tppassedpostinspection_#i#_#j#").is(':visible')) {	
+			if ($('#chr(35)#tppassedpostinspection_#i#_#j#').is(':checked') == false) {	
+				frm.push({"name" : "tppassedpostinspection_#i#_#j#", "value" : "off"});
+			}
+		}
+		<!--- ------ end ---- joe hu  Feb 2019 multiple update --------------------  --->
+		
+		
+		
+		
 		</cfloop>
 	</cfloop>
 	</cfoutput>
@@ -6689,6 +7985,8 @@ function submitForm7() {
 	
 	
 	
+	
+	<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
 	  <cfoutput>
 	<cfloop index="i" from="1" to="#lngth1#">
 		<cfloop index="j" from="1" to="#lngth2#">
@@ -6699,23 +7997,79 @@ function submitForm7() {
 		} 
 		
 		
-		if ($("#chr(35)#trpsoverhead_#i#_#j#").is(':visible')) {	
-			if ($('#chr(35)#trpsoverhead_#i#_#j#').is(':checked') == false) {	
-				frm.push({"name" : "trpsoverhead_#i#_#j#", "value" : "off"});
+		
+		
+		if ($("#chr(35)#trpsfurpr_#i#_#j#").is(':visible')) {	
+			if ($('#chr(35)#trpsfurpr_#i#_#j#').is(':checked') == false) {	
+				frm.push({"name" : "trpsfurpr_#i#_#j#", "value" : "off"});
 			}
 		}
 		
-		if ($("#chr(35)#trpspostinspect_#i#_#j#").is(':visible')) {	
-			if ($('#chr(35)#trpspostinspect_#i#_#j#').is(':checked') == false) {	
-				frm.push({"name" : "trpspostinspect_#i#_#j#", "value" : "off"});
+		
+		
+		
+		if ($("#chr(35)#trpsct_#i#_#j#").is(':visible')) {	
+			if ($('#chr(35)#trpsct_#i#_#j#').is(':checked') == false) {	
+				frm.push({"name" : "trpsct_#i#_#j#", "value" : "off"});
 			}
 		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		</cfloop>
+		
+		
+		
+		<!--- for sirBPWapprovalRequired and sirBPWapprovaldt only --->
+		
+		if ($("#chr(35)#sirBPWapprovalRequired_#i#").is(':visible')) {	
+			if ($('#chr(35)#sirBPWapprovalRequired_#i#').is(':checked') == false) {	
+				frm.push({"name" : "sirBPWapprovalRequired_#i#", "value" : "off"});
+				frm.push({"name" : "sirBPWapprovaldt_#i#", "value" : ""});
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
+		
 	</cfloop>
+	
+	
+	
+	   if ($("#chr(35)#tree_trc").prop("disabled"))
+		{	
+		
+		        console.log("tree_trc --- disabled")
+				frm.push({"name" : "tree_trc", "value" : ""});
+			
+		}
+		
+		
+		if ($("#chr(35)#tree_tpc").prop("disabled"))
+		{	
+		        console.log("tree_tpc --- disabled")
+				frm.push({"name" : "tree_tpc", "value" : ""});
+			
+		}
+	
+	
+	
 	</cfoutput>
 	
-	
+	<!--- ------  end ---- joe hu  Feb 2019 multiple update --------------------  --->
 	
 	
 	
@@ -6821,8 +8175,8 @@ function submitForm7() {
 			var v = v.replace("_L_","_l_");
 			var x = eval("data."+property);
 			$('#'+v).val(x);
-  			//console.log( property );
-			//console.log( x );
+  			console.log( property );
+			console.log( x );
 		}
 		
 		if (data.ADDS.length > 0) {
@@ -6973,13 +8327,15 @@ function addTree(typ,scnt) {
 	var pfx = "tr";
 	if (typ == "add") { pfx = "tp"; }
 	if (typ == "root") { pfx = "trps"; }
+	if (typ == "stumprmv") { pfx = "ts"; }
 	
-	console.log('add tree: ', typ);
+	console.log('add record --- type: ', typ);
 	
 	
 	$("#" + pfx + "dia_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "pidt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "trdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	$("#" + pfx + "srdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "swdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "ewdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	
@@ -6987,7 +8343,31 @@ function addTree(typ,scnt) {
 	<!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
 	$("#" + pfx + "rpdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "furpdt_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	
 	<!--- -------  End ----- joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+	$("#" + pfx + "lf_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	$("#" + pfx + "furpr_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	$("#" + pfx + "ct_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	
+	$("#" + pfx + "PreservationAlternative_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	$("#" + pfx + "ExistingCondition_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	
+	$("#" + pfx + "AttemptedPreservation_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	$("#" + pfx + "PlantedCondition_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	$("#" + pfx + "passedpostinspection_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	
+	<!--- ---------- end ----------  joe hu  Feb 2019 multiple update --------------------  --->
+	
 	
 	$("#" + pfx + "addr_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "species_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
@@ -6998,13 +8378,14 @@ function addTree(typ,scnt) {
 	$("#" + pfx + "subpos_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "postinspect_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	$("#" + pfx + "offsite_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
+	$("#" + pfx + "gatorbags_" + scnt + "_" + (cnt+1)).removeAttr('disabled');
 	
 	if ( cnt < lgth2) { 
 		$('#' + pfx + '_tot_' + scnt).html(cnt+1); 
 		$('#tr_' + typ + '_cnt_' + scnt).val(cnt+1); 
 		if (typ == "add") { calcTrees(); } 
 		if (typ == "root") { calcTrees_root(); } 
-		
+		if (typ == "stumprmv") { calcTrees_stumprmv(); } 
 	}
 }
 
@@ -7016,10 +8397,20 @@ function delTree(typ,scnt) {
 		var pfx = "tr";
 		if (typ == "add") { pfx = "tp"; }
 		if (typ == "root") { pfx = "trps"; }
+		if (typ == "stumprmv") { pfx = "ts"; }
 		
 		$("#" + pfx + "dia_" + scnt + "_" + (cnt)).attr('disabled', true);
 		$("#" + pfx + "pidt_" + scnt + "_" + (cnt)).attr('disabled', true);
 		$("#" + pfx + "trdt_" + scnt + "_" + (cnt)).attr('disabled', true);
+		
+		
+		
+		$("#" + pfx + "srdt_" + scnt + "_" + (cnt)).attr('disabled', true);
+		$("#" + pfx + "ExistingCondition_" + scnt + "_" + (cnt)).attr('disabled', true);
+		$("#" + pfx + "AttemptedPreservation_" + scnt + "_" + (cnt)).attr('disabled', true);
+		
+		
+		
 		$("#" + pfx + "swdt_" + scnt + "_" + (cnt)).attr('disabled', true);
 		$("#" + pfx + "ewdt_" + scnt + "_" + (cnt)).attr('disabled', true);
 		$("#" + pfx + "addr_" + scnt + "_" + (cnt)).attr('disabled', true);
@@ -7032,7 +8423,7 @@ function delTree(typ,scnt) {
 		
 		if (typ == "add") { calcTrees(); }
 		if (typ == "root") { calcTrees_root(); }
-		
+		if (typ == "stumprmv") { calcTrees_stumprmv(); }
 	}
 }
 
@@ -7099,6 +8490,53 @@ function calcTrees_root() {
 
 
 
+
+
+
+function calcTrees_stumprmv() {
+	var cnt = parseInt($('#trees_sir_cnt').val());
+	
+	console.log('calcTrees_stumprmv, cnt :', cnt )
+	
+	var tot = 0; 
+	var tot2 = 0;
+	for (var i = 1; i < cnt+1; i++) {
+		var cnt2 = parseInt($('#tr_stumprmv_cnt_' + i).val());
+		
+		 console.log('calcTrees_stumprmv, cnt2 :', cnt2 )
+		
+		for (var j = 1; j < cnt2+1; j++) {
+			var v = parseInt($("#tsdia_" + i + "_" + j).val());
+			if (v == 24) {
+				tot++;
+				//console.log("tot=" + tot);
+			}
+		}
+		
+		console.log('calcTrees_stumprmv, tot :', tot )
+		
+		tot2 = tot2 + cnt2;
+	}
+	$('#tree_EXISTING_STUMP_REMOVAL_QUANTITY').val(tot2);
+	
+	/*
+	if ($('#tree_lock').is(':checked') == false) {	
+		$('#tree_INSTALL_ROOT_CONTROL_BARRIER_QUANTITY').val(tot2*14);
+	}
+	*/
+}
+
+
+
+
+
+
+
+
+
+
+
+
 function autoLock() {
 	if ($('#tree_lock').is(':checked') == false) {	
 		$('#tree_lock').prop('checked', true);
@@ -7112,6 +8550,13 @@ function addSIR() {
 	$('#trees_sir_cnt').val(cnt+1);
 	$('#sir_' + (cnt+1)).removeAttr('disabled');
 	$('#sirdt_' + (cnt+1)).removeAttr('disabled');
+	
+	 <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+	$('#sirBPWapprovalRequired_' + (cnt+1)).removeAttr('disabled');
+	$('#sirBPWapprovaldt_' + (cnt+1)).removeAttr('disabled');
+	 <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+	
+	
 	$('#tr_rmv_cnt_' + (cnt+1)).removeAttr('disabled');
 	$('#tr_add_cnt_' + (cnt+1)).removeAttr('disabled');
 }
@@ -7123,6 +8568,15 @@ function delSIR() {
 		$('#trees_sir_cnt').val(cnt-1); 
 		$('#sir_' + cnt).attr('disabled', true);	
 		$('#sirdt_' + cnt).attr('disabled', true);	
+		
+		
+		 <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+		$('#sirBPWapprovalRequired_' + cnt).attr('disabled', true);	
+		$('#sirBPWapprovaldt_' + cnt).attr('disabled', true);	
+		 <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+		
+		
+		
 		$('#tr_rmv_cnt_' + cnt).attr('disabled', true);	
 		$('#tr_add_cnt_' + cnt).attr('disabled', true);	
 	}
@@ -7258,6 +8712,9 @@ function showAttach(txt,cnt) {
 	$("#fi_cert").html('');
 	$("#fi_curb").html('');
 	$("#fi_memo").html('');
+	
+	$("#fi_field_assess").html('');
+	
 	$("#fi_roe").html('');
 	$("#fi_prn").html('');
 	$("#fi_rcurb").html('');
@@ -7292,18 +8749,27 @@ function attachFiles(sw_id) {
 			  var doCert = $( '#attach_iframe' ).contents().find('#doCERT').html();
 			  var doCurb = $( '#attach_iframe' ).contents().find('#doCURB').html();
 			  var doMemo = $( '#attach_iframe' ).contents().find('#doMEMO').html();
+			  
+			  
+			  var doField_Assess = $( '#attach_iframe' ).contents().find('#doFIELD_ASSESS').html();
+			  
+			  
 			  var doRoe = $( '#attach_iframe' ).contents().find('#doROE').html();
 			  var doPrn = $( '#attach_iframe' ).contents().find('#doPRN').html();
 			  var doRCurb = $( '#attach_iframe' ).contents().find('#doRCURB').html();
 			  var dir = $( '#attach_iframe' ).contents().find('#dir').html();
-			  finishUploadFiles(msg,doArb,doRmvl,doCert,doCurb,doMemo,doRoe,doPrn,doRCurb,dir);
+			  finishUploadFiles(msg,doArb,doRmvl,doCert,doCurb,doMemo,doField_Assess,doRoe,doPrn,doRCurb,dir);
 	     }
 	//end setInterval
     } , 1000);
 
 }
 
-function finishUploadFiles(msg,doArb,doRmvl,doCert,doCurb,doMemo,doRoe,doPrn,doRCurb,dir){
+
+
+
+
+function finishUploadFiles(msg,doArb,doRmvl,doCert,doCurb,doMemo,doField_Assess,doRoe,doPrn,doRCurb,dir){
 
 	if (msg != "Success") {
 		$("#attach_msg").html("<span style='color:red;'>Attachment Failed:</span> Please try again.");
@@ -7341,6 +8807,18 @@ function finishUploadFiles(msg,doArb,doRmvl,doCert,doCurb,doMemo,doRoe,doPrn,doR
 		$("#img_memo").attr('src', '../images/pdf_icon.gif');
 		$("#rmv_memo").css('visibility', 'visible');
 	}
+	
+	
+	
+	if (doField_Assess == "true") {
+		$("#a_field_assess").attr('href', url + 'pdfs/' + dir + '/Field_Assess.' + dir + '.pdf');
+		$("#a_field_assess").attr('title', 'View Field Assessment Data PDF');
+		$("#img_field_assess").attr('src', '../images/pdf_icon.gif');
+		$("#rmv_field_assess").css('visibility', 'visible');
+	}
+	
+	
+	
 	if (doRoe == "true") {
 		$("#a_roe").attr('href', url + 'pdfs/' + dir + '/ROE_Form.' + dir + '.pdf');
 		$("#a_roe").attr('title', 'View Tree Removal Permits PDF');
@@ -7363,6 +8841,9 @@ function finishUploadFiles(msg,doArb,doRmvl,doCert,doCurb,doMemo,doRoe,doPrn,doR
 	$('#attachments').hide();
 }
 
+
+
+
 function showRemoveAttach(idx) {
 	$('#msg7').css({top:'50%',left:'50%',margin:'-'+($('#msg7').height() / 2)+'px 0 0 -'+($('#msg7').width() / 2)+'px'});
 	$('#msg7').show();
@@ -7377,6 +8858,9 @@ function doRemoveAttach() {
 	else if (typ == 2) { ref = $('#a_cert').attr('href'); }
 	else if (typ == 3) { ref = $('#a_roe').attr('href'); }
 	else if (typ == 4) { ref = $('#a_memo').attr('href'); }
+	
+	else if (typ == 8) { ref = $('#a_field_assess').attr('href'); }
+	
 	else if (typ == 5) { ref = $('#a_curb').attr('href'); }
 	else if (typ == 6) { ref = $('#a_prn').attr('href'); }
 	else if (typ == 7) { ref = $('#a_rcurb').attr('href'); }
@@ -7428,6 +8912,18 @@ function doRemoveAttach() {
 			$("#img_memo").attr('src', '../images/pdf_icon_trans.gif');
 			$("#rmv_memo").css('visibility', 'hidden');
 		}
+		
+		
+		
+		else if (typ == 8) {
+			$("#a_field_assess").removeAttr('href');
+			$("#a_field_assess").removeAttr('title');
+			$("#img_field_assess").attr('src', '../images/pdf_icon_trans.gif');
+			$("#rmv_field_assess").css('visibility', 'hidden');
+		}
+		
+		
+		
 		else if (typ == 5) {
 			$("#a_curb").removeAttr('href');
 			$("#a_curb").removeAttr('title');
@@ -7612,13 +9108,31 @@ return false;
 
 
 
-<cfoutput>
-    $(function() {
+     <cfoutput>
+	 
+	 
+ 
+	 // document ready 
+         // $(function() {
+			$(document).ready(function() {		 
+									   
+									   
+									   
+			     console.log(" ---- doc.ready  ------")
+				 
 				<cfloop index="i" from="1" to="#lngth1#">
 					<cfloop index="j" from="1" to="#lngth2#">
 						$( "#chr(35)#trspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
 						$( "#chr(35)#trpidt_#i#_#j#" ).datepicker();
 						$( "#chr(35)#trtrdt_#i#_#j#" ).datepicker();
+						
+						 <!--- --------------------------- joe hu 6/11/2019 ------------- add stump removals --------------------------  --->
+						$( "#chr(35)#tsspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
+						$( "#chr(35)#tspidt_#i#_#j#" ).datepicker();
+						$( "#chr(35)#tssrdt_#i#_#j#" ).datepicker();
+						 <!--- ---------------- end ----------- joe hu 6/11/2019 ------------- add stump removals --------------------------  --->
+						
+						
 						$( "#chr(35)#tpspecies_#i#_#j#" ).autocomplete({ source: arrSpecies });
 						$( "#chr(35)#tppidt_#i#_#j#" ).datepicker();
 						$( "#chr(35)#tptrdt_#i#_#j#" ).datepicker();
@@ -7635,6 +9149,14 @@ return false;
 						
 					</cfloop>
 						$( "#chr(35)#sirdt_#i#" ).datepicker();
+						
+						
+						<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+						$( "#chr(35)#sirBPWapprovaldt_#i#" ).datepicker();
+						<!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+						
+						
+						
 				</cfloop>
 				
 				<cfif isdefined("url.editcr")>
@@ -7727,6 +9249,13 @@ return false;
 					    <!--- ------- end ---------  category on change event -------------  --->
 						   
 						   
+						   
+						     console.log(" doc.ready ")
+							 
+							 
+							 
+							 
+						   
 					
 					 });  //   $(function() {
 	 
@@ -7780,7 +9309,15 @@ $( "#sw_dsgnstart" ).datepicker();
 $( "#sw_dsgnfinish" ).datepicker();
 
 $( "#tree_preinspdt" ).datepicker();
+$( "#replant_tree_postinspdt" ).datepicker();
 $( "#tree_postinspdt" ).datepicker();
+
+
+
+ <!--- ---------- joe hu  Feb 2019 multiple update --------------------  --->
+$( "#tree_tpc_dt" ).datepicker();
+
+
 
 
 Number.prototype.formatMoney = function(c, d, t){
@@ -7815,6 +9352,10 @@ var n = this,
 	<!---	$(".overlay").show();   --->
 	<!--- if default div style="display:none;" ( as in css)  $(".overlay").show(); must immediately next to div tag. --->
 		
+		
+		
+				
+	   		
 		$(window).load(function () {
 			
 			  $(".overlay").hide();	
@@ -7823,6 +9364,13 @@ var n = this,
 			
 		});
 
+    
+  
+  
+     
+  
+  
+  
   
 
 <!--- ------------ joe hu ------ 8/7/18  ---------- add root pruning ---------------  --->

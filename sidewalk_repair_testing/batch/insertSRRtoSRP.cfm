@@ -17,7 +17,7 @@
 	CASE WHEN prop_type = 'R' THEN 27 ELSE 28 END AS Type, 
 	job_address as Address,
 	council_dist AS Council_District, 
-	rtrim(ltrim(RIGHT(job_address,LEN(job_address)-CHARINDEX('-',job_address)))) as Zip_Code,
+	CASE WHEN CHARINDEX('-', job_address) = 0 THEN NULL ELSE rtrim(ltrim(RIGHT(job_address, LEN(job_address) - CHARINDEX('-', job_address)))) END AS Zip_Code,
 	sr_number, ddate_submitted AS Date_Logged, 1 AS Field_Assessed, 
 	CASE WHEN bca_assessment_comp_dt IS NOT NULL THEN bca_assessment_comp_dt ELSE bss_assessment_comp_dt END AS Assessed_Date, 
 	CASE WHEN bca_action_by IS NOT NULL THEN bca_action_by ELSE bss_action_by END AS Field_Assessor,
@@ -220,6 +220,8 @@
 				
 			</cfloop>
 			
+			<cfmodule template="updateTreeList_module.cfm" sr_no="#getSiteInfo.sr_number#">
+
 		</cfif>
 		
 	</cfloop>
